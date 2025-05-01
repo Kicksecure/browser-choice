@@ -1,0 +1,21 @@
+# Copyright (C) 2024 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@kicksecure.com>
+## See the file COPYING for copying conditions.
+
+Source: browser-choice
+Section: admin
+Priority: optional
+Maintainer: Patrick Schleizer <adrelanos@kicksecure.com>
+Build-Depends: debhelper (>= 13), debhelper-compat (= 13), python3
+Homepage: https://www.kicksecure.com/wiki/browser-choice
+Vcs-Browser: https://github.com/Kicksecure/browser-choice
+Vcs-Git: https://github.com/Kicksecure/browser-choice.git
+Standards-Version: 4.6.2
+Rules-Requires-Root: no
+
+Package: browser-choice
+Architecture: all
+Depends: ${misc:Depends}
+Description: browser choice
+ A graphical interface that allows users to select and manage browsers.
+ .
+ Features a plugin-based design and multiple install types.
