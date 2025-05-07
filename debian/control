@@ -15,7 +15,7 @@ Rules-Requires-Root: no
 Package: browser-choice
 Architecture: all
 Depends: ${misc:Depends}
-Description: browser choice
+Description: browser selection installer dialog
  A graphical interface that allows users to select and manage browsers.
  .
  Features a plugin-based design and multiple install types.
