@@ -1,3 +1,9 @@
+# browser selection installer dialog #
+
+A graphical interface that allows users to select and manage browsers.
+
+Features a plugin-based design and multiple install types.
+
 ## How to install `browser-choice` using apt-get ##
 
 1\. Download the APT Signing Key.
