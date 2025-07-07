@@ -1,0 +1,26 @@
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+[product]
+product-name=Tor Browser
+product-category=Browsers
+product-website=https://www.torproject.org/download
+product-logo=/usr/share/browser-choice/icons/torbrowser.png
+vendor-name=The Tor Project
+vendor-website=https://www.torproject.org
+vendor-logo=/usr/share/browser-choice/icons/torproject.svg
+wiki=https://www.kicksecure.com/wiki/Tor_Browser
+official-plugin=yes
+
+[action:install-tb-updater]
+method-name=Official Tor Browser tarball
+method-name-short=Tarball (TPO)
+method-subtext=Tor Brwoser from torproject.org repository. Manage by Tor Browser Downloader (by Kicksecure developers).
+method-logo=/usr/share/browser-choice/icons/torbrowser.png
+install-script=update-torbrowser --gui
+uninstall-script=
+purge-script=
+install-status=test -d "${HOME}/.tb"
+precheck=
+postcheck=
+capability=/usr/libexec/browser-choice/architecture-support-check amd64

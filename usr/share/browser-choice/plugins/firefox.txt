@@ -1,0 +1,55 @@
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+[product]
+product-name=Firefox
+product-category=Browsers
+product-website=https://www.mozilla.org/en-US/firefox/new
+product-logo=/usr/share/browser-choice/icons/firefox.svg
+vendor-name=Mozilla
+vendor-website=https://www.mozilla.org
+vendor-logo=/usr/share/browser-choice/icons/mozilla.svg
+wiki=https://www.kicksecure.com/wiki/Firefox
+official-plugin=yes
+
+[action:install-debian]
+method-name=Firefox ESR from Debian stable repository
+method-name-short=Repo (Debian)
+method-subtext=Firefox ESR (Extended Stable Release) from packages.debian.org repository. Managed by apt.
+method-logo=/usr/share/browser-choice/icons/debian.svg
+update-script=apt-get update
+install-script=apt-get-noninteractive install firefox-esr
+uninstall-script=apt-get-noninteractive remove firefox-esr
+purge-script=apt-get-noninteractive purge firefox-esr
+install-status=source /usr/libexec/helper-scripts/package_installed_check.bsh; pkg_installed firefox-esr
+precheck=apt-get check
+postcheck=apt-get check
+capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 ppc64el
+
+[action:install-mozilla]
+method-name=Firefox Stable from Mozilla official repository
+method-name-short=Repo (Mozilla)
+method-subtext=Firefox Stable from packages.mozilla.org repository. Managed by apt.
+method-logo=/usr/share/browser-choice/icons/firefox.svg
+update-script=
+install-script=/usr/libexec/browser-choice/firefox-stable-mozilla-helper install
+uninstall-script=/usr/libexec/browser-choice/firefox-stable-mozilla-helper remove
+purge-script=/usr/libexec/browser-choice/firefox-stable-mozilla-helper purge
+install-status=/usr/libexec/browser-choice/firefox-stable-mozilla-helper status
+precheck=apt-get check
+postcheck=apt-get check
+capability=/usr/libexec/browser-choice/architecture-support-check amd64
+
+[action:install-flathub]
+method-name=Firefox Stable from Flathub repository
+method-name-short=Flatpak (Mozilla)
+method-subtext=Firefox Stable from flathub.org repository. Managed by Flatpak.
+method-logo=/usr/share/browser-choice/icons/flatpak.svg
+update-script=
+install-script=flatpak install flathub org.mozilla.firefox
+uninstall-script=flatpak uninstall org.mozilla.firefox
+purge-script=
+install-status=flatpak info org.mozilla.firefox
+precheck=
+postcheck=
+capability=architecture-support-check amd64 arm64

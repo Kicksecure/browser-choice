@@ -14,7 +14,7 @@ Rules-Requires-Root: no
 
 Package: browser-choice
 Architecture: all
-Depends: ${misc:Depends}
+Depends: python3, ${misc:Depends}
 Description: browser selection installer dialog
  A graphical interface that allows users to select and manage browsers.
  .

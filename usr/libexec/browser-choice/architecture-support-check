@@ -1,0 +1,15 @@
+#!/bin/bash
+
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+supported_arch_list=( "$@" )
+current_arch="$(dpkg --print-architecture)"
+
+for supported_arch in "${supported_arch_list[@]}"; do
+  if [ "${current_arch}" = "${supported_arch}" ]; then
+    exit 0
+  fi
+done
+
+exit 1
