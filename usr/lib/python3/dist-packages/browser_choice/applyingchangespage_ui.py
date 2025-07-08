@@ -7,7 +7,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_ApplyingChangesPage(object):
     def setupUi(self, ApplyingChangesPage):
         ApplyingChangesPage.setObjectName("ApplyingChangesPage")
-        ApplyingChangesPage.resize(493, 171)
+        ApplyingChangesPage.resize(493, 425)
         self.verticalLayout = QtWidgets.QVBoxLayout(ApplyingChangesPage)
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
@@ -24,12 +24,17 @@ class Ui_ApplyingChangesPage(object):
         self.label_2.setWordWrap(True)
         self.label_2.setObjectName("label_2")
         self.verticalLayout.addWidget(self.label_2)
-        spacerItem2 = QtWidgets.QSpacerItem(20, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem2)
+        self.logView = QtWidgets.QPlainTextEdit(ApplyingChangesPage)
+        self.logView.setStyleSheet("background-color: rgb(0, 0, 0);\n"
+"color: rgb(255, 255, 255);\n"
+"font: 9pt \"Monospace\";")
+        self.logView.setPlainText("")
+        self.logView.setObjectName("logView")
+        self.verticalLayout.addWidget(self.logView)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem3)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem2)
         self.continueButton = QtWidgets.QPushButton(ApplyingChangesPage)
         icon = QtGui.QIcon.fromTheme("go-next")
         self.continueButton.setIcon(icon)
@@ -44,5 +49,5 @@ class Ui_ApplyingChangesPage(object):
         _translate = QtCore.QCoreApplication.translate
         ApplyingChangesPage.setWindowTitle(_translate("ApplyingChangesPage", "Form"))
         self.label.setText(_translate("ApplyingChangesPage", "<span style=\" font-size:20pt; font-weight:600;\">Step 3/4: Applying Software Changes</span>"))
-        self.label_2.setText(_translate("ApplyingChangesPage", "A terminal window has been opened for finishing the installation or removal process. Please finish installing or removing your selected application there."))
+        self.label_2.setText(_translate("ApplyingChangesPage", "The system is performing the requested operation. Please wait, this may take a while."))
         self.continueButton.setText(_translate("ApplyingChangesPage", "Continue"))

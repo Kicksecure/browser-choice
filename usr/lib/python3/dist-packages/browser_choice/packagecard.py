@@ -12,7 +12,6 @@ from packagecard_ui import Ui_PackageCard
 from PyQt5.QtCore import pyqtSignal
 
 from PyQt5.QtGui import (
-    QImage,
     QPixmap,
 )
 
@@ -28,7 +27,7 @@ class PackageCard(QWidget):
         action_id: str,
         package_short_description: str,
         package_long_description: str,
-        package_icon_path: str,
+        package_icon: QPixmap,
         supports_update: bool,
         supports_remove: bool,
         supports_purge: bool,
@@ -42,10 +41,7 @@ class PackageCard(QWidget):
         self.ui.packageRadioButton.setText(package_short_description)
         self.ui.packageInfoLabel.setText(package_long_description)
         self.ui.packageIconLabel.setText("")
-        package_icon_image: QImage = QImage(package_icon_path)
-        self.ui.packageIconLabel.setPixmap(
-            QPixmap.fromImage(package_icon_image)
-        )
+        self.ui.packageIconLabel.setPixmap(package_icon)
         self.supports_update = supports_update
         self.supports_remove = supports_remove
         self.supports_purge = supports_purge

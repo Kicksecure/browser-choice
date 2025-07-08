@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>493</width>
-    <height>171</height>
+    <height>425</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -54,7 +54,7 @@
    <item>
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>A terminal window has been opened for finishing the installation or removal process. Please finish installing or removing your selected application there.</string>
+      <string>The system is performing the requested operation. Please wait, this may take a while.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -62,17 +62,16 @@
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+    <widget class="QPlainTextEdit" name="logView">
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(0, 0, 0);
+color: rgb(255, 255, 255);
+font: 9pt &quot;Monospace&quot;;</string>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>0</height>
-      </size>
+     <property name="plainText">
+      <string/>
      </property>
-    </spacer>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">

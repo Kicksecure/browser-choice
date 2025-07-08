@@ -8,6 +8,7 @@ browsercard.py - Card widget that displays an application (in this case,
 a web browser).
 """
 
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QWidget
 

@@ -11,6 +11,7 @@ user's choice.
 import sys
 import traceback
 import subprocess
+import functools
 from pathlib import Path
 from typing import Tuple
 
@@ -30,9 +31,9 @@ import browser_choice
 
 from browsercard import BrowserCard
 from packagecard import PackageCard
-from cardview import CardView
 from selectapplicationpage import SelectApplicationPage
 from chooseinstallationpage import ChooseInstallationPage
+from confirminstallationdialog import ConfirmInstallationDialog
 
 
 def convert_plugins_to_browser_cards(
@@ -79,7 +80,7 @@ def check_package_installed(package_name: str) -> bool:
             "-c",
             "--",
             "source /usr/libexec/helper-scripts/package_installed_check.bsh; "
-            f"rslt=\"$(pkg_installed {package_name}\); "
+            f"rslt=\"$(pkg_installed {package_name})\"; "
             "exit $rslt",
         ],
         check=False,
@@ -150,6 +151,26 @@ class BrowserChoiceWindow(QDialog):
             error_dialog.exec()
             sys.exit(1)
 
+        self.chosen_plugin: browser_choice.ChoicePlugin | None = None
+        self.chosen_action: browser_choice.ChoicePluginAction | None = None
+
+        self.current_page: QWidget | None = None
+        self.select_application_page: SelectApplicationPage | None = None
+        self.choose_installation_page: ChooseInstallationPage | None = None
+
+        self.make_select_application_page()
+        self.switch_to_page(self.select_application_page)
+
+    def switch_to_page(self, page: QWidget):
+        if self.current_page is not None:
+            self.current_page.hide()
+        self.root_layout.addWidget(page)
+        page.show()
+        self.current_page = page
+
+    def make_select_application_page(self) -> None:
+        ## This will only ever be called once when first instantiating the
+        ## page, so we don't need to have any teardown code here.
         app_type_list: list[str]
         card_group_list: list[list[BrowserCard]]
         app_type_list, card_group_list = (
@@ -158,12 +179,12 @@ class BrowserChoiceWindow(QDialog):
 
         show_sysmaint_warning = False
         if (
-            check_package_installed("user-sysmaint-split")
-            and "boot-role=sysmaint" not in GlobalData.kernel_cmdline
+                check_package_installed("user-sysmaint-split")
+                and "boot-role=sysmaint" not in GlobalData.kernel_cmdline
         ):
             show_sysmaint_warning = True
 
-        self.select_application_page: SelectApplicationPage = (
+        select_application_page: SelectApplicationPage = (
             SelectApplicationPage(
                 app_type_list,
                 card_group_list,
@@ -173,8 +194,106 @@ class BrowserChoiceWindow(QDialog):
                 self,
             )
         )
+        select_application_page.ui.cancelButton.clicked.connect(self.exit_app)
+        select_application_page.ui.continueButton.clicked.connect(
+            self.make_and_switch_to_choose_installation_page
+        )
 
-        self.root_layout.addWidget(self.select_application_page)
+        self.select_application_page = select_application_page
+
+    def make_choose_installation_page(self) -> None:
+        if self.choose_installation_page is not None:
+            for card in self.choose_installation_page.card_view.card_list:
+                card.deleteLater()
+            self.choose_installation_page.deleteLater()
+            self.choose_installation_page = None
+
+        for idx, card in enumerate(
+            self.select_application_page.card_view_list[
+                self.select_application_page.ui.appChooserTabWidget.currentIndex()
+            ].card_list
+        ):
+            assert isinstance(card, BrowserCard)
+            if card.ui.appRadioButton.isChecked():
+                self.chosen_plugin = self.plugin_data[
+                    self.select_application_page.ui.appChooserTabWidget.currentIndex()
+                ].plugin_list[idx]
+
+        package_card_list: list[PackageCard] = []
+        for plugin_action in self.chosen_plugin.action_list:
+            package_card = PackageCard(
+                action_id=plugin_action.internal_id,
+                package_short_description=plugin_action.method_name,
+                package_long_description=plugin_action.method_subtext,
+                package_icon=plugin_action.method_logo,
+                supports_update=plugin_action.update_and_install_script is not None,
+                supports_remove=plugin_action.uninstall_script is not None,
+                supports_purge=plugin_action.purge_script is not None,
+            )
+            package_card_list.append(package_card)
+
+        choose_installation_page = ChooseInstallationPage(
+            self.chosen_plugin.product_name,
+            package_card_list,
+            self,
+        )
+        choose_installation_page.ui.backButton.clicked.connect(
+            functools.partial(
+                self.switch_to_page, self.select_application_page
+            )
+        )
+        choose_installation_page.ui.continueButton.clicked.connect(
+            self.confirm_installation_choice
+        )
+        self.choose_installation_page = choose_installation_page
+
+    def make_and_switch_to_choose_installation_page(self) -> None:
+        self.make_choose_installation_page()
+        self.switch_to_page(self.choose_installation_page)
+
+    def confirm_installation_choice(self):
+        for idx, card in enumerate(
+            self.choose_installation_page.card_view.card_list
+        ):
+            assert isinstance(card, PackageCard)
+            if card.ui.packageRadioButton.isChecked():
+                self.chosen_action = self.chosen_plugin.action_list[idx]
+
+        action_str: str | None = None
+        command_str: str | None = None
+
+        if self.choose_installation_page.ui.installRadioButton.isChecked():
+            action_str = "installed"
+            if self.choose_installation_page.ui.noUpdateCheckbox.isChecked():
+                command_str = self.chosen_action.install_script
+            else:
+                if self.chosen_action.update_and_install_script is not None:
+                    command_str = self.chosen_action.update_and_install_script
+                else:
+                    command_str = self.chosen_action.install_script
+        elif self.choose_installation_page.ui.removeRadioButton.isChecked():
+            action_str = "removed"
+            command_str = self.chosen_action.uninstall_script
+        elif self.choose_installation_page.ui.purgeRadioButton.isChecked():
+            action_str = "purged"
+            command_str = self.chosen_action.purge_script
+
+        assert action_str is not None
+        assert command_str is not None
+
+        confirm_installation_dialog = ConfirmInstallationDialog(
+            app_name=self.chosen_plugin.product_name,
+            repository_name=self.chosen_action.method_name_short,
+            action_str=action_str,
+            command_str=command_str,
+        )
+        confirm_installation_dialog.exec()
+
+        ## TODO: Branch here - non-zero exit code = go back, zero = continue
+
+    @staticmethod
+    def exit_app():
+        sys.exit(0)
 
 
 def main():

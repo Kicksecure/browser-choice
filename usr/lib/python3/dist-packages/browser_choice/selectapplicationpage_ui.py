@@ -7,7 +7,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_SelectApplicationPage(object):
     def setupUi(self, SelectApplicationPage):
         SelectApplicationPage.setObjectName("SelectApplicationPage")
-        SelectApplicationPage.resize(659, 907)
+        SelectApplicationPage.resize(659, 645)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(SelectApplicationPage)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.horizontalLayout = QtWidgets.QHBoxLayout()

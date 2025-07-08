@@ -22,6 +22,13 @@ from PyQt5.QtGui import (
     QPixmap,
 )
 
+
+def str_or_none(data: str) -> str | None:
+    if data == "":
+        return None
+    return data
+
+
 class ChoicePluginAction(QObject):
     def __init__(
             self,
@@ -31,7 +38,7 @@ class ChoicePluginAction(QObject):
             method_name_short: str | None,
             method_subtext: str | None,
             method_logo: QPixmap | None,
-            update_script: str | None,
+            update_and_install_script: str | None,
             install_script: str | None,
             uninstall_script: str | None,
             purge_script: str | None,
@@ -63,7 +70,7 @@ class ChoicePluginAction(QObject):
         self.method_name_short: str = method_name_short
         self.method_subtext: str = method_subtext
         self.method_logo: QPixmap = method_logo
-        self.update_script: str | None = update_script
+        self.update_and_install_script: str | None = update_and_install_script
         self.install_script: str = install_script
         self.uninstall_script: str | None = uninstall_script
         self.purge_script: str | None = purge_script
@@ -87,10 +94,10 @@ class ChoicePluginAction(QObject):
             raise OSError("Failed to start script!")
         return output_process
 
-    def run_update(self) -> QProcess | None:
-        if self.update_script is None:
+    def run_update_and_install(self) -> QProcess | None:
+        if self.update_and_install_script is None:
             return None
-        return self.__run_script(self.update_script)
+        return self.__run_script(self.update_and_install_script)
 
     def run_install(self) -> QProcess:
         return self.__run_script(self.install_script)
@@ -114,6 +121,7 @@ class ChoicePluginAction(QObject):
                 self.install_status,
             ],
             check=False,
+            capture_output=True,
         )
         if check_process.returncode == 0:
             return True
@@ -138,6 +146,7 @@ class ChoicePluginAction(QObject):
                 self.capability,
             ],
             check=False,
+            capture_output=True,
         )
         if capability_process.returncode == 0:
             return True
@@ -226,7 +235,7 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
     action_method_name_short: str | None = None
     action_method_subtext: str | None = None
     action_method_logo: QPixmap | None = None
-    action_update_script: str | None = None
+    action_update_and_install_script: str | None = None
     action_install_script: str | None = None
     action_uninstall_script: str | None = None
     action_purge_script: str | None = None
@@ -270,7 +279,9 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
                             method_name_short=action_method_name_short,
                             method_subtext=action_method_subtext,
                             method_logo=action_method_logo,
-                            update_script=action_update_script,
+                            update_and_install_script=(
+                                action_update_and_install_script
+                            ),
                             install_script=action_install_script,
                             uninstall_script=action_uninstall_script,
                             purge_script=action_purge_script,
@@ -310,25 +321,25 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
                     line_val = None
                 match line_key:
                     case "product-name":
-                        product_name = line_val
+                        product_name = str_or_none(line_val)
                     case "product-category":
-                        product_category = line_val
+                        product_category = str_or_none(line_val)
                     case "product-website":
-                        product_website = line_val
+                        product_website = str_or_none(line_val)
                     case "product-logo":
                         product_logo = load_image(
                             line_val, config_file, "product logo"
                         )
                     case "vendor-name":
-                        vendor_name = line_val
+                        vendor_name = str_or_none(line_val)
                     case "vendor-website":
-                        vendor_website = line_val
+                        vendor_website = str_or_none(line_val)
                     case "vendor-logo":
                         vendor_logo = load_image(
                             line_val, config_file, "vendor logo"
                         )
                     case "wiki":
-                        wiki_link = line_val
+                        wiki_link = str_or_none(line_val)
                     case "official-plugin":
                         if line_val.lower() == "yes":
                             is_official_plugin = True
@@ -343,33 +354,33 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
             else:
                 match line_key:
                     case "method-name":
-                        action_method_name = line_val
+                        action_method_name = str_or_none(line_val)
                     case "method-name-short":
-                        action_method_name_short = line_val
+                        action_method_name_short = str_or_none(line_val)
                     case "method-subtext":
-                        action_method_subtext = line_val
+                        action_method_subtext = str_or_none(line_val)
                     case "method-logo":
                         action_method_logo = load_image(
                             line_val,
                             config_file,
                             f"method logo for '{current_action_name}'",
                         )
-                    case "update-script":
-                        action_update_script = line_val
+                    case "update-and-install-script":
+                        action_update_and_install_script = str_or_none(line_val)
                     case "install-script":
-                        action_install_script = line_val
+                        action_install_script = str_or_none(line_val)
                     case "uninstall-script":
-                        action_uninstall_script = line_val
+                        action_uninstall_script = str_or_none(line_val)
                     case "purge-script":
-                        action_purge_script = line_val
+                        action_purge_script = str_or_none(line_val)
                     case "install-status":
-                        action_install_status = line_val
+                        action_install_status = str_or_none(line_val)
                     case "precheck":
-                        action_precheck = line_val
+                        action_precheck = str_or_none(line_val)
                     case "postcheck":
-                        action_postcheck = line_val
+                        action_postcheck = str_or_none(line_val)
                     case "capability":
-                        action_capability = line_val
+                        action_capability = str_or_none(line_val)
 
     if not hit_product_header and not hit_action_header:
         throw_config_error(config_file, "no headers found")
@@ -385,7 +396,7 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
         method_name_short=action_method_name_short,
         method_subtext=action_method_subtext,
         method_logo=action_method_logo,
-        update_script=action_update_script,
+        update_and_install_script=action_update_and_install_script,
         install_script=action_install_script,
         uninstall_script=action_uninstall_script,
         purge_script=action_purge_script,
