@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>504</width>
-    <height>186</height>
+    <height>165</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -54,7 +54,7 @@
    <item>
     <widget class="QLabel" name="actionCompleteLabel">
      <property name="text">
-      <string>The application &quot;App Name&quot; has been installed/removed via &quot;Repository&quot;. Click &quot;Done&quot; to exit the wizard.</string>
+      <string>actionCompleteLabel</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -79,7 +79,7 @@
      <item>
       <widget class="QCheckBox" name="launchAppCheckbox">
        <property name="text">
-        <string>Launch &quot;App Name&quot;</string>
+        <string>launchAppCheckbox</string>
        </property>
       </widget>
      </item>
@@ -119,7 +119,8 @@
         <string>Done</string>
        </property>
        <property name="icon">
-        <iconset theme="checkbox"/>
+        <iconset theme="checkbox">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
      </item>

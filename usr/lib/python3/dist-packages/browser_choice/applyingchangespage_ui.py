@@ -7,7 +7,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_ApplyingChangesPage(object):
     def setupUi(self, ApplyingChangesPage):
         ApplyingChangesPage.setObjectName("ApplyingChangesPage")
-        ApplyingChangesPage.resize(493, 425)
+        ApplyingChangesPage.resize(814, 640)
         self.verticalLayout = QtWidgets.QVBoxLayout(ApplyingChangesPage)
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
@@ -28,6 +28,7 @@ class Ui_ApplyingChangesPage(object):
         self.logView.setStyleSheet("background-color: rgb(0, 0, 0);\n"
 "color: rgb(255, 255, 255);\n"
 "font: 9pt \"Monospace\";")
+        self.logView.setReadOnly(True)
         self.logView.setPlainText("")
         self.logView.setObjectName("logView")
         self.verticalLayout.addWidget(self.logView)

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>445</width>
-    <height>204</height>
+    <height>158</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <widget class="QLabel" name="actionInfoLabel">
      <property name="text">
-      <string>The application &quot;App Name&quot; will be installed/removed via &quot;Repository&quot;. The following command will be executed to install/remove the application:</string>
+      <string>actionInfoLabel</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -27,7 +27,7 @@
    <item>
     <widget class="QLabel" name="commandLabel">
      <property name="text">
-      <string>&lt;code&gt;actual command here&lt;/code&gt;</string>
+      <string>&lt;code&gt;commandLabel&lt;/code&gt;</string>
      </property>
     </widget>
    </item>
@@ -62,7 +62,8 @@
         <string>Back</string>
        </property>
        <property name="icon">
-        <iconset theme="go-previous"/>
+        <iconset theme="go-previous">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
      </item>
@@ -85,7 +86,8 @@
         <string>Continue</string>
        </property>
        <property name="icon">
-        <iconset theme="go-next"/>
+        <iconset theme="go-next">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
      </item>

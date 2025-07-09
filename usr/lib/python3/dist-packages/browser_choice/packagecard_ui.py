@@ -7,7 +7,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_PackageCard(object):
     def setupUi(self, PackageCard):
         PackageCard.setObjectName("PackageCard")
-        PackageCard.resize(232, 162)
+        PackageCard.resize(187, 158)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -44,5 +44,5 @@ class Ui_PackageCard(object):
         _translate = QtCore.QCoreApplication.translate
         PackageCard.setWindowTitle(_translate("PackageCard", "Form"))
         self.packageIconLabel.setText(_translate("PackageCard", "O"))
-        self.packageRadioButton.setText(_translate("PackageCard", "App Name from Repository"))
-        self.packageInfoLabel.setText(_translate("PackageCard", "App Name from www.example.com repository. Managed by package-manager. (Installed)"))
+        self.packageRadioButton.setText(_translate("PackageCard", "packageRadioButton"))
+        self.packageInfoLabel.setText(_translate("PackageCard", "packageInfoLabel"))

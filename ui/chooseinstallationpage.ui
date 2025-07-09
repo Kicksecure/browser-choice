@@ -54,7 +54,7 @@
    <item>
     <widget class="QLabel" name="appNameChoiceLabel">
      <property name="text">
-      <string>Choose the package for &quot;App Name&quot; to install or remove.</string>
+      <string>appNameChoiceLabel</string>
      </property>
     </widget>
    </item>

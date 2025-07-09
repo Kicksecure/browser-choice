@@ -1,0 +1,64 @@
+#!/usr/bin/python3 -su
+
+# Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+# See the file COPYING for copying conditions.
+
+# pylint: disable=invalid-name
+
+"""
+changescompletepage.py - Notifies the user that software has been installed or
+removed and allows the user to launch a newly installed application.
+"""
+
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QWidget
+
+from browser_choice.changescompletepage_ui import Ui_ChangesCompletePage
+
+
+class ChangesCompletePage(QWidget):
+    """
+    A wizard screen widget that informs the user that software changes have
+    been made, and offers to let the user launch the app if desired.
+    """
+
+    doneClicked: pyqtSignal = pyqtSignal()
+
+    # pylint: disable=too-many-arguments
+    def __init__(
+        self,
+        app_name: str,
+        repository_name: str,
+        change_str: str,
+        did_succeed: bool,
+        allow_launch: bool,
+        parent: QWidget | None = None,
+    ):
+        super().__init__(parent)
+        self.ui = Ui_ChangesCompletePage()
+        self.ui.setupUi(self)
+
+        self.ui.doneButton.clicked.connect(self.doneClicked)
+
+        if did_succeed:
+            self.ui.actionCompleteLabel.setText(
+                f"The application '{app_name}' from '{repository_name}' has been "
+                f"{change_str}. Click 'Done' to exit the wizard."
+            )
+            if allow_launch:
+                self.ui.launchAppCheckbox.setText(f"Launch '{app_name}")
+            else:
+                self.ui.launchAppCheckbox.setVisible(False)
+        else:
+            self.ui.actionCompleteLabel.setText(
+                f"The application '{app_name}' from '{repository_name} could "
+                f"not be {change_str}. Click 'Done' to exit the wizard."
+            )
+            self.ui.launchAppCheckbox.setVisible(False)
+
+    def launchAppChecked(self) -> bool:
+        """
+        Indicates whether the user checked the "launch app" checkbox.
+        """
+
+        return self.ui.launchAppCheckbox.isChecked()

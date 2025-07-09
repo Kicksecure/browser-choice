@@ -7,7 +7,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_ConfirmInstallationDialog(object):
     def setupUi(self, ConfirmInstallationDialog):
         ConfirmInstallationDialog.setObjectName("ConfirmInstallationDialog")
-        ConfirmInstallationDialog.resize(445, 204)
+        ConfirmInstallationDialog.resize(445, 158)
         self.verticalLayout = QtWidgets.QVBoxLayout(ConfirmInstallationDialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.actionInfoLabel = QtWidgets.QLabel(ConfirmInstallationDialog)
@@ -45,8 +45,8 @@ class Ui_ConfirmInstallationDialog(object):
     def retranslateUi(self, ConfirmInstallationDialog):
         _translate = QtCore.QCoreApplication.translate
         ConfirmInstallationDialog.setWindowTitle(_translate("ConfirmInstallationDialog", "Confirm Installation Options"))
-        self.actionInfoLabel.setText(_translate("ConfirmInstallationDialog", "The application \"App Name\" will be installed/removed via \"Repository\". The following command will be executed to install/remove the application:"))
-        self.commandLabel.setText(_translate("ConfirmInstallationDialog", "<code>actual command here</code>"))
+        self.actionInfoLabel.setText(_translate("ConfirmInstallationDialog", "actionInfoLabel"))
+        self.commandLabel.setText(_translate("ConfirmInstallationDialog", "<code>commandLabel</code>"))
         self.label_3.setText(_translate("ConfirmInstallationDialog", "Click \"Continue\" to proceed with these changes, or \"Back\" to return to the \"Choose Installation Options\" page."))
         self.backButton.setText(_translate("ConfirmInstallationDialog", "Back"))
         self.continueButton.setText(_translate("ConfirmInstallationDialog", "Continue"))

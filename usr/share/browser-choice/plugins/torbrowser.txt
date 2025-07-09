@@ -21,6 +21,7 @@ install-and-update-script=
 install-script=update-torbrowser --gui
 uninstall-script=
 purge-script=
+launch-script=torbrowser
 install-status=test -d "${HOME}/.tb"
 precheck=
 postcheck=

@@ -7,7 +7,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_ChangesCompletePage(object):
     def setupUi(self, ChangesCompletePage):
         ChangesCompletePage.setObjectName("ChangesCompletePage")
-        ChangesCompletePage.resize(504, 186)
+        ChangesCompletePage.resize(504, 165)
         self.verticalLayout = QtWidgets.QVBoxLayout(ChangesCompletePage)
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
@@ -52,6 +52,6 @@ class Ui_ChangesCompletePage(object):
         _translate = QtCore.QCoreApplication.translate
         ChangesCompletePage.setWindowTitle(_translate("ChangesCompletePage", "Form"))
         self.label.setText(_translate("ChangesCompletePage", "<span style=\" font-size:20pt; font-weight:600;\">Step 4/4: Software Changes Complete</span>"))
-        self.actionCompleteLabel.setText(_translate("ChangesCompletePage", "The application \"App Name\" has been installed/removed via \"Repository\". Click \"Done\" to exit the wizard."))
-        self.launchAppCheckbox.setText(_translate("ChangesCompletePage", "Launch \"App Name\""))
+        self.actionCompleteLabel.setText(_translate("ChangesCompletePage", "actionCompleteLabel"))
+        self.launchAppCheckbox.setText(_translate("ChangesCompletePage", "launchAppCheckbox"))
         self.doneButton.setText(_translate("ChangesCompletePage", "Done"))

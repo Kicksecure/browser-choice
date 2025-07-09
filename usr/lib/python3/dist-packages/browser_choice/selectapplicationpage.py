@@ -3,6 +3,8 @@
 # Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 # See the file COPYING for copying conditions.
 
+# pylint: disable=invalid-name
+
 """
 selectapplicationpage.py - Displays a list of applications to the user.
 """
@@ -10,16 +12,27 @@ selectapplicationpage.py - Displays a list of applications to the user.
 import copy
 import functools
 
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import (
     QWidget,
     QVBoxLayout,
 )
 
-from selectapplicationpage_ui import Ui_SelectApplicationPage
-from browsercard import BrowserCard
-from cardview import CardView
+from browser_choice.selectapplicationpage_ui import Ui_SelectApplicationPage
+from browser_choice.browsercard import BrowserCard
+from browser_choice.cardview import CardView
+
 
 class SelectApplicationPage(QWidget):
+    """
+    A wizard screen widget that allows the user to choose an application to
+    install or remove.
+    """
+
+    cancelClicked: pyqtSignal = pyqtSignal()
+    continueClicked: pyqtSignal = pyqtSignal()
+
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         app_type_list: list[str],
@@ -29,11 +42,13 @@ class SelectApplicationPage(QWidget):
         show_unofficial_warning: bool,
         parent: QWidget | None = None,
     ):
-        super(SelectApplicationPage, self).__init__(parent)
+        super().__init__(parent)
         self.ui = Ui_SelectApplicationPage()
         self.ui.setupUi(self)
 
         self.ui.continueButton.setEnabled(False)
+        self.ui.cancelButton.clicked.connect(self.cancelClicked)
+        self.ui.continueButton.clicked.connect(self.continueClicked)
 
         if not show_sysmaint_warning:
             self.ui.sysmaintWarningLabel.setVisible(False)
@@ -72,7 +87,7 @@ class SelectApplicationPage(QWidget):
             self.card_view_list.append(card_view)
             for card in card_group_list[idx]:
                 card_view.add_card(card)
-                card.ui.appRadioButton.toggled.connect(
+                card.toggled.connect(
                     functools.partial(
                         self.card_selected,
                         card,
@@ -81,16 +96,26 @@ class SelectApplicationPage(QWidget):
             app_type_layout.addWidget(card_view)
             self.ui.appChooserTabWidget.addTab(app_type_widget, app_type)
 
-    def card_selected(self, card: BrowserCard):
-        if card.ui.appRadioButton.isChecked():
+    def card_selected(self, card: BrowserCard) -> None:
+        """
+        Qt signal handler. Triggered when the user changes the currently
+        selected card.
+        """
+
+        if card.isChecked():
             self.current_card = card
 
     def tab_changed(self, index: int) -> None:
+        """
+        Qt signal handler. Triggered when the user changes the currently
+        selected tab.
+        """
+
         card_view: CardView = self.card_view_list[index]
         item_selected: bool = False
         for card in card_view.card_list:
             assert card is BrowserCard
-            if card.ui.appRadioButton.isChecked():
+            if card.isChecked():
                 item_selected = True
                 self.current_card = card
                 break
@@ -99,3 +124,10 @@ class SelectApplicationPage(QWidget):
             self.ui.continueButton.setEnabled(True)
         else:
             self.ui.continueButton.setEnabled(False)
+
+    def tabIndex(self) -> int:
+        """
+        Gets the index of the currently selected tab.
+        """
+
+        return self.ui.appChooserTabWidget.currentIndex()

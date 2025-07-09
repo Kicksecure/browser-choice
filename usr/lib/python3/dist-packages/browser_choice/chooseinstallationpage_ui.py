@@ -77,7 +77,7 @@ class Ui_ChooseInstallationPage(object):
         _translate = QtCore.QCoreApplication.translate
         ChooseInstallationPage.setWindowTitle(_translate("ChooseInstallationPage", "Form"))
         self.label.setText(_translate("ChooseInstallationPage", "<span style=\" font-size:20pt; font-weight:600;\">Step 2/4: Choose Installation Options</span>"))
-        self.appNameChoiceLabel.setText(_translate("ChooseInstallationPage", "Choose the package for \"App Name\" to install or remove."))
+        self.appNameChoiceLabel.setText(_translate("ChooseInstallationPage", "appNameChoiceLabel"))
         self.label_3.setText(_translate("ChooseInstallationPage", "Choose which action to take with the selected package:"))
         self.installRadioButton.setText(_translate("ChooseInstallationPage", "Install"))
         self.noUpdateCheckbox.setText(_translate("ChooseInstallationPage", "Don\'t update software databases before installation"))

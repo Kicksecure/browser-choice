@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>232</width>
-    <height>162</height>
+    <width>187</width>
+    <height>158</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -69,14 +69,14 @@
    <item>
     <widget class="QRadioButton" name="packageRadioButton">
      <property name="text">
-      <string>App Name from Repository</string>
+      <string>packageRadioButton</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QLabel" name="packageInfoLabel">
      <property name="text">
-      <string>App Name from www.example.com repository. Managed by package-manager. (Installed)</string>
+      <string>packageInfoLabel</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

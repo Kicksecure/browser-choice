@@ -7,7 +7,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_BrowserCard(object):
     def setupUi(self, BrowserCard):
         BrowserCard.setObjectName("BrowserCard")
-        BrowserCard.resize(155, 268)
+        BrowserCard.resize(220, 246)
         self.verticalLayout = QtWidgets.QVBoxLayout(BrowserCard)
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
@@ -79,21 +79,17 @@ class Ui_BrowserCard(object):
     def retranslateUi(self, BrowserCard):
         _translate = QtCore.QCoreApplication.translate
         BrowserCard.setWindowTitle(_translate("BrowserCard", "Form"))
-        self.appIconLabel.setText(_translate("BrowserCard", "O"))
-        self.appRadioButton.setText(_translate("BrowserCard", "App Name"))
+        self.appIconLabel.setText(_translate("BrowserCard", "icon"))
+        self.appRadioButton.setText(_translate("BrowserCard", "appRadioButton"))
         self.label.setText(_translate("BrowserCard", "by"))
         self.appVendorIconLabel.setText(_translate("BrowserCard", "O"))
-        self.appVendorLabel.setText(_translate("BrowserCard", "<a href=\"https://example.com\">Vendor</a>"))
-        self.appWikiLabel.setText(_translate("BrowserCard", "<a href=\"https://www.example.com\">App info</a>, <a href=\"https://www.kicksecure.com/wiki\">Wiki</a>"))
+        self.appVendorLabel.setText(_translate("BrowserCard", "<a href=\"https://example.com\">appVendorLabel</a>"))
+        self.appWikiLabel.setText(_translate("BrowserCard", "appWikiLabel"))
         self.label_5.setText(_translate("BrowserCard", "<html><head/><body><p>Available as:</p></body></html>"))
-        self.availableInstallListLabel.setText(_translate("BrowserCard", "<html><head/><body>\n"
-"<ul>\n"
-"<li>Inst. Method 1</li>\n"
-"<li>Inst. Method 2</li>\n"
-"</body></html>"))
+        self.availableInstallListLabel.setText(_translate("BrowserCard", "<ul>\n"
+"<li>availableInstallListLabel</li>\n"
+"</ul>"))
         self.installedHeaderLabel.setText(_translate("BrowserCard", "<html><head/><body><p>Installed as:</p></body></html>"))
-        self.installedLabel.setText(_translate("BrowserCard", "<html><head/><body>\n"
-"<ul>\n"
-"<li>Inst. Method 1</li>\n"
-"</ul>\n"
-"</body></html>"))
+        self.installedLabel.setText(_translate("BrowserCard", "<ul>\n"
+"<li>installedLabel</li>\n"
+"</ul>"))

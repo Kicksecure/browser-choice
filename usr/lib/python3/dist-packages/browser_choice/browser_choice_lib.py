@@ -4,8 +4,11 @@
 # See the file COPYING for copying conditions.
 
 """
-browser_choice.py - Library for browser-choice.
+browser_choice_lib.py - Library for browser-choice.
 """
+
+## NOTE: This file must not be named 'browser_choice.py', it confuses mypy.
+## See https://github.com/python/mypy/issues/19410
 
 import subprocess
 import re
@@ -24,46 +27,75 @@ from PyQt5.QtGui import (
 
 
 def str_or_none(data: str) -> str | None:
+    """
+    Returns the input string, or None if the input string is empty.
+    """
+
     if data == "":
         return None
     return data
 
 
+# pylint: disable=too-many-instance-attributes
 class ChoicePluginAction(QObject):
+    """
+    Represents an action defined in a browser-choice plugin. Actions
+    correspond to packaging methods and allow installing, removing, and
+    purging a particular package.
+
+    TODO: "Action" is a horrible name for this. "Package" would be much
+    better.
+    """
+
+    # pylint: disable=too-many-arguments,too-many-locals
     def __init__(
-            self,
-            config_file: Path,
-            internal_id: str,
-            method_name: str | None,
-            method_name_short: str | None,
-            method_subtext: str | None,
-            method_logo: QPixmap | None,
-            update_and_install_script: str | None,
-            install_script: str | None,
-            uninstall_script: str | None,
-            purge_script: str | None,
-            install_status: str | None,
-            precheck: str | None,
-            postcheck: str | None,
-            capability: str | None,
-            parent: QObject | None = None
+        self,
+        config_file: Path,
+        internal_id: str | None,
+        method_name: str | None,
+        method_name_short: str | None,
+        method_subtext: str | None,
+        method_logo: QPixmap | None,
+        update_and_install_script: str | None,
+        install_script: str | None,
+        uninstall_script: str | None,
+        purge_script: str | None,
+        launch_script: str | None,
+        install_status: str | None,
+        precheck: str | None,
+        postcheck: str | None,
+        capability: str | None,
+        parent: QObject | None = None,
     ):
-        super(QObject, self).__init__(parent)
+        super().__init__(parent)
 
         none_check_dict: dict[str, Any] = {
+            "internal_id": internal_id,
             "method_name": method_name,
             "method_name_short": method_name_short,
             "method_subtext": method_subtext,
             "method_logo": method_logo,
             "install_script": install_script,
+            "launch_script": launch_script,
             "install_status": install_status,
             "capability": capability,
         }
         for key, value in none_check_dict.items():
             if value is None:
-                throw_config_error(config_file,
-                    f"'{key}' in action '{internal_id}' cannot be None!"
+                throw_config_error(
+                    config_file,
+                    f"'{key}' in action '{internal_id}' cannot be None!",
                 )
+
+        assert internal_id is not None
+        assert method_name is not None
+        assert method_name_short is not None
+        assert method_subtext is not None
+        assert method_logo is not None
+        assert install_script is not None
+        assert launch_script is not None
+        assert install_status is not None
+        assert capability is not None
 
         self.internal_id: str = internal_id
         self.method_name: str = method_name
@@ -74,14 +106,22 @@ class ChoicePluginAction(QObject):
         self.install_script: str = install_script
         self.uninstall_script: str | None = uninstall_script
         self.purge_script: str | None = purge_script
+        self.launch_script: str = launch_script
         self.install_status: str = install_status
         self.precheck: str | None = precheck
         self.postcheck: str | None = postcheck
         self.capability: str = capability
+        self.is_installed: bool = self.check_installed()
 
-    def __run_script(self, script: str) -> QProcess:
+    def __run_script(self, script: str, detach: bool = False) -> QProcess:
+        """
+        Runs the provided script asynchronously with QProcess. Used internally
+        to run plugin-defined scripts.
+        """
+
         output_process: QProcess = QProcess(self)
         output_process.setProgram("/usr/bin/bash")
+        output_process.setProcessChannelMode(QProcess.MergedChannels)
         output_process.setArguments(
             [
                 "-c",
@@ -89,30 +129,62 @@ class ChoicePluginAction(QObject):
                 script,
             ]
         )
-        output_process.start()
-        if not output_process.waitForStarted():
-            raise OSError("Failed to start script!")
+        if detach:
+            output_process.startDetached()
+        else:
+            output_process.start()
+            if not output_process.waitForStarted():
+                raise OSError("Failed to start script!")
         return output_process
 
     def run_update_and_install(self) -> QProcess | None:
+        """
+        Run a plugin's 'update-and-install-script' asynchronously.
+        """
+
         if self.update_and_install_script is None:
             return None
         return self.__run_script(self.update_and_install_script)
 
     def run_install(self) -> QProcess:
+        """
+        Run a plugin's 'install-script' asynchronously.
+        """
+
         return self.__run_script(self.install_script)
 
     def run_uninstall(self) -> QProcess | None:
+        """
+        Run a plugin's 'uninstall-script' asynchronously.
+        """
+
         if self.uninstall_script is None:
             return None
         return self.__run_script(self.uninstall_script)
 
     def run_purge(self) -> QProcess | None:
+        """
+        Run a plugin's 'purge-script' asynchronously.
+        """
+
         if self.purge_script is None:
             return None
         return self.__run_script(self.purge_script)
 
+    def run_launch(self) -> QProcess | None:
+        """
+        Run a plugin's 'launch-script' asynchronously, detached from the
+        parent so the parent can terminate without terminating the child.
+        """
+
+        return self.__run_script(self.launch_script, detach=True)
+
     def check_installed(self) -> bool:
+        """
+        Check if the defined package is installed by running the
+        'install-status' script synchronously with subprocess.run.
+        """
+
         check_process = subprocess.run(
             [
                 "/usr/bin/bash",
@@ -128,16 +200,29 @@ class ChoicePluginAction(QObject):
         return False
 
     def run_precheck(self) -> QProcess | None:
+        """
+        Run a plugin's 'precheck' script asynchronously.
+        """
+
         if self.precheck is None:
             return None
         return self.__run_script(self.precheck)
 
     def run_postcheck(self) -> QProcess | None:
+        """
+        Run a plugin's 'postcheck' script asynchronously.
+        """
+
         if self.postcheck is None:
             return None
         return self.__run_script(self.postcheck)
 
     def check_capability(self) -> bool:
+        """
+        Check if a package can be installed on the current machine by running
+        the 'capability' script synchronously with subprocess.run.
+        """
+
         capability_process = subprocess.run(
             [
                 "/usr/bin/bash",
@@ -152,7 +237,13 @@ class ChoicePluginAction(QObject):
             return True
         return False
 
+
 class ChoicePlugin(QObject):
+    """
+    Represents a browser-choice plugin.
+    """
+
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         product_name: str,
@@ -179,31 +270,50 @@ class ChoicePlugin(QObject):
         self.is_official_plugin: bool = is_official_plugin
         self.action_list: list[ChoicePluginAction] = action_list
 
+
 class ChoicePluginCategory(QObject):
-    def __init__(
-        self,
-        category_name: str,
-        parent: QObject | None = None
-    ):
+    """
+    Represents a group of plugins that fall into the same category. These
+    categories are defined by the 'product-category' key in plugins.
+    """
+
+    def __init__(self, category_name: str, parent: QObject | None = None):
         super(QObject, self).__init__(parent)
 
         self.category_name = category_name
         self.plugin_list: list[ChoicePlugin] = []
 
-    def add_plugin(self, plugin: ChoicePlugin):
+    def add_plugin(self, plugin: ChoicePlugin) -> None:
+        """
+        Adds a plugin to the category.
+        """
+
         if plugin.product_category != self.category_name:
             raise ValueError(
                 "Mismatch between category object and plugin category"
             )
         self.plugin_list.append(plugin)
 
+
 def throw_config_error(config_file: Path, error_reason: str) -> None:
+    """
+    Convenience function for throwing exceptions related to config file
+    parsing.
+    """
+
     raise ValueError(
-        f"Invalid config file '{str(config_file)}' "
-        f"({error_reason})"
+        f"Invalid config file '{str(config_file)}' " f"({error_reason})"
     )
 
-def load_image(image_path_str: str, config_file: Path, image_type: str) -> QPixmap:
+
+def load_image(
+    image_path_str: str, config_file: Path, image_type: str
+) -> QPixmap:
+    """
+    Loads an image from the specified path. Throws an exception specifying the
+    problematic config file and image type if something goes wrong.
+    """
+
     logo_file: Path = Path(image_path_str)
     if not logo_file.is_file():
         throw_config_error(config_file, f"{image_type} does not exist")
@@ -213,7 +323,13 @@ def load_image(image_path_str: str, config_file: Path, image_type: str) -> QPixm
     logo_pixmap: QPixmap = QPixmap.fromImage(logo_image)
     return logo_pixmap
 
+
+# pylint: disable=too-many-locals,too-many-branches,too-many-statements
 def parse_config_file(config_file: Path) -> ChoicePlugin:
+    """
+    Parses a single plugin config file and returns the plugin it defines.
+    """
+
     detect_comment_regex: re.Pattern[str] = re.compile(r"\s*#")
     detect_header_regex: re.Pattern[str] = re.compile(r"\[.*]\Z")
     hit_product_header: bool = False
@@ -239,6 +355,7 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
     action_install_script: str | None = None
     action_uninstall_script: str | None = None
     action_purge_script: str | None = None
+    action_launch_script: str | None = None
     action_install_status: str | None = None
     action_precheck: str | None = None
     action_postcheck: str | None = None
@@ -263,7 +380,7 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
                             config_file, "multiple product headers hit"
                         )
                     continue
-                elif current_header_name.startswith("action:"):
+                if current_header_name.startswith("action:"):
                     if not hit_product_header:
                         throw_config_error(
                             config_file,
@@ -285,6 +402,7 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
                             install_script=action_install_script,
                             uninstall_script=action_uninstall_script,
                             purge_script=action_purge_script,
+                            launch_script=action_launch_script,
                             install_status=action_install_status,
                             precheck=action_precheck,
                             postcheck=action_postcheck,
@@ -298,27 +416,20 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
                         maxsplit=1,
                     )[1]
                     continue
-                else:
-                    throw_config_error(
-                        config_file,
-                        f"unrecognized header '{current_header_name}'",
-                    )
+                throw_config_error(
+                    config_file,
+                    f"unrecognized header '{current_header_name}'",
+                )
 
             if not "=" in line:
-                throw_config_error(
-                    config_file, "non-header line missing '='"
-                )
+                throw_config_error(config_file, "non-header line missing '='")
             line_parts: list[str] = line.split("=", maxsplit=1)
             line_key: str = line_parts[0]
-            line_val: str | None = line_parts[1]
+            line_val: str = line_parts[1]
 
             if not hit_product_header:
-                throw_config_error(
-                    config_file, "config lines before headers"
-                )
+                throw_config_error(config_file, "config lines before headers")
             elif hit_product_header and not hit_action_header:
-                if line_val == "":
-                    line_val = None
                 match line_key:
                     case "product-name":
                         product_name = str_or_none(line_val)
@@ -373,6 +484,8 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
                         action_uninstall_script = str_or_none(line_val)
                     case "purge-script":
                         action_purge_script = str_or_none(line_val)
+                    case "launch-script":
+                        action_launch_script = str_or_none(line_val)
                     case "install-status":
                         action_install_status = str_or_none(line_val)
                     case "precheck":
@@ -400,6 +513,7 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
         install_script=action_install_script,
         uninstall_script=action_uninstall_script,
         purge_script=action_purge_script,
+        launch_script=action_launch_script,
         install_status=action_install_status,
         precheck=action_precheck,
         postcheck=action_postcheck,
@@ -426,6 +540,16 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
     elif is_official_plugin is None:
         throw_config_error(config_file, "no official plugin indicator")
 
+    assert product_name is not None
+    assert product_category is not None
+    assert product_website is not None
+    assert product_logo is not None
+    assert vendor_name is not None
+    assert vendor_website is not None
+    assert vendor_logo is not None
+    assert wiki_link is not None
+    assert is_official_plugin is not None
+
     output_plugin: ChoicePlugin = ChoicePlugin(
         product_name=product_name,
         product_category=product_category,
@@ -440,7 +564,12 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
     )
     return output_plugin
 
+
 def parse_config_dir(config_dir: Path) -> list[ChoicePluginCategory]:
+    """
+    Parses all plugin config files from the specified directory.
+    """
+
     config_file_list: list[Path] = []
     for config_file in config_dir.iterdir():
         if not config_file.is_file():

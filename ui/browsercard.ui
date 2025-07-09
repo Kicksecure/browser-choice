@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>155</width>
-    <height>268</height>
+    <width>220</width>
+    <height>246</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,7 +38,7 @@
         </size>
        </property>
        <property name="text">
-        <string>O</string>
+        <string>icon</string>
        </property>
        <property name="scaledContents">
         <bool>true</bool>
@@ -84,7 +84,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>App Name</string>
+        <string>appRadioButton</string>
        </property>
       </widget>
      </item>
@@ -144,7 +144,7 @@
      <item>
       <widget class="QLabel" name="appVendorLabel">
        <property name="text">
-        <string>&lt;a href=&quot;https://example.com&quot;&gt;Vendor&lt;/a&gt;</string>
+        <string>&lt;a href=&quot;https://example.com&quot;&gt;appVendorLabel&lt;/a&gt;</string>
        </property>
       </widget>
      </item>
@@ -166,7 +166,7 @@
    <item>
     <widget class="QLabel" name="appWikiLabel">
      <property name="text">
-      <string>&lt;a href=&quot;https://www.example.com&quot;&gt;App info&lt;/a&gt;, &lt;a href=&quot;https://www.kicksecure.com/wiki&quot;&gt;Wiki&lt;/a&gt;</string>
+      <string>appWikiLabel</string>
      </property>
     </widget>
    </item>
@@ -180,11 +180,9 @@
    <item>
     <widget class="QLabel" name="availableInstallListLabel">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
-&lt;ul&gt;
-&lt;li&gt;Inst. Method 1&lt;/li&gt;
-&lt;li&gt;Inst. Method 2&lt;/li&gt;
-&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;ul&gt;
+&lt;li&gt;availableInstallListLabel&lt;/li&gt;
+&lt;/ul&gt;</string>
      </property>
     </widget>
    </item>
@@ -198,11 +196,9 @@
    <item>
     <widget class="QLabel" name="installedLabel">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
-&lt;ul&gt;
-&lt;li&gt;Inst. Method 1&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;ul&gt;
+&lt;li&gt;installedLabel&lt;/li&gt;
+&lt;/ul&gt;</string>
      </property>
     </widget>
    </item>
