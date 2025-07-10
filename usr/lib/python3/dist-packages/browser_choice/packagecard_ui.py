@@ -7,7 +7,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_PackageCard(object):
     def setupUi(self, PackageCard):
         PackageCard.setObjectName("PackageCard")
-        PackageCard.resize(187, 158)
+        PackageCard.resize(187, 341)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)

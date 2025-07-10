@@ -1,0 +1,8 @@
+#!/usr/bin/python3 -su
+
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+from browser_choice import browser_choice_ui
+browser_choice_ui.main()
+print("INFO: End of browser-choice.")

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>445</width>
-    <height>158</height>
+    <width>451</width>
+    <height>229</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,7 +34,7 @@
    <item>
     <widget class="QLabel" name="label_3">
      <property name="text">
-      <string>Click &quot;Continue&quot; to proceed with these changes, or &quot;Back&quot; to return to the &quot;Choose Installation Options&quot; page.</string>
+      <string>Click 'Continue' to proceed with these changes, or 'Back' to return to the 'Choose Installation Options' page.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

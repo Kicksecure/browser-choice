@@ -12,32 +12,34 @@ vendor-logo=/usr/share/browser-choice/icons/google.svg
 wiki=https://www.kicksecure.com/wiki/Chromium
 official-plugin=yes
 
-[action:install-debian]
+[repo:debian]
 method-name=Chromium from Debian stable repository
 method-name-short=Repo (Debian)
 method-subtext=Chromium from packages.debian.org repository. Managed by apt.
 method-logo=/usr/share/browser-choice/icons/debian.svg
-update-and-install-script=pkexec bash -c -- 'apt-get update; apt-get-noninteractive install chromium'
-install-script=pkexec apt-get-noninteractive install chromium
-uninstall-script=pkexec apt-get-noninteractive remove chromium
-purge-script=pkexec apt-get-noninteractive purge chromium
+update-and-install-script=pkexec bash -c -- 'apt-get update; apt-get-noninteractive -y install chromium'
+install-warn-text=
+install-script=pkexec apt-get-noninteractive -y install chromium
+uninstall-script=pkexec apt-get-noninteractive -y remove chromium
+purge-script=pkexec apt-get-noninteractive -y purge chromium
 launch-script=chromium
 install-status=source /usr/libexec/helper-scripts/package_installed_check.bsh; pkg_installed chromium
 precheck=apt-get check
 postcheck=apt-get check
-capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 ppc64el
+capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 ppc64el && /usr/libexec/browser-choice/user-sysmaint-split-check needs-sysmaint
 
-[action:install-flathub]
+[repo:flathub]
 method-name=Chromium from Flathub repository (Community)
 method-name-short=Flatpak
 method-subtext=Chromium from flathub.org repository. Unofficial. Managed by Flatpak.
 method-logo=/usr/share/browser-choice/icons/flatpak.svg
 update-and-install-script=
-install-script=flatpak install --assumeyes flathub org.chromium.Chromium
+install-warn-text=Chromium is an unverified flatpak. Installing it will enable unverified and non-FOSS flatpaks to be installed on this system if explicitly requested by the user.
+install-script=pkexec flatpak remote-modify --subset= flathub; flatpak install --assumeyes flathub org.chromium.Chromium
 uninstall-script=flatpak uninstall --assumeyes org.chromium.Chromium
 purge-script=
 launch-script=flatpak run org.chromium.Chromium
 install-status=flatpak info org.chromium.Chromium
 precheck=
 postcheck=
-capability=architecture-support-check amd64 arm64
+capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 && /usr/libexec/browser-choice/user-sysmaint-split-check needs-sysmaint

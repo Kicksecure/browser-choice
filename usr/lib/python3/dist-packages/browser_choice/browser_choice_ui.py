@@ -15,10 +15,12 @@ import traceback
 import subprocess
 import functools
 import signal
+import datetime
 from pathlib import Path
 from typing import (
     Tuple,
     NoReturn,
+    TextIO,
 )
 from types import FrameType
 
@@ -37,7 +39,7 @@ from PyQt5.QtWidgets import (
 )
 
 from browser_choice.browser_choice_lib import (
-    ChoicePluginAction,
+    ChoicePluginRepo,
     ChoicePlugin,
     ChoicePluginCategory,
     parse_config_dir,
@@ -73,9 +75,9 @@ def convert_plugins_to_browser_cards(
         for plugin in plugin_category.plugin_list:
             app_installed_method_list: list[str] | None = []
             assert app_installed_method_list is not None
-            for action in plugin.action_list:
-                if action.is_installed:
-                    app_installed_method_list.append(action.method_name_short)
+            for repo in plugin.repo_list:
+                if repo.is_installed:
+                    app_installed_method_list.append(repo.method_name_short)
 
             if len(app_installed_method_list) == 0:
                 app_installed_method_list = None
@@ -88,7 +90,7 @@ def convert_plugins_to_browser_cards(
                 plugin.vendor_website,
                 plugin.product_logo,
                 plugin.vendor_logo,
-                [x.method_name_short for x in plugin.action_list],
+                [x.method_name_short for x in plugin.repo_list],
                 app_installed_method_list,
             )
             card_group.append(new_card)
@@ -153,6 +155,14 @@ def are_unofficial_plugins_present(
                 return True
     return False
 
+def write_to_log(line: str) -> None:
+    """
+    Writes a line of text to browser-choice's log file, if it exists.
+    """
+
+    if GlobalData.log_file is not None:
+        print(line, file=GlobalData.log_file)
+
 
 # pylint: disable=too-few-public-methods
 class GlobalData:
@@ -161,7 +171,9 @@ class GlobalData:
     """
 
     plugin_dir: Path = Path("/usr/share/browser-choice/plugins")
-    kernel_cmdline: str | None = None
+    log_dir_path: Path = Path.home().joinpath(".local/share/browser-choice")
+    log_file_path: Path = log_dir_path.joinpath("log.txt")
+    log_file: TextIO | None = None
 
 
 # pylint: disable=too-few-public-methods
@@ -207,7 +219,7 @@ class BrowserChoiceWindow(QDialog):
             sys.exit(1)
 
         self.chosen_plugin: ChoicePlugin | None = None
-        self.chosen_action: ChoicePluginAction | None = None
+        self.chosen_repo: ChoicePluginRepo | None = None
         self.change_str: str | None = None
         self.allow_app_launch: bool = False
 
@@ -250,23 +262,14 @@ class BrowserChoiceWindow(QDialog):
             self.plugin_data
         )
 
-        show_sysmaint_warning = False
-        assert GlobalData.kernel_cmdline is not None
-        if (
-            check_package_installed("user-sysmaint-split")
-            # pylint: disable=unsupported-membership-test
-            ## see https://github.com/pylint-dev/pylint/issues/3045
-            and "boot-role=sysmaint" not in GlobalData.kernel_cmdline
-        ):
-            show_sysmaint_warning = True
-
         select_application_page: SelectApplicationPage = SelectApplicationPage(
-            app_type_list,
-            card_group_list,
-            show_sysmaint_warning,
-            get_qube_type(),
-            are_unofficial_plugins_present(self.plugin_data),
-            self,
+            app_type_list=app_type_list,
+            card_group_list=card_group_list,
+            qube_type=get_qube_type(),
+            show_unofficial_warning=(
+                are_unofficial_plugins_present(self.plugin_data)
+            ),
+            parent=self,
         )
         select_application_page.cancelClicked.connect(self.exit_app)
         select_application_page.continueClicked.connect(
@@ -302,24 +305,26 @@ class BrowserChoiceWindow(QDialog):
         assert self.chosen_plugin is not None
 
         package_card_list: list[PackageCard] = []
-        for plugin_action in self.chosen_plugin.action_list:
+        for plugin_repo in self.chosen_plugin.repo_list:
             package_card = PackageCard(
-                action_id=plugin_action.internal_id,
-                package_short_description=plugin_action.method_name,
-                package_long_description=plugin_action.method_subtext,
-                package_icon=plugin_action.method_logo,
-                supports_update=plugin_action.update_and_install_script
-                is not None,
-                supports_remove=plugin_action.uninstall_script is not None,
-                supports_purge=plugin_action.purge_script is not None,
-                is_installed=plugin_action.is_installed,
+                repo_id=plugin_repo.internal_id,
+                package_short_description=plugin_repo.method_name,
+                package_long_description=plugin_repo.method_subtext,
+                package_icon=plugin_repo.method_logo,
+                supports_update=(
+                    plugin_repo.update_and_install_script is not None
+                ),
+                supports_remove=plugin_repo.uninstall_script is not None,
+                supports_purge=plugin_repo.purge_script is not None,
+                is_installed=plugin_repo.is_installed,
+                capability_info=plugin_repo.capability_info,
             )
             package_card_list.append(package_card)
 
         choose_installation_page = ChooseInstallationPage(
             self.chosen_plugin.product_name,
             package_card_list,
-            self,
+            parent=self,
         )
         choose_installation_page.backClicked.connect(
             functools.partial(self.switch_to_page, self.select_application_page)
@@ -341,10 +346,9 @@ class BrowserChoiceWindow(QDialog):
 
     def confirm_installation_choice(self) -> None:
         """
-        Prompts the user to confirm or deny their chosen software
-        modifications.
-
-        TODO: Rename this, the user might be uninstalling the application.
+        Prompts the user to confirm or deny their chosen changes to the
+        software's installation. Note that this may trigger uninstallation of
+        an application, it doesn't just allow installing applications.
         """
 
         assert self.choose_installation_page is not None
@@ -354,10 +358,10 @@ class BrowserChoiceWindow(QDialog):
         ):
             assert isinstance(card, PackageCard)
             if card.isChecked():
-                self.chosen_action = self.chosen_plugin.action_list[idx]
+                self.chosen_repo = self.chosen_plugin.repo_list[idx]
                 break
 
-        assert self.chosen_action is not None
+        assert self.chosen_repo is not None
 
         command_str: str | None = None
 
@@ -365,17 +369,17 @@ class BrowserChoiceWindow(QDialog):
             case ModifyMode.UpdateAndInstall:
                 self.change_str = "installed"
                 self.allow_app_launch = True
-                command_str = self.chosen_action.update_and_install_script
+                command_str = self.chosen_repo.update_and_install_script
             case ModifyMode.Install:
                 self.change_str = "installed"
                 self.allow_app_launch = True
-                command_str = self.chosen_action.install_script
+                command_str = self.chosen_repo.install_script
             case ModifyMode.Remove:
                 self.change_str = "removed"
-                command_str = self.chosen_action.uninstall_script
+                command_str = self.chosen_repo.uninstall_script
             case ModifyMode.Purge:
                 self.change_str = "purged"
-                command_str = self.chosen_action.purge_script
+                command_str = self.chosen_repo.purge_script
             case _:
                 error_dialog = ErrorDialog(
                     "<p>Unreachable code hit in <code>confirm_installation_choice</code>."
@@ -388,9 +392,11 @@ class BrowserChoiceWindow(QDialog):
 
         confirm_installation_dialog = ConfirmInstallationDialog(
             app_name=self.chosen_plugin.product_name,
-            repository_name=self.chosen_action.method_name_short,
+            repository_name=self.chosen_repo.method_name_short,
+            install_warn_str=self.chosen_repo.install_warn_text,
             change_str=self.change_str,
             command_str=command_str,
+            parent=self,
         )
         confirm_installation_dialog.exec()
 
@@ -405,7 +411,7 @@ class BrowserChoiceWindow(QDialog):
         """
 
         assert self.choose_installation_page is not None
-        assert self.chosen_action is not None
+        assert self.chosen_repo is not None
 
         self.applying_changes_page = ApplyingChangesPage()
         self.applying_changes_page.continueClicked.connect(
@@ -413,17 +419,36 @@ class BrowserChoiceWindow(QDialog):
         )
         self.switch_to_page(self.applying_changes_page)
 
+        write_to_log(
+            "----- browser-choice run on "
+            f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} "
+            "-----"
+        )
+
         match self.choose_installation_page.modifyMode():
             case ModifyMode.UpdateAndInstall:
+                write_to_log(
+                    "Executing command: "
+                    f"{self.chosen_repo.update_and_install_script}"
+                )
                 self.execute_process = (
-                    self.chosen_action.run_update_and_install()
+                    self.chosen_repo.run_update_and_install()
                 )
             case ModifyMode.Install:
-                self.execute_process = self.chosen_action.run_install()
+                write_to_log(
+                    f"Executing command: {self.chosen_repo.install_script}"
+                )
+                self.execute_process = self.chosen_repo.run_install()
             case ModifyMode.Remove:
-                self.execute_process = self.chosen_action.run_uninstall()
+                write_to_log(
+                    f"Executing command: {self.chosen_repo.uninstall_script}"
+                )
+                self.execute_process = self.chosen_repo.run_uninstall()
             case ModifyMode.Purge:
-                self.execute_process = self.chosen_action.run_purge()
+                write_to_log(
+                    f"Executing command: {self.chosen_repo.purge_script}"
+                )
+                self.execute_process = self.chosen_repo.run_purge()
             case _:
                 error_dialog = ErrorDialog(
                     "<p>Unreachable code hit in <code>apply_software_changes</code>."
@@ -457,11 +482,20 @@ class BrowserChoiceWindow(QDialog):
         )
         stdout_text: str = self.stdout_buffer.decode(encoding="utf-8")
         self.applying_changes_page.logLine(stdout_text)
+        write_to_log(stdout_text)
 
         if exit_code == 0:
             self.execute_process_successful = True
+            self.applying_changes_page.logLine(
+                "Done, operation was successful."
+            )
+            write_to_log("Done, operation was successful.")
         else:
             self.execute_process_successful = False
+            self.applying_changes_page.logLine(
+                "Done, but operation failed!."
+            )
+            write_to_log("Done, but operation failed!")
         self.applying_changes_page.setContinueEnabled(True)
 
     def execute_process_output_received(self) -> None:
@@ -484,6 +518,7 @@ class BrowserChoiceWindow(QDialog):
             self.stdout_buffer = self.stdout_buffer[cutoff_idx + 1 :]
             line_text: str = buffer_line.decode(encoding="utf-8")
             self.applying_changes_page.logLine(line_text)
+            write_to_log(line_text)
 
     def show_software_changes_complete(self) -> None:
         """
@@ -491,18 +526,19 @@ class BrowserChoiceWindow(QDialog):
         """
 
         assert self.chosen_plugin is not None
-        assert self.chosen_action is not None
+        assert self.chosen_repo is not None
         assert self.change_str is not None
 
         self.changes_complete_page = ChangesCompletePage(
             app_name=self.chosen_plugin.product_name,
-            repository_name=self.chosen_action.method_name_short,
+            repository_name=self.chosen_repo.method_name_short,
             change_str=self.change_str,
             did_succeed=self.execute_process_successful,
             allow_launch=self.allow_app_launch,
         )
         self.changes_complete_page.doneClicked.connect(self.finish_wizard)
         self.switch_to_page(self.changes_complete_page)
+        self.resize(self.minimumWidth(), self.minimumHeight())
 
     def finish_wizard(self) -> None:
         """
@@ -511,10 +547,10 @@ class BrowserChoiceWindow(QDialog):
         """
 
         assert self.changes_complete_page is not None
-        assert self.chosen_action is not None
+        assert self.chosen_repo is not None
 
         if self.changes_complete_page.launchAppChecked():
-            self.chosen_action.run_launch()
+            self.chosen_repo.run_launch()
         sys.exit(0)
 
     @staticmethod
@@ -541,16 +577,23 @@ def main() -> NoReturn:
     Main function.
     """
 
-    kernel_cmdline_path = Path("/proc/cmdline")
-    if kernel_cmdline_path.is_file():
-        GlobalData.kernel_cmdline = kernel_cmdline_path.read_text(
-            encoding="utf-8"
-        )
-    else:
-        kernel_cmdline_path = Path("/proc/1/cmdline")
-        GlobalData.kernel_cmdline = kernel_cmdline_path.read_text(
-            encoding="utf-8"
-        )
+    try:
+        GlobalData.log_dir_path.mkdir(exist_ok=True)
+    except Exception:
+        ## Ignore a failure to create the target directory, we can survive
+        ## without being able to write logs.
+        pass
+
+    if GlobalData.log_dir_path.is_dir():
+        try:
+            # pylint: disable=consider-using-with
+            GlobalData.log_file = open(
+                GlobalData.log_file_path,
+                mode="a",
+                encoding="utf-8"
+            )
+        except PermissionError:
+            GlobalData.log_file = None
 
     app = QApplication(sys.argv)
 

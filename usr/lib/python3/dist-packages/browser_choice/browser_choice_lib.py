@@ -37,14 +37,11 @@ def str_or_none(data: str) -> str | None:
 
 
 # pylint: disable=too-many-instance-attributes
-class ChoicePluginAction(QObject):
+class ChoicePluginRepo(QObject):
     """
-    Represents an action defined in a browser-choice plugin. Actions
-    correspond to packaging methods and allow installing, removing, and
-    purging a particular package.
+    Represents a repo defined in a browser-choice plugin. You can install,
+    remove, or purge an application from a particular repo.
 
-    TODO: "Action" is a horrible name for this. "Package" would be much
-    better.
     """
 
     # pylint: disable=too-many-arguments,too-many-locals
@@ -56,14 +53,13 @@ class ChoicePluginAction(QObject):
         method_name_short: str | None,
         method_subtext: str | None,
         method_logo: QPixmap | None,
+        install_warn_text: str | None,
         update_and_install_script: str | None,
         install_script: str | None,
         uninstall_script: str | None,
         purge_script: str | None,
         launch_script: str | None,
         install_status: str | None,
-        precheck: str | None,
-        postcheck: str | None,
         capability: str | None,
         parent: QObject | None = None,
     ):
@@ -84,7 +80,7 @@ class ChoicePluginAction(QObject):
             if value is None:
                 throw_config_error(
                     config_file,
-                    f"'{key}' in action '{internal_id}' cannot be None!",
+                    f"'{key}' in repo '{internal_id}' cannot be None!",
                 )
 
         assert internal_id is not None
@@ -102,16 +98,16 @@ class ChoicePluginAction(QObject):
         self.method_name_short: str = method_name_short
         self.method_subtext: str = method_subtext
         self.method_logo: QPixmap = method_logo
+        self.install_warn_text: str | None = install_warn_text
         self.update_and_install_script: str | None = update_and_install_script
         self.install_script: str = install_script
         self.uninstall_script: str | None = uninstall_script
         self.purge_script: str | None = purge_script
         self.launch_script: str = launch_script
         self.install_status: str = install_status
-        self.precheck: str | None = precheck
-        self.postcheck: str | None = postcheck
         self.capability: str = capability
         self.is_installed: bool = self.check_installed()
+        self.capability_info: str = self.check_capability()
 
     def __run_script(self, script: str, detach: bool = False) -> QProcess:
         """
@@ -199,25 +195,7 @@ class ChoicePluginAction(QObject):
             return True
         return False
 
-    def run_precheck(self) -> QProcess | None:
-        """
-        Run a plugin's 'precheck' script asynchronously.
-        """
-
-        if self.precheck is None:
-            return None
-        return self.__run_script(self.precheck)
-
-    def run_postcheck(self) -> QProcess | None:
-        """
-        Run a plugin's 'postcheck' script asynchronously.
-        """
-
-        if self.postcheck is None:
-            return None
-        return self.__run_script(self.postcheck)
-
-    def check_capability(self) -> bool:
+    def check_capability(self) -> str:
         """
         Check if a package can be installed on the current machine by running
         the 'capability' script synchronously with subprocess.run.
@@ -234,8 +212,13 @@ class ChoicePluginAction(QObject):
             capture_output=True,
         )
         if capability_process.returncode == 0:
-            return True
-        return False
+            return ""
+        capability_process_str = (
+            capability_process.stdout.decode(encoding="utf-8")
+        )
+        if capability_process_str.strip() == "":
+            return "Unsupported on this system."
+        return capability_process_str
 
 
 class ChoicePlugin(QObject):
@@ -255,7 +238,7 @@ class ChoicePlugin(QObject):
         vendor_logo: QPixmap,
         wiki_link: str,
         is_official_plugin: bool,
-        action_list: list[ChoicePluginAction],
+        repo_list: list[ChoicePluginRepo],
         parent: QObject | None = None,
     ):
         super(QObject, self).__init__(parent)
@@ -268,7 +251,7 @@ class ChoicePlugin(QObject):
         self.vendor_logo: QPixmap = vendor_logo
         self.wiki_link: str = wiki_link
         self.is_official_plugin: bool = is_official_plugin
-        self.action_list: list[ChoicePluginAction] = action_list
+        self.repo_list: list[ChoicePluginRepo] = repo_list
 
 
 class ChoicePluginCategory(QObject):
@@ -333,8 +316,8 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
     detect_comment_regex: re.Pattern[str] = re.compile(r"\s*#")
     detect_header_regex: re.Pattern[str] = re.compile(r"\[.*]\Z")
     hit_product_header: bool = False
-    hit_action_header: bool = False
-    current_action_name: str | None = None
+    hit_repo_header: bool = False
+    current_repo_name: str | None = None
 
     product_name: str | None = None
     product_category: str | None = None
@@ -345,21 +328,20 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
     vendor_logo: QPixmap | None = None
     wiki_link: str | None = None
     is_official_plugin: bool | None = None
-    action_list: list[ChoicePluginAction] = []
+    repo_list: list[ChoicePluginRepo] = []
 
-    action_method_name: str | None = None
-    action_method_name_short: str | None = None
-    action_method_subtext: str | None = None
-    action_method_logo: QPixmap | None = None
-    action_update_and_install_script: str | None = None
-    action_install_script: str | None = None
-    action_uninstall_script: str | None = None
-    action_purge_script: str | None = None
-    action_launch_script: str | None = None
-    action_install_status: str | None = None
-    action_precheck: str | None = None
-    action_postcheck: str | None = None
-    action_capability: str | None = None
+    repo_method_name: str | None = None
+    repo_method_name_short: str | None = None
+    repo_method_subtext: str | None = None
+    repo_method_logo: QPixmap | None = None
+    repo_install_warn_text: str | None = None
+    repo_update_and_install_script: str | None = None
+    repo_install_script: str | None = None
+    repo_uninstall_script: str | None = None
+    repo_purge_script: str | None = None
+    repo_launch_script: str | None = None
+    repo_install_status: str | None = None
+    repo_capability: str | None = None
 
     with open(config_file, "r", encoding="utf-8") as conf_stream:
         for line in conf_stream:
@@ -380,38 +362,37 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
                             config_file, "multiple product headers hit"
                         )
                     continue
-                if current_header_name.startswith("action:"):
+                if current_header_name.startswith("repo:"):
                     if not hit_product_header:
                         throw_config_error(
                             config_file,
-                            "action headers found before product header",
+                            "repo headers found before product header",
                         )
 
-                    if hit_action_header:
-                        assert current_action_name is not None
-                        new_action: ChoicePluginAction = ChoicePluginAction(
+                    if hit_repo_header:
+                        assert current_repo_name is not None
+                        new_repo: ChoicePluginRepo = ChoicePluginRepo(
                             config_file=config_file,
-                            internal_id=current_action_name,
-                            method_name=action_method_name,
-                            method_name_short=action_method_name_short,
-                            method_subtext=action_method_subtext,
-                            method_logo=action_method_logo,
+                            internal_id=current_repo_name,
+                            method_name=repo_method_name,
+                            method_name_short=repo_method_name_short,
+                            method_subtext=repo_method_subtext,
+                            method_logo=repo_method_logo,
+                            install_warn_text=repo_install_warn_text,
                             update_and_install_script=(
-                                action_update_and_install_script
+                                repo_update_and_install_script
                             ),
-                            install_script=action_install_script,
-                            uninstall_script=action_uninstall_script,
-                            purge_script=action_purge_script,
-                            launch_script=action_launch_script,
-                            install_status=action_install_status,
-                            precheck=action_precheck,
-                            postcheck=action_postcheck,
-                            capability=action_capability,
+                            install_script=repo_install_script,
+                            uninstall_script=repo_uninstall_script,
+                            purge_script=repo_purge_script,
+                            launch_script=repo_launch_script,
+                            install_status=repo_install_status,
+                            capability=repo_capability,
                         )
-                        action_list.append(new_action)
+                        repo_list.append(new_repo)
 
-                    hit_action_header = True
-                    current_action_name = current_header_name.split(
+                    hit_repo_header = True
+                    current_repo_name = current_header_name.split(
                         ":",
                         maxsplit=1,
                     )[1]
@@ -429,7 +410,7 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
 
             if not hit_product_header:
                 throw_config_error(config_file, "config lines before headers")
-            elif hit_product_header and not hit_action_header:
+            elif hit_product_header and not hit_repo_header:
                 match line_key:
                     case "product-name":
                         product_name = str_or_none(line_val)
@@ -465,61 +446,58 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
             else:
                 match line_key:
                     case "method-name":
-                        action_method_name = str_or_none(line_val)
+                        repo_method_name = str_or_none(line_val)
                     case "method-name-short":
-                        action_method_name_short = str_or_none(line_val)
+                        repo_method_name_short = str_or_none(line_val)
                     case "method-subtext":
-                        action_method_subtext = str_or_none(line_val)
+                        repo_method_subtext = str_or_none(line_val)
                     case "method-logo":
-                        action_method_logo = load_image(
+                        repo_method_logo = load_image(
                             line_val,
                             config_file,
-                            f"method logo for '{current_action_name}'",
+                            f"method logo for '{current_repo_name}'",
                         )
+                    case "install-warn-text":
+                        repo_install_warn_text = str_or_none(line_val)
                     case "update-and-install-script":
-                        action_update_and_install_script = str_or_none(line_val)
+                        repo_update_and_install_script = str_or_none(line_val)
                     case "install-script":
-                        action_install_script = str_or_none(line_val)
+                        repo_install_script = str_or_none(line_val)
                     case "uninstall-script":
-                        action_uninstall_script = str_or_none(line_val)
+                        repo_uninstall_script = str_or_none(line_val)
                     case "purge-script":
-                        action_purge_script = str_or_none(line_val)
+                        repo_purge_script = str_or_none(line_val)
                     case "launch-script":
-                        action_launch_script = str_or_none(line_val)
+                        repo_launch_script = str_or_none(line_val)
                     case "install-status":
-                        action_install_status = str_or_none(line_val)
-                    case "precheck":
-                        action_precheck = str_or_none(line_val)
-                    case "postcheck":
-                        action_postcheck = str_or_none(line_val)
+                        repo_install_status = str_or_none(line_val)
                     case "capability":
-                        action_capability = str_or_none(line_val)
+                        repo_capability = str_or_none(line_val)
 
-    if not hit_product_header and not hit_action_header:
+    if not hit_product_header and not hit_repo_header:
         throw_config_error(config_file, "no headers found")
-    elif hit_product_header and not hit_action_header:
+    elif hit_product_header and not hit_repo_header:
         throw_config_error(
-            config_file, "product header found but no action headers"
+            config_file, "product header found but no repo headers"
         )
 
-    new_action = ChoicePluginAction(
+    new_repo = ChoicePluginRepo(
         config_file=config_file,
-        internal_id=current_action_name,
-        method_name=action_method_name,
-        method_name_short=action_method_name_short,
-        method_subtext=action_method_subtext,
-        method_logo=action_method_logo,
-        update_and_install_script=action_update_and_install_script,
-        install_script=action_install_script,
-        uninstall_script=action_uninstall_script,
-        purge_script=action_purge_script,
-        launch_script=action_launch_script,
-        install_status=action_install_status,
-        precheck=action_precheck,
-        postcheck=action_postcheck,
-        capability=action_capability,
+        internal_id=current_repo_name,
+        method_name=repo_method_name,
+        method_name_short=repo_method_name_short,
+        method_subtext=repo_method_subtext,
+        method_logo=repo_method_logo,
+        install_warn_text=repo_install_warn_text,
+        update_and_install_script=repo_update_and_install_script,
+        install_script=repo_install_script,
+        uninstall_script=repo_uninstall_script,
+        purge_script=repo_purge_script,
+        launch_script=repo_launch_script,
+        install_status=repo_install_status,
+        capability=repo_capability,
     )
-    action_list.append(new_action)
+    repo_list.append(new_repo)
 
     if product_name is None:
         throw_config_error(config_file, "no product name")
@@ -560,7 +538,7 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
         vendor_logo=vendor_logo,
         wiki_link=wiki_link,
         is_official_plugin=is_official_plugin,
-        action_list=action_list,
+        repo_list=repo_list,
     )
     return output_plugin
 

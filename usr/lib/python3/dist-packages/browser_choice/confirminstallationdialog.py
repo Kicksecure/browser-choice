@@ -31,6 +31,7 @@ class ConfirmInstallationDialog(QDialog):
         self,
         app_name: str,
         repository_name: str,
+        install_warn_str: str | None,
         change_str: str,
         command_str: str,
         parent: QWidget | None = None,
@@ -39,10 +40,20 @@ class ConfirmInstallationDialog(QDialog):
         self.ui = Ui_ConfirmInstallationDialog()
         self.ui.setupUi(self)
 
-        self.ui.actionInfoLabel.setText(
-            f"The application '{app_name}' from source '{repository_name}' "
-            f"will be {change_str}. The following command will be executed:"
+        action_info_text = (
+            f"<p>The application '{app_name}' from source '{repository_name}' "
+            f"will be {change_str}. The following command will be executed:</p>"
         )
+        if (
+            install_warn_str is not None
+            and change_str == "installed"
+        ):
+            action_info_text = (
+                f"<p><font color=\"orange\">WARNING:</font> {install_warn_str}"
+                f"</p>{action_info_text}"
+            )
+
+        self.ui.actionInfoLabel.setText(action_info_text)
         self.ui.commandLabel.setText(f"<code>{command_str}</code>")
         self.ui.backButton.clicked.connect(
             functools.partial(self.done, QDialog.Rejected)

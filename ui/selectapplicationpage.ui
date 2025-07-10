@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>659</width>
-    <height>645</height>
+    <width>652</width>
+    <height>955</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -91,21 +91,14 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="sysmaintWarningLabel">
-     <property name="text">
-      <string>user-sysmaint-split is installed, and you are currently booted into a user session. You can view applications, but cannot install them. To install applications, please reboot into a sysmaint session. See &lt;a href=&quot;https://www.kicksecure.com/wiki/Sysmaint&quot;&gt;Sysmaint&lt;/a&gt; for more information.</string>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QLabel" name="appvmNoticeLabel">
      <property name="text">
       <string>You are currently running Application Chooser inside a Qubes OS app qube. You can view and install applications, but they will be erased after a reboot. This is because most system files in app qubes are reset upon reboot. See &lt;a href=&quot;https://www.qubes-os.org/doc/templates/&quot;&gt;Qubes Templates&lt;/a&gt; for more information.</string>
      </property>
      <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="openExternalLinks">
       <bool>true</bool>
      </property>
     </widget>
@@ -118,6 +111,9 @@
      <property name="wordWrap">
       <bool>true</bool>
      </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item>
@@ -126,6 +122,9 @@
       <string>You are current running Application Chooser inside a Qubes OS standalone qube. Applications installed into this qube will only be available within this qube. See &lt;a href=&quot;https://www.qubes-os.org/doc/templates/&quot;&gt;Qubes Templates&lt;/a&gt; for more information.</string>
      </property>
      <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="openExternalLinks">
       <bool>true</bool>
      </property>
     </widget>
@@ -138,6 +137,9 @@
      <property name="wordWrap">
       <bool>true</bool>
      </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item>
@@ -148,12 +150,18 @@
      <property name="wordWrap">
       <bool>true</bool>
      </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item>
     <widget class="QLabel" name="label_6">
      <property name="text">
       <string>For more information about this tool, see &lt;a href=&quot;https://www.kicksecure.com/wiki/Dev/browser-choice&quot;&gt;Dev/browser-choice&lt;/a&gt;.</string>
+     </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

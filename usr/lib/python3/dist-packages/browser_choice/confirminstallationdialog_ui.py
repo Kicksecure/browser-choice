@@ -7,7 +7,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_ConfirmInstallationDialog(object):
     def setupUi(self, ConfirmInstallationDialog):
         ConfirmInstallationDialog.setObjectName("ConfirmInstallationDialog")
-        ConfirmInstallationDialog.resize(445, 158)
+        ConfirmInstallationDialog.resize(451, 229)
         self.verticalLayout = QtWidgets.QVBoxLayout(ConfirmInstallationDialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.actionInfoLabel = QtWidgets.QLabel(ConfirmInstallationDialog)
@@ -47,6 +47,6 @@ class Ui_ConfirmInstallationDialog(object):
         ConfirmInstallationDialog.setWindowTitle(_translate("ConfirmInstallationDialog", "Confirm Installation Options"))
         self.actionInfoLabel.setText(_translate("ConfirmInstallationDialog", "actionInfoLabel"))
         self.commandLabel.setText(_translate("ConfirmInstallationDialog", "<code>commandLabel</code>"))
-        self.label_3.setText(_translate("ConfirmInstallationDialog", "Click \"Continue\" to proceed with these changes, or \"Back\" to return to the \"Choose Installation Options\" page."))
+        self.label_3.setText(_translate("ConfirmInstallationDialog", "Click \'Continue\' to proceed with these changes, or \'Back\' to return to the \'Choose Installation Options\' page."))
         self.backButton.setText(_translate("ConfirmInstallationDialog", "Back"))
         self.continueButton.setText(_translate("ConfirmInstallationDialog", "Continue"))

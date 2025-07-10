@@ -37,7 +37,6 @@ class SelectApplicationPage(QWidget):
         self,
         app_type_list: list[str],
         card_group_list: list[list[BrowserCard]],
-        show_sysmaint_warning: bool,
         qube_type: str,
         show_unofficial_warning: bool,
         parent: QWidget | None = None,
@@ -49,9 +48,6 @@ class SelectApplicationPage(QWidget):
         self.ui.continueButton.setEnabled(False)
         self.ui.cancelButton.clicked.connect(self.cancelClicked)
         self.ui.continueButton.clicked.connect(self.continueClicked)
-
-        if not show_sysmaint_warning:
-            self.ui.sysmaintWarningLabel.setVisible(False)
 
         match qube_type:
             case "appvm":

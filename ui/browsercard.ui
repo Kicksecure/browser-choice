@@ -146,6 +146,9 @@
        <property name="text">
         <string>&lt;a href=&quot;https://example.com&quot;&gt;appVendorLabel&lt;/a&gt;</string>
        </property>
+       <property name="openExternalLinks">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
@@ -167,6 +170,9 @@
     <widget class="QLabel" name="appWikiLabel">
      <property name="text">
       <string>appWikiLabel</string>
+     </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

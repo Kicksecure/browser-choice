@@ -27,7 +27,7 @@ class PackageCard(QWidget):
     # pylint: disable=too-many-arguments
     def __init__(
         self,
-        action_id: str,
+        repo_id: str,
         package_short_description: str,
         package_long_description: str,
         package_icon: QPixmap,
@@ -35,13 +35,14 @@ class PackageCard(QWidget):
         supports_remove: bool,
         supports_purge: bool,
         is_installed: bool,
+        capability_info: str,
         parent: QWidget | None = None,
     ):
         super().__init__(parent)
         self.ui = Ui_PackageCard()
         self.ui.setupUi(self)
 
-        self.action_id = action_id
+        self.repo_id = repo_id
         self.ui.packageRadioButton.setText(package_short_description)
         self.ui.packageRadioButton.toggled.connect(self.toggled)
         self.ui.packageIconLabel.setText("")
@@ -50,12 +51,23 @@ class PackageCard(QWidget):
         self.supports_remove = supports_remove
         self.supports_purge = supports_purge
         self.is_installed = is_installed
-        if is_installed:
-            self.ui.packageInfoLabel.setText(
-                f"{package_long_description} (Installed)"
-            )
+
+        if capability_info == "":
+            if is_installed:
+                self.ui.packageInfoLabel.setText(
+                    f"{package_long_description} (Installed)"
+                )
+            else:
+                self.ui.packageInfoLabel.setText(package_long_description)
         else:
-            self.ui.packageInfoLabel.setText(package_long_description)
+            ## Package is not compatible with the system for some reason,
+            ## disable selecting it and gray it out.
+            self.ui.packageIconLabel.setEnabled(False)
+            self.ui.packageRadioButton.setEnabled(False)
+            self.ui.packageInfoLabel.setEnabled(False)
+            self.ui.packageInfoLabel.setText(
+                f"{package_long_description} ({capability_info})"
+            )
 
     def isChecked(self) -> bool:
         """

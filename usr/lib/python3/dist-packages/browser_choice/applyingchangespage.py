@@ -3,7 +3,7 @@
 # Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 # See the file COPYING for copying conditions.
 
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name,
 
 """
 applyingchangespage.py - Displays a log showing progress of application installation or removal.
@@ -23,7 +23,10 @@ class ApplyingChangesPage(QWidget):
 
     continueClicked: pyqtSignal = pyqtSignal()
 
-    def __init__(self, parent: QWidget | None = None):
+    def __init__(
+        self,
+        parent: QWidget | None = None,
+    ):
         super().__init__(parent)
         self.ui = Ui_ApplyingChangesPage()
         self.ui.setupUi(self)

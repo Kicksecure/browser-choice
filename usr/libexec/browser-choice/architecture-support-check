@@ -12,4 +12,5 @@ for supported_arch in "${supported_arch_list[@]}"; do
   fi
 done
 
+printf '%s' "Unavailable on ${current_arch}."
 exit 1
