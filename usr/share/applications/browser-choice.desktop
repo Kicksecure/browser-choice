@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Browser Choice
-Comment=Install an open-source web browser
+Comment=Install an Open Source Web Browser
 Keywords=browser;web;internet;
 Exec=browser-choice
 TryExec=browser-choice
