@@ -1,0 +1,48 @@
+#!/usr/bin/python3 -su
+
+# Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+# See the file COPYING for copying conditions.
+
+# pylint: disable=invalid-name,
+
+"""
+applyingchangespage.py - Displays a log showing progress of application installation or removal.
+"""
+
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QWidget
+
+from browser_choice.applyingchangespage_ui import Ui_ApplyingChangesPage
+
+
+class ApplyingChangesPage(QWidget):
+    """
+    A wizard screen widget that displays the log output of a software change
+    operation.
+    """
+
+    continueClicked: pyqtSignal = pyqtSignal()
+
+    def __init__(
+        self,
+        parent: QWidget | None = None,
+    ):
+        super().__init__(parent)
+        self.ui = Ui_ApplyingChangesPage()
+        self.ui.setupUi(self)
+        self.ui.continueButton.setEnabled(False)
+        self.ui.continueButton.clicked.connect(self.continueClicked)
+
+    def setContinueEnabled(self, val: bool) -> None:
+        """
+        Enables or disables the continue button.
+        """
+
+        self.ui.continueButton.setEnabled(val)
+
+    def logLine(self, line: str) -> None:
+        """
+        Appends a line of text to the log view.
+        """
+
+        self.ui.logView.appendPlainText(line)

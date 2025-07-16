@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SelectApplicationPage</class>
+ <widget class="QWidget" name="SelectApplicationPage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>652</width>
+    <height>955</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>&lt;span style=&quot; font-size:20pt; font-weight:600;&quot;&gt;Step 1/4: Select Application&lt;/span&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Select the application to install or remove.</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTabWidget" name="appChooserTabWidget">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="currentIndex">
+      <number>-1</number>
+     </property>
+     <property name="elideMode">
+      <enum>Qt::ElideNone</enum>
+     </property>
+     <property name="usesScrollButtons">
+      <bool>true</bool>
+     </property>
+     <property name="documentMode">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>This tool is provided solely for convenience. Users are free to use any applications they choose, installed with or without the help of this tool.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="appvmNoticeLabel">
+     <property name="text">
+      <string>You are currently running Application Chooser inside a Qubes OS app qube. You can view and install applications, but they will be erased after a reboot. This is because most system files in app qubes are reset upon reboot. See &lt;a href=&quot;https://www.qubes-os.org/doc/templates/&quot;&gt;Qubes Templates&lt;/a&gt; for more information.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="templatevmNoticeLabel">
+     <property name="text">
+      <string>You are currently running Application Chooser inside a Qubes OS template qube. Applications installed into this template will be made available in all app qubes based on this template. See &lt;a href=&quot;https://www.qubes-os.org/doc/templates/&quot;&gt;Qubes Templates&lt;/a&gt; for more information.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="standalonevmNoticeLabel">
+     <property name="text">
+      <string>You are current running Application Chooser inside a Qubes OS standalone qube. Applications installed into this qube will only be available within this qube. See &lt;a href=&quot;https://www.qubes-os.org/doc/templates/&quot;&gt;Qubes Templates&lt;/a&gt; for more information.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="fossNoticeLabel">
+     <property name="text">
+      <string>All applications displayed by this tool are open-source software. For more information on the inclusion criteria for applications listed above, see &lt;a href=&quot;https://www.kicksecure.com/wiki/Dev/browser-choice#criteria_for_inclusion_into_browser_choice&quot;&gt;Criteria for inclusion into browser-choice&lt;/a&gt;.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="nonFossWarningLabel">
+     <property name="text">
+      <string>Unofficial plugins for Application Chooser have been installed. The applications above may not be open-source or may be otherwise non-compliant with the inclusion criteria listed in &lt;a href=&quot;https://www.kicksecure.com/wiki/Dev/browser-choice#criteria_for_inclusion_into_browser_choice&quot;&gt;Criteria for inclusion into browser-choice&lt;/a&gt;. Proceed with caution.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>For more information about this tool, see &lt;a href=&quot;https://www.kicksecure.com/wiki/Dev/browser-choice&quot;&gt;Dev/browser-choice&lt;/a&gt;.</string>
+     </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QPushButton" name="cancelButton">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+       <property name="icon">
+        <iconset theme="dialog-cancel">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="continueButton">
+       <property name="text">
+        <string>Continue</string>
+       </property>
+       <property name="icon">
+        <iconset theme="go-next">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

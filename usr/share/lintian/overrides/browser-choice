@@ -2,4 +2,4 @@
 ## See the file COPYING for copying conditions.
 
 ## configuration files
-browser-choice: package-contains-documentation-outside-usr-share-doc [usr/share/choice/browser/*]
+browser-choice: package-contains-documentation-outside-usr-share-doc [usr/share/browser-choice/*]

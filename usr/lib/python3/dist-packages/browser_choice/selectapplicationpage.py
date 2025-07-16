@@ -1,0 +1,129 @@
+#!/usr/bin/python3 -su
+
+# Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+# See the file COPYING for copying conditions.
+
+# pylint: disable=invalid-name
+
+"""
+selectapplicationpage.py - Displays a list of applications to the user.
+"""
+
+import copy
+import functools
+
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import (
+    QWidget,
+    QVBoxLayout,
+)
+
+from browser_choice.selectapplicationpage_ui import Ui_SelectApplicationPage
+from browser_choice.browsercard import BrowserCard
+from browser_choice.cardview import CardView
+
+
+class SelectApplicationPage(QWidget):
+    """
+    A wizard screen widget that allows the user to choose an application to
+    install or remove.
+    """
+
+    cancelClicked: pyqtSignal = pyqtSignal()
+    continueClicked: pyqtSignal = pyqtSignal()
+
+    # pylint: disable=too-many-arguments
+    def __init__(
+        self,
+        app_type_list: list[str],
+        card_group_list: list[list[BrowserCard]],
+        qube_type: str,
+        show_unofficial_warning: bool,
+        parent: QWidget | None = None,
+    ):
+        super().__init__(parent)
+        self.ui = Ui_SelectApplicationPage()
+        self.ui.setupUi(self)
+
+        self.ui.continueButton.setEnabled(False)
+        self.ui.cancelButton.clicked.connect(self.cancelClicked)
+        self.ui.continueButton.clicked.connect(self.continueClicked)
+
+        match qube_type:
+            case "appvm":
+                self.ui.templatevmNoticeLabel.setVisible(False)
+                self.ui.standalonevmNoticeLabel.setVisible(False)
+            case "templatevm":
+                self.ui.appvmNoticeLabel.setVisible(False)
+                self.ui.standalonevmNoticeLabel.setVisible(False)
+            case "standalonevm":
+                self.ui.appvmNoticeLabel.setVisible(False)
+                self.ui.templatevmNoticeLabel.setVisible(False)
+            case _:
+                self.ui.appvmNoticeLabel.setVisible(False)
+                self.ui.templatevmNoticeLabel.setVisible(False)
+                self.ui.standalonevmNoticeLabel.setVisible(False)
+
+        if show_unofficial_warning:
+            self.ui.fossNoticeLabel.setVisible(False)
+        else:
+            self.ui.nonFossWarningLabel.setVisible(False)
+
+        self.card_view_list: list[CardView] = []
+        self.app_type_list = copy.copy(app_type_list)
+        self.current_card: BrowserCard | None = None
+
+        for idx, app_type in enumerate(app_type_list):
+            app_type_widget: QWidget = QWidget()
+            app_type_layout: QVBoxLayout = QVBoxLayout(app_type_widget)
+            card_view: CardView = CardView("BrowserCard")
+            card_view.itemSelected.connect(
+                functools.partial(self.ui.continueButton.setEnabled, True)
+            )
+            self.card_view_list.append(card_view)
+            for card in card_group_list[idx]:
+                card_view.add_card(card)
+                card.toggled.connect(
+                    functools.partial(
+                        self.card_selected,
+                        card,
+                    )
+                )
+            app_type_layout.addWidget(card_view)
+            self.ui.appChooserTabWidget.addTab(app_type_widget, app_type)
+
+    def card_selected(self, card: BrowserCard) -> None:
+        """
+        Qt signal handler. Triggered when the user changes the currently
+        selected card.
+        """
+
+        if card.isChecked():
+            self.current_card = card
+
+    def tab_changed(self, index: int) -> None:
+        """
+        Qt signal handler. Triggered when the user changes the currently
+        selected tab.
+        """
+
+        card_view: CardView = self.card_view_list[index]
+        item_selected: bool = False
+        for card in card_view.card_list:
+            assert card is BrowserCard
+            if card.isChecked():
+                item_selected = True
+                self.current_card = card
+                break
+
+        if item_selected:
+            self.ui.continueButton.setEnabled(True)
+        else:
+            self.ui.continueButton.setEnabled(False)
+
+    def tabIndex(self) -> int:
+        """
+        Gets the index of the currently selected tab.
+        """
+
+        return self.ui.appChooserTabWidget.currentIndex()

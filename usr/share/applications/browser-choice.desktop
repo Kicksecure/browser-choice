@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Browser Choice
+Comment=Install an open-source web browser
+Keywords=browser;web;internet;
+Exec=browser-choice
+TryExec=browser-choice
+Terminal=false
+Type=Application
+Categories=Network;WebBrowser;System;
+Icon=web-browser

@@ -1,0 +1,137 @@
+# Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+# See the file COPYING for copying conditions.
+
+## This is an example plugin with documentation. Lines starting with the '#'
+## character are comments and are ignored.
+##
+## browser-choice expects all plugins to be installed under
+## /usr/share/browser-choice/plugins. Applications will be displayed in
+## alphabetical order.
+
+## The 'product' section defines an application that browser-choice should
+## offer. This section is mandatory.
+[product]
+
+## 'product-name' specifies the name of the application, such as 'Firefox',
+## 'Chromium', etc.
+product-name=App Name Here
+
+## 'product-category' specifies the category the application should be placed
+## in. This field is free-form. All applications in the same category will be
+## displayed in the same tab of the wizard's first page.
+product-category=Category Name Here
+
+## 'product-website' specifies the application's home page on the Internet.
+## This will usually NOT be a download page, but will have a link to the
+## download page somewhere on it.
+product-website=https://example.com/product
+
+## 'product-logo' specifies the full path to the logo of the application.
+## Usually this will specify a file under /usr/share/browser-choice/icons.
+product-logo=/usr/share/browser-choice/icons/appicon.svg
+
+## 'vendor-name' specifies the name of the application's creator or
+## distributor. For instance, Firefox's vendor is Mozilla.
+vendor-name=Vendor Name Here
+
+## 'vendor-website' specifies the vendor's home page on the Internet.
+## Depending on the vendor, this may be the same thing as the product's
+## website, or it may have no connection to the product whatsoever,
+vendor-website=https://example.com/vendor
+
+## 'vendor-logo' specifies the full path to the logo of the vendor.
+vendor-logo=/usr/share/browser-choice/icons/vendor.svg
+
+## 'wiki' specifies a page on the Internet with information about the
+## application. This will always point to Kicksecure or Whonix's wiki for
+## official plugins.
+wiki=https://www.kicksecure.com/wiki/App
+
+## 'official-plugin' is a boolean specifying whether the plugin is official or
+## not. Unofficial plugins will cause a warning to be displayed to the user.
+## If you are not creating an official plugin, please DO NOT set this to
+## 'yes', as doing so may lead a user to compromise their system's security in
+## a way they do not expect.
+official-plugin=yes|no
+
+
+
+## Sections that start with 'repo:' define a repository. The repository name
+## is placed after the colon. There is no limit on the number of repositories
+## an application may have, though more than four repositories will probably
+## result in the user having to scroll very far to see all available repos.
+## At least one repo is mandatory, the others are optional.
+[repo:my-source]
+
+## 'method-name' specifies a long name for this particular application+repo
+## combination. It should specify the particular variant of the application
+## being installed (i.e. Firefox vs. Firefox ESR), and the entity managing the
+## repository (such as Debian, Mozilla, or Flathub).
+method-name=App Name from Main Repository
+
+## 'method-name-short' specifies a short name for this particular
+## application+repo combination. It must be kept very short to prevent
+## truncation in the user interface. One or two short words is ideal.
+method-name-short=Repo (Main)
+
+## 'method-subtext' specifies a longer block of text describing this
+## application+repo combination. This should usually be a couple of sentences
+## long.
+method-subtext=App Name from example.com repository. Managed by package manager.
+
+## 'method-logo' specifies the full path to a logo corresponding to the
+## repository. For instance, if this repo is used to install the application
+## from the Debian repos, this should usually point to a Debian logo.
+method-logo=/usr/share/browser-choice/icons/repo.svg
+
+## 'install-warn-text' specifies text the user should be shown before being
+## allowed to install an application where the installation may or will have
+## unexpected side effects. For instance, if an installation script is going
+## to allow unverified Flatpaks in general to be installed on a system, it
+## should be mentioned here.
+install-warn-text=Installing this application may have unexpected consequences!
+
+## 'update-and-install-script' specifies a shell command that will update the
+## appropriate software database if necessary, then install the application.
+## If the package manager being used doesn't have a concept of a "software
+## database update", or if there is no way to install an application with the
+## package manager without updating a software database, this may be set to an
+## empty string.
+##
+## NOTE: For the software installation and uninstallation scripts, you may
+## need to run package manager commands as root. If this is necessary, prefix
+## your command with 'pkexec' - this will handle any necessary authentication
+## for you.
+update-and-install-script=pkexec bash -c -- 'apt-get update; apt-get-noninteractive install appname'
+
+## 'install-script' specifies a shell command that will install the
+## application without explicitly updating a software database. It is
+## acceptable for this command to update a software database if there is no
+## reasonable way to skip updating the database.
+install-script=pkexec apt-get-noninteractive install appname
+
+## 'uninstall-script' specifies a shell command that will remove the
+## application from the system. If the appropriate package manager supports a
+## separate "purge" mode for erasing additional information about the software
+## beyond what would normally be removed, this command must NOT use the purge
+## mode.
+uninstall-script=pkexec apt-get-noninteractive remove appname
+
+## 'purge-script' specifies a shell command that will remove the application
+## and additional associated data (usually config files) from the system.
+purge-script=pkexec apt-get-noninteractive purge appname
+
+## 'launch-script' specifies a shell command that will run the application.
+launch-script=appname
+
+## 'install-status' specifies a shell command that will check if the
+## application is installed or not.
+install-status=source /usr/libexec/helper-scripts/package_installed_check.bsh; pkg_installed appname
+
+## 'capability' specifies a shell command that will ensure the system supports
+## installing the application from this repo. Usually this is used to check
+## architecture requirements. If the capability command fails, the repo will
+## be considered unsupported. If the script outputs any information to stdout
+## before failing, this info will be used to explain why the application is
+## unsupported.
+capability=/usr/libexec/browser-choice/architecture-support-check amd64

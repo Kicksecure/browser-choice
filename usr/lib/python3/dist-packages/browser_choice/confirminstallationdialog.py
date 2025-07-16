@@ -1,0 +1,63 @@
+#!/usr/bin/python3 -su
+
+# Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+# See the file COPYING for copying conditions.
+
+"""
+confirminstallationdialog.py - Pop-up asking the user if they really want to
+continue with installation.
+"""
+
+import functools
+
+from PyQt5.QtWidgets import (
+    QDialog,
+    QWidget,
+)
+
+from browser_choice.confirminstallationdialog_ui import (
+    Ui_ConfirmInstallationDialog,
+)
+
+
+class ConfirmInstallationDialog(QDialog):
+    """
+    Pop-up informing the user of what command will be run to modify the
+    system's software, and allowing the user to cancel if they desire.
+    """
+
+    # pylint: disable=too-many-arguments
+    def __init__(
+        self,
+        app_name: str,
+        repository_name: str,
+        install_warn_str: str | None,
+        change_str: str,
+        command_str: str,
+        parent: QWidget | None = None,
+    ):
+        super().__init__(parent)
+        self.ui = Ui_ConfirmInstallationDialog()
+        self.ui.setupUi(self)
+
+        action_info_text = (
+            f"<p>The application '{app_name}' from source '{repository_name}' "
+            f"will be {change_str}. The following command will be executed:</p>"
+        )
+        if (
+            install_warn_str is not None
+            and change_str == "installed"
+        ):
+            action_info_text = (
+                f"<p><font color=\"orange\">WARNING:</font> {install_warn_str}"
+                f"</p>{action_info_text}"
+            )
+
+        self.ui.actionInfoLabel.setText(action_info_text)
+        self.ui.commandLabel.setText(f"<code>{command_str}</code>")
+        self.ui.backButton.clicked.connect(
+            functools.partial(self.done, QDialog.Rejected)
+        )
+        self.ui.continueButton.clicked.connect(
+            functools.partial(self.done, QDialog.Accepted)
+        )

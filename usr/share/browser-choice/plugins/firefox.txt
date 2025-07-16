@@ -1,0 +1,61 @@
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+[product]
+product-name=Firefox
+product-category=Browsers
+product-website=https://www.mozilla.org/en-US/firefox/new
+product-logo=/usr/share/browser-choice/icons/firefox.svg
+vendor-name=Mozilla
+vendor-website=https://www.mozilla.org
+vendor-logo=/usr/share/browser-choice/icons/mozilla.svg
+wiki=https://www.kicksecure.com/wiki/Firefox
+official-plugin=yes
+
+[repo:debian]
+method-name=Firefox ESR from Debian stable repository
+method-name-short=Repo (Debian)
+method-subtext=Firefox ESR (Extended Stable Release) from packages.debian.org repository. Managed by apt.
+method-logo=/usr/share/browser-choice/icons/debian.svg
+install-warn-text=
+update-and-install-script=pkexec bash -c -- 'apt-get update; apt-get-noninteractive -y install firefox-esr'
+install-script=pkexec apt-get-noninteractive -y install firefox-esr
+uninstall-script=pkexec apt-get-noninteractive -y remove firefox-esr
+purge-script=pkexec apt-get-noninteractive -y purge firefox-esr
+launch-script=firefox-esr
+install-status=source /usr/libexec/helper-scripts/package_installed_check.bsh; pkg_installed firefox-esr
+precheck=apt-get check
+postcheck=apt-get check
+capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 ppc64el && /usr/libexec/browser-choice/user-sysmaint-split-check needs-sysmaint
+
+[repo:mozilla]
+method-name=Firefox Stable from Mozilla official repository
+method-name-short=Repo (Mozilla)
+method-subtext=Firefox Stable from packages.mozilla.org repository. Managed by apt.
+method-logo=/usr/share/browser-choice/icons/firefox.svg
+install-warn-text=Installing Firefox from Mozilla's repository will cause packages from Mozilla's repository to be preferred over packages from Debian's repository. This may result in packages other than 'firefox' (such as 'firefox-esr') being installed from Mozilla's repo going forward.
+update-and-install-script=
+install-script=pkexec /usr/libexec/browser-choice/firefox-stable-mozilla-helper install
+uninstall-script=pkexec /usr/libexec/browser-choice/firefox-stable-mozilla-helper remove
+purge-script=pkexec /usr/libexec/browser-choice/firefox-stable-mozilla-helper purge
+launch-script=firefox
+install-status=/usr/libexec/browser-choice/firefox-stable-mozilla-helper status
+precheck=apt-get check
+postcheck=apt-get check
+capability=/usr/libexec/browser-choice/architecture-support-check amd64 && /usr/libexec/browser-choice/user-sysmaint-split-check needs-sysmaint
+
+[repo:flathub]
+method-name=Firefox Stable from Flathub repository
+method-name-short=Flatpak (Mozilla)
+method-subtext=Firefox Stable from flathub.org repository. Managed by Flatpak.
+method-logo=/usr/share/browser-choice/icons/flatpak.svg
+update-and-install-script=
+install-warn-text=
+install-script=flatpak install --assumeyes flathub org.mozilla.firefox
+uninstall-script=flatpak uninstall --assumeyes org.mozilla.firefox
+purge-script=
+launch-script=flatpak run org.mozilla.firefox
+install-status=flatpak info org.mozilla.firefox
+precheck=
+postcheck=
+capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 && /usr/libexec/browser-choice/user-sysmaint-split-check needs-sysmaint
