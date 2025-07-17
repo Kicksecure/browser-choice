@@ -34,7 +34,7 @@ method-name-short=Flatpak
 method-subtext=Chromium from flathub.org repository. Unofficial. Installable via tool: flatpak.
 method-logo=/usr/share/browser-choice/icons/flatpak.svg
 update-and-install-script=
-install-warn-text=Chromium is an unverified (non-official) flatpak (Open Source) packaged by a third-party (not Google). Installing it will allow unverified and proprietary, closed source (not Open Source) flatpaks to be installed on this system if explicitly requested by the user. This does not imply that Chromium itself is closed source. See also: https://www.kicksecure.com/wiki/Install_Software#Flathub_Package_Sources_Security
+install-warn-text=Chromium is an unverified (non-official) Flatpak (Open Source) packaged by a third party (not Google). Installing it will allow unverified and proprietary, closed source (not Open Source) Flatpaks to be installed on this system if explicitly requested by the user. This does not imply that Chromium itself is closed source. See also: https://www.kicksecure.com/wiki/Install_Software#Flathub_Package_Sources_Security
 install-script=pkexec flatpak remote-modify --subset= flathub; flatpak install --assumeyes flathub org.chromium.Chromium
 uninstall-script=flatpak uninstall --assumeyes org.chromium.Chromium
 purge-script=
