@@ -15,9 +15,9 @@ official-plugin=yes
 [repo:tpo]
 method-name=Official Tor Browser tarball
 method-name-short=Tarball (TPO)
-method-subtext=Tor Brwoser from torproject.org repository. Manage by Tor Browser Downloader (by Kicksecure developers).
+method-subtext=Tor Browser from the torproject.org repository. Installed via the tool: Tor Browser Downloader (by Kicksecure developers).
 method-logo=/usr/share/browser-choice/icons/torbrowser.png
-install-warn-text=Tor Browser will only be installed for the current user account.
+install-warn-text=Tor Browser will only be installed for the current user account, not system-wide.
 update-and-install-script=
 install-script=update-torbrowser --input gui
 uninstall-script=
