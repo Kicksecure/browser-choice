@@ -91,9 +91,19 @@
     </widget>
    </item>
    <item>
+    <widget class="QLabel" name="noNetworkWarningLabel">
+     <property name="text">
+      <string>You are not connected to a network. You will not be able to install applications shown here, but may remove or purge them.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QLabel" name="appvmNoticeLabel">
      <property name="text">
-      <string>You are currently running Application Chooser inside a Qubes OS app qube. You can view and install applications, but they will be erased after a reboot. This is because most system files in app qubes are reset upon reboot. See &lt;a href=&quot;https://www.qubes-os.org/doc/templates/&quot;&gt;Qubes Templates&lt;/a&gt; for more information.</string>
+      <string>You are currently running Application Chooser inside a Qubes OS app qube. You can install or uninstall applications, but these changes will be reverted after a reboot. This is because most system files in app qubes are reset upon reboot. See &lt;a href=&quot;https://www.qubes-os.org/doc/templates/&quot;&gt;Qubes Templates&lt;/a&gt; for more information.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -173,8 +183,7 @@
         <string>Cancel</string>
        </property>
        <property name="icon">
-        <iconset theme="dialog-cancel">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset theme="dialog-cancel"/>
        </property>
       </widget>
      </item>
@@ -197,8 +206,7 @@
         <string>Continue</string>
        </property>
        <property name="icon">
-        <iconset theme="go-next">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset theme="go-next"/>
        </property>
       </widget>
      </item>

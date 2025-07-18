@@ -21,7 +21,7 @@ class Ui_ChangesCompletePage(object):
         self.horizontalLayout.addItem(spacerItem1)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.actionCompleteLabel = QtWidgets.QLabel(ChangesCompletePage)
-        self.actionCompleteLabel.setWordWrap(True)
+        self.actionCompleteLabel.setWordWrap(False)
         self.actionCompleteLabel.setObjectName("actionCompleteLabel")
         self.verticalLayout.addWidget(self.actionCompleteLabel)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()

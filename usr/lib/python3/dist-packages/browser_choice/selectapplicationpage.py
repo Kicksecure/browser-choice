@@ -39,6 +39,7 @@ class SelectApplicationPage(QWidget):
         card_group_list: list[list[BrowserCard]],
         qube_type: str,
         show_unofficial_warning: bool,
+        is_network_connected: bool,
         parent: QWidget | None = None,
     ):
         super().__init__(parent)
@@ -68,6 +69,9 @@ class SelectApplicationPage(QWidget):
             self.ui.fossNoticeLabel.setVisible(False)
         else:
             self.ui.nonFossWarningLabel.setVisible(False)
+
+        if is_network_connected:
+            self.ui.noNetworkWarningLabel.setVisible(False)
 
         self.card_view_list: list[CardView] = []
         self.app_type_list = copy.copy(app_type_list)

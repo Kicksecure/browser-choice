@@ -51,6 +51,7 @@ class ChooseInstallationPage(QWidget):
         self,
         app_name: str,
         card_list: list[PackageCard],
+        is_network_connected: bool,
         parent: QWidget | None = None,
     ):
         super().__init__(parent)
@@ -60,13 +61,17 @@ class ChooseInstallationPage(QWidget):
         self.ui.backButton.clicked.connect(self.backClicked)
         self.ui.continueButton.clicked.connect(self.continueClicked)
 
+        self.is_network_connected: bool = is_network_connected
+
         self.ui.appNameChoiceLabel.setText(
             f"Choose the package for '{app_name}' to install or remove."
         )
         self.ui.continueButton.setEnabled(False)
 
-        self.card_view_layout = QVBoxLayout(self.ui.packageChooserWidget)
-        self.card_view = CardView("PackageCard", self)
+        self.card_view_layout: QVBoxLayout = QVBoxLayout(
+            self.ui.packageChooserWidget
+        )
+        self.card_view: CardView = CardView("PackageCard", self)
         for card in card_list:
             self.card_view.add_card(card)
             card.toggled.connect(
@@ -111,25 +116,34 @@ class ChooseInstallationPage(QWidget):
         checkboxes as appropriate for the user's currently chosen settings.
         """
 
+        enable_next: bool = False
+
         if self.current_card is None:
             return
 
-        self.ui.installRadioButton.setEnabled(True)
+        if self.is_network_connected:
+            self.ui.installRadioButton.setEnabled(True)
+            if self.ui.installRadioButton.isChecked():
+                enable_next = True
 
         if self.current_card.supports_remove and self.current_card.is_installed:
             self.ui.removeRadioButton.setEnabled(True)
+            if self.ui.removeRadioButton.isChecked():
+                enable_next = True
         else:
             self.uncheck_radio_button(self.ui.removeRadioButton)
             self.ui.removeRadioButton.setEnabled(False)
 
         if self.current_card.supports_purge and self.current_card.is_installed:
             self.ui.purgeRadioButton.setEnabled(True)
+            if self.ui.purgeRadioButton.isChecked():
+                enable_next = True
         else:
             self.uncheck_radio_button(self.ui.purgeRadioButton)
             self.ui.purgeRadioButton.setEnabled(False)
 
         if self.ui.installRadioButton.isChecked():
-            if self.current_card.supports_update:
+            if self.current_card.supports_update and self.is_network_connected:
                 self.ui.noUpdateCheckbox.setEnabled(True)
             else:
                 self.uncheck_radio_button(self.ui.noUpdateCheckbox)
@@ -137,6 +151,11 @@ class ChooseInstallationPage(QWidget):
         else:
             self.uncheck_radio_button(self.ui.noUpdateCheckbox)
             self.ui.noUpdateCheckbox.setEnabled(False)
+
+        if enable_next:
+            self.ui.continueButton.setEnabled(True)
+        else:
+            self.ui.continueButton.setEnabled(False)
 
     def update_current_card(
         self,
@@ -148,7 +167,6 @@ class ChooseInstallationPage(QWidget):
         """
 
         if source_card.isChecked():
-            self.ui.continueButton.setEnabled(True)
             self.current_card = source_card
             self.update_available_actions()
 

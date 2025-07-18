@@ -97,8 +97,7 @@ font: 9pt &quot;Monospace&quot;;</string>
         <string>Continue</string>
        </property>
        <property name="icon">
-        <iconset theme="go-next">
-         <normaloff>../../../../../../../home/aaron</normaloff>../../../../../../../home/aaron</iconset>
+        <iconset theme="go-next"/>
        </property>
       </widget>
      </item>

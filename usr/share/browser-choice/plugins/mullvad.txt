@@ -1,0 +1,27 @@
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+[product]
+product-name=Mullvad
+product-category=Browsers
+product-website=https://mullvad.net/en/browser
+product-logo=/usr/share/browser-choice/icons/mullvad-browser.svg
+vendor-name=Mullvad
+vendor-website=https://mullvad.net
+vendor-logo=/usr/share/browser-choice/icons/mullvad.svg
+wiki=https://www.kicksecure.com/wiki/Browser#Mullvad_Browser
+official-plugin=yes
+
+[repo:mullvad]
+method-name=Mullvad Browser from Mullvad official repository
+method-name-short=Repo (Mullvad)
+method-subtext=Mullvad Browser from repository.mullvad.net repository. Managed by apt.
+method-logo=/usr/share/browser-choice/icons/mullvad.svg
+install-warn-text=
+update-and-install-script=
+install-script=pkexec /usr/libexec/browser-choice/mullvad-browser-install-helper
+uninstall-script=pkexec apt-get-noninteractive -y remove mullvad-browser
+purge-script=pkexec apt-get-noninteractive -y purge mullvad-browser
+launch-script=mullvad-browser
+install-status=source /usr/libexec/helper-scripts/package_installed_check.bsh; pkg_installed mullvad-browser
+capability=/usr/libexec/browser-choice/architecture-support-check amd64 && /usr/libexec/browser-choice/user-sysmaint-split-check needs-sysmaint
