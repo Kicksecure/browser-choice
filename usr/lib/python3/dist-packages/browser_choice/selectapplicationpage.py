@@ -52,16 +52,24 @@ class SelectApplicationPage(QWidget):
 
         match qube_type:
             case "appvm":
+                self.ui.dispvmNoticeLabel.setVisible(False)
+                self.ui.templatevmNoticeLabel.setVisible(False)
+                self.ui.standalonevmNoticeLabel.setVisible(False)
+            case "dispvm":
+                self.ui.appvmNoticeLabel.setVisible(False)
                 self.ui.templatevmNoticeLabel.setVisible(False)
                 self.ui.standalonevmNoticeLabel.setVisible(False)
             case "templatevm":
                 self.ui.appvmNoticeLabel.setVisible(False)
+                self.ui.dispvmNoticeLabel.setVisible(False)
                 self.ui.standalonevmNoticeLabel.setVisible(False)
             case "standalonevm":
                 self.ui.appvmNoticeLabel.setVisible(False)
+                self.ui.dispvmNoticeLabel.setVisible(False)
                 self.ui.templatevmNoticeLabel.setVisible(False)
             case _:
                 self.ui.appvmNoticeLabel.setVisible(False)
+                self.ui.dispvmNoticeLabel.setVisible(False)
                 self.ui.templatevmNoticeLabel.setVisible(False)
                 self.ui.standalonevmNoticeLabel.setVisible(False)
 

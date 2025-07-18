@@ -114,6 +114,19 @@
     </widget>
    </item>
    <item>
+    <widget class="QLabel" name="dispvmNoticeLabel">
+     <property name="text">
+      <string>You are currently running Browser Choice inside a Qubes OS disposable qube. You can install or uninstall applications, but these changes will be reverted after a reboot. This is because all files in disposable qubes are reset upon reboot. See &lt;a href=&quot;https://www.qubes-os.org/doc/how-to-use-disposables/&quot;&gt;How to use disposables&lt;/a&gt; for more information.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QLabel" name="templatevmNoticeLabel">
      <property name="text">
       <string>You are currently running Application Chooser inside a Qubes OS template qube. Applications installed into this template will be made available in all app qubes based on this template. See &lt;a href=&quot;https://www.qubes-os.org/doc/templates/&quot;&gt;Qubes Templates&lt;/a&gt; for more information.</string>
@@ -183,7 +196,8 @@
         <string>Cancel</string>
        </property>
        <property name="icon">
-        <iconset theme="dialog-cancel"/>
+        <iconset theme="dialog-cancel">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
      </item>
@@ -206,7 +220,8 @@
         <string>Continue</string>
        </property>
        <property name="icon">
-        <iconset theme="go-next"/>
+        <iconset theme="go-next">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
      </item>

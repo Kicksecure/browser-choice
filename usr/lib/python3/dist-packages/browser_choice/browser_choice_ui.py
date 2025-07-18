@@ -135,6 +135,8 @@ def get_qube_type() -> str:
     if Path("/run/qubes/this-is-appvm").is_file():
         if Path("/run/qubes/persistent-rw-only").is_file():
             return "appvm"
+        if Path("/run/qubes/persistent-none").is_file():
+            return "dispvm"
         if Path("/run/qubes/persistent-full").is_file():
             return "standalonevm"
         return "unknown"
@@ -198,34 +200,45 @@ class ErrorDialog(QDialog):
         self.resize(self.minimumWidth(), self.minimumHeight())
 
 
-class AppVMWarningDialog(QDialog):
+class EphemeralVMWarnDialog(QDialog):
     """
     Warns the user that they are in a Qubes OS AppVM and that the application
     they install or remove will not stay permanently installed or removed.
     """
 
-    def __init__(self, parent: QWidget | None = None):
+    def __init__(self, type: str, parent: QWidget | None = None):
         super().__init__(parent)
-        self.setGeometry(QRect(0, 0, 640, 480))
+        self.setGeometry(QRect(0, 0, 470, 180))
         self.root_layout: QVBoxLayout = QVBoxLayout(self)
         self.warn_label: QLabel = QLabel(self)
         self.warn_label.setWordWrap(True)
-        self.warn_label.setText(
-            'You are currently running Application \
-Chooser inside a Qubes OS app qube. You can install or uninstall \
-applications, but these changes will be reverted after a reboot. This is \
-because most system files in app qubes are reset upon reboot. See \
+        if type == "appvm":
+            self.warn_label.setText(
+                'You are currently running Browser Choice \
+inside a Qubes OS app qube. You can install or uninstall applications, but \
+these changes will be reverted after a reboot. This is because most system \
+files in app qubes are reset upon reboot. See \
 <a href="https://www.qubes-os.org/doc/templates/">Qubes Templates</a> for \
 more information.'
-        )
+            )
+        elif type == "dispvm":
+            self.warn_label.setText(
+                'You are currently running Browser Choice \
+inside a Qubes OS disposable qube. You can install or uninstall \
+applications, but these changes will be reverted after a reboot. This is \
+because all files in disposable qubes are reset upon reboot. See \
+<a href="https://www.qubes-os.org/doc/how-to-use-disposables/">How to use \
+disposables</a> for more information.'
+            )
+        self.warn_label.setOpenExternalLinks(True)
         self.root_layout.addWidget(self.warn_label)
-        self.button_layout: QHBoxLayout = QHBoxLayout(self)
+        self.root_layout.addStretch()
+        self.button_layout: QHBoxLayout = QHBoxLayout(None)
         self.button_layout.addStretch()
         self.ok_button: QPushButton = QPushButton()
         self.ok_button.setText("OK")
         self.button_layout.addWidget(self.ok_button)
         self.root_layout.addLayout(self.button_layout)
-        self.resize(self.minimumWidth(), self.minimumHeight())
         self.ok_button.clicked.connect(lambda: self.done(0))
 
 
@@ -238,9 +251,11 @@ class BrowserChoiceWindow(QDialog):
     def __init__(self, parent: QWidget | None = None):
         super(QWidget, self).__init__(parent)
 
-        if GlobalData.qube_type == "appvm":
-            appvm_warn_dialog: AppVMWarningDialog = AppVMWarningDialog()
-            appvm_warn_dialog.exec()
+        if GlobalData.qube_type in ("appvm", "dispvm"):
+            ephvm_warn_dialog: EphemeralVMWarnDialog = EphemeralVMWarnDialog(
+                type=GlobalData.qube_type
+            )
+            ephvm_warn_dialog.exec()
 
         self.setGeometry(QRect(0, 0, 700, 600))
         self.root_layout = QVBoxLayout(self)
@@ -258,13 +273,17 @@ class BrowserChoiceWindow(QDialog):
             error_dialog.exec()
             sys.exit(1)
 
-        self.is_network_connected: bool = (
-            subprocess.run(
-                ["/usr/libexec/helper-scripts/check-network-access"],
-                check=False,
-            ).returncode
-            == 0
-        )
+        if GlobalData.qube_type == "templatevm":
+            self.is_network_connected = True
+        else:
+            self.is_network_connected: bool = (
+                subprocess.run(
+                    ["/usr/libexec/helper-scripts/check-network-access"],
+                    check=False,
+                ).returncode
+                == 0
+            )
+
         self.in_sysmaint_session: bool = (
             subprocess.run(
                 [
