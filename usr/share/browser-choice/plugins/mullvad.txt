@@ -17,6 +17,7 @@ method-name=Mullvad Browser from Mullvad official repository
 method-name-short=Repo (Mullvad)
 method-subtext=Mullvad Browser from repository.mullvad.net repository. Managed by apt.
 method-logo=/usr/share/browser-choice/icons/mullvad.svg
+method-type=apt-thirdparty
 install-warn-text=
 update-and-install-script=
 install-script=pkexec /usr/libexec/browser-choice/mullvad-browser-install-helper

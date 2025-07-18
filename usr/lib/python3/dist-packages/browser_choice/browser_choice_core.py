@@ -52,6 +52,7 @@ class ChoicePluginRepo(QObject):
         method_name: str | None,
         method_name_short: str | None,
         method_subtext: str | None,
+        method_type: str | None,
         method_logo: QPixmap | None,
         install_warn_text: str | None,
         update_and_install_script: str | None,
@@ -71,6 +72,7 @@ class ChoicePluginRepo(QObject):
             "method_name_short": method_name_short,
             "method_subtext": method_subtext,
             "method_logo": method_logo,
+            "method_type": method_type,
             "install_script": install_script,
             "launch_script": launch_script,
             "install_status": install_status,
@@ -87,6 +89,7 @@ class ChoicePluginRepo(QObject):
         assert method_name is not None
         assert method_name_short is not None
         assert method_subtext is not None
+        assert method_type is not None
         assert method_logo is not None
         assert install_script is not None
         assert launch_script is not None
@@ -98,6 +101,7 @@ class ChoicePluginRepo(QObject):
         self.method_name_short: str = method_name_short
         self.method_subtext: str = method_subtext
         self.method_logo: QPixmap = method_logo
+        self.method_type: str = method_type
         self.install_warn_text: str | None = install_warn_text
         self.update_and_install_script: str | None = update_and_install_script
         self.install_script: str = install_script
@@ -334,6 +338,7 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
     repo_method_name_short: str | None = None
     repo_method_subtext: str | None = None
     repo_method_logo: QPixmap | None = None
+    repo_method_type: str | None = None
     repo_install_warn_text: str | None = None
     repo_update_and_install_script: str | None = None
     repo_install_script: str | None = None
@@ -376,6 +381,7 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
                             internal_id=current_repo_name,
                             method_name=repo_method_name,
                             method_name_short=repo_method_name_short,
+                            method_type=repo_method_type,
                             method_subtext=repo_method_subtext,
                             method_logo=repo_method_logo,
                             install_warn_text=repo_install_warn_text,
@@ -457,6 +463,8 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
                             config_file,
                             f"method logo for '{current_repo_name}'",
                         )
+                    case "method-type":
+                        repo_method_type = str_or_none(line_val)
                     case "install-warn-text":
                         repo_install_warn_text = str_or_none(line_val)
                     case "update-and-install-script":
@@ -488,6 +496,7 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
         method_name_short=repo_method_name_short,
         method_subtext=repo_method_subtext,
         method_logo=repo_method_logo,
+        method_type=repo_method_type,
         install_warn_text=repo_install_warn_text,
         update_and_install_script=repo_update_and_install_script,
         install_script=repo_install_script,

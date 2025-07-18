@@ -480,6 +480,9 @@ class BrowserChoiceWindow(QDialog):
             install_warn_str=self.chosen_repo.install_warn_text,
             change_str=self.change_str,
             command_str=command_str,
+            is_apt_third_party_repo=(
+                self.chosen_repo.method_type == "apt-thirdparty"
+            ),
             parent=self,
         )
         confirm_installation_dialog.exec()

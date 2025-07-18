@@ -35,11 +35,15 @@ class ConfirmInstallationDialog(QDialog):
         install_warn_str: str | None,
         change_str: str,
         command_str: str,
+        is_apt_third_party_repo: bool,
         parent: QWidget | None = None,
     ):
         super().__init__(parent)
         self.ui = Ui_ConfirmInstallationDialog()
         self.ui.setupUi(self)
+
+        if not is_apt_third_party_repo:
+            self.ui.thirdPartyWarningLabel.setVisible(False)
 
         action_info_text = (
             f"<p>The application '{app_name}' from source '{repository_name}' "
