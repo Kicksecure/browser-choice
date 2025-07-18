@@ -6,9 +6,11 @@
 # pylint: disable=broad-exception-caught
 
 """
-browser_choice_ui.py - Wizard for installing a browser or application of the
-user's choice.
+browser_choice_present.py - GUI layer of browser-choice.
 """
+
+## NOTE: This file must not be named 'browser_choice.py', it confuses mypy.
+## See https://github.com/python/mypy/issues/19410
 
 import sys
 import traceback
@@ -40,7 +42,7 @@ from PyQt5.QtWidgets import (
     QHBoxLayout,
 )
 
-from browser_choice.browser_choice_lib import (
+from browser_choice.browser_choice_core import (
     ChoicePluginRepo,
     ChoicePlugin,
     ChoicePluginCategory,

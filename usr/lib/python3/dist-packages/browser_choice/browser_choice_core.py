@@ -4,7 +4,7 @@
 # See the file COPYING for copying conditions.
 
 """
-browser_choice_lib.py - Library for browser-choice.
+browser_choice_core.py - Non-graphical routines for browser-choice.
 """
 
 ## NOTE: This file must not be named 'browser_choice.py', it confuses mypy.
