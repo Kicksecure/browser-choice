@@ -8,5 +8,10 @@
 %:
 	dh $@
 
+override_dh_auto_build:
+	./build-ui.sh clean
+	./build-ui.sh build
+	dh_auto_build
+
 override_dh_installchangelogs:
 	dh_installchangelogs changelog.upstream upstream

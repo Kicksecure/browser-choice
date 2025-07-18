@@ -62,8 +62,7 @@
         <string>Back</string>
        </property>
        <property name="icon">
-        <iconset theme="go-previous">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset theme="go-previous"/>
        </property>
       </widget>
      </item>
@@ -86,8 +85,7 @@
         <string>Continue</string>
        </property>
        <property name="icon">
-        <iconset theme="go-next">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset theme="go-next"/>
        </property>
       </widget>
      </item>

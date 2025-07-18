@@ -5,7 +5,8 @@ Source: browser-choice
 Section: admin
 Priority: optional
 Maintainer: Patrick Schleizer <adrelanos@kicksecure.com>
-Build-Depends: debhelper (>= 13), debhelper-compat (= 13), python3
+Build-Depends: debhelper (>= 13), debhelper-compat (= 13), python3,
+ pyqt5-dev-tools, safe-rm
 Homepage: https://www.kicksecure.com/wiki/browser-choice
 Vcs-Browser: https://github.com/Kicksecure/browser-choice
 Vcs-Git: https://github.com/Kicksecure/browser-choice.git

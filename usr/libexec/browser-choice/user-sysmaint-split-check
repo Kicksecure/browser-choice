@@ -6,6 +6,7 @@
 source /usr/libexec/helper-scripts/package_installed_check.bsh
 
 mode="${1:-needs-sysmaint}"
+quiet="${2:-no}"
 
 kernel_cmdline=""
 if [ -r '/proc/cmdline' ]; then
@@ -17,12 +18,16 @@ fi
 if pkg_installed user-sysmaint-split; then
   if [[ "${kernel_cmdline}" =~ 'boot-role=sysmaint' ]]; then
     if [ "${mode}" = 'needs-user' ]; then
-      printf '%s' 'Boot into a user session to manage.'
+      if [ "${quiet}" = 'no' ]; then
+        printf '%s' 'Boot into a user session to manage.'
+      fi
       exit 1
     fi
   else
     if [ "${mode}" = 'needs-sysmaint' ]; then
-      printf '%s' 'Boot into a sysmaint session to manage.'
+      if [ "${quiet}" = 'no' ]; then
+        printf '%s' 'Boot into a sysmaint session to manage.'
+      fi
       exit 1
     fi
   fi

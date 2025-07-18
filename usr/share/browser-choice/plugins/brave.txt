@@ -1,0 +1,41 @@
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+[product]
+product-name=Brave
+product-category=Browsers
+product-website=https://brave.com/download
+product-logo=/usr/share/browser-choice/icons/brave.svg
+vendor-name=Brave Software
+vendor-website=https://brave.com
+vendor-logo=/usr/share/browser-choice/icons/brave.svg
+wiki=https://www.kicksecure.com/wiki/Browser#Brave_Browser
+official-plugin=yes
+
+[repo:brave]
+method-name=Brave Browser from Brave official repository
+method-name-short=Repo (Brave)
+method-subtext=Brave Browser from brave.com repository. Managed by apt.
+method-logo=/usr/share/browser-choice/icons/brave.svg
+install-warn-text=
+update-and-install-script=
+install-script=pkexec bash -c -- 'extrepo enable brave_release; apt-get update; apt-get-noninteractive -y install brave-browser'
+uninstall-script=pkexec apt-get-noninteractive -y remove brave-browser
+purge-script=pkexec apt-get-noninteractive -y purge brave-browser
+launch-script=brave-browser
+install-status=source /usr/libexec/helper-scripts/package_installed_check.bsh; pkg_installed brave-browser
+capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 && /usr/libexec/browser-choice/user-sysmaint-split-check needs-sysmaint
+
+[repo:flathub]
+method-name=Brave Browser from Flathub repository
+method-name-short=Flatpak (Brave)
+method-subtext=Brave Browser from flathub.org repository. Managed by Flathub.
+method-logo=/usr/share/browser-choice/icons/flatpak.svg
+install-warn-text=
+update-and-install-script=
+install-script=flatpak install --assumeyes flathub com.brave.Browser
+uninstall-script=flatpak uninstall --assumeyes com.brave.Browser
+purge-script=
+launch-script=flatpak run com.brave.Browser
+install-status=flatpak info com.brave.Browser
+capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 && /usr/libexec/browser-choice/user-sysmaint-split-check needs-sysmaint

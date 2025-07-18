@@ -6,9 +6,11 @@
 # pylint: disable=broad-exception-caught
 
 """
-browser_choice_ui.py - Wizard for installing a browser or application of the
-user's choice.
+browser_choice_present.py - GUI layer of browser-choice.
 """
+
+## NOTE: This file must not be named 'browser_choice.py', it confuses mypy.
+## See https://github.com/python/mypy/issues/19410
 
 import sys
 import traceback
@@ -36,9 +38,11 @@ from PyQt5.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QLabel,
+    QPushButton,
+    QHBoxLayout,
 )
 
-from browser_choice.browser_choice_lib import (
+from browser_choice.browser_choice_core import (
     ChoicePluginRepo,
     ChoicePlugin,
     ChoicePluginCategory,
@@ -133,6 +137,8 @@ def get_qube_type() -> str:
     if Path("/run/qubes/this-is-appvm").is_file():
         if Path("/run/qubes/persistent-rw-only").is_file():
             return "appvm"
+        if Path("/run/qubes/persistent-none").is_file():
+            return "dispvm"
         if Path("/run/qubes/persistent-full").is_file():
             return "standalonevm"
         return "unknown"
@@ -155,6 +161,7 @@ def are_unofficial_plugins_present(
                 return True
     return False
 
+
 def write_to_log(line: str) -> None:
     """
     Writes a line of text to browser-choice's log file, if it exists.
@@ -174,6 +181,7 @@ class GlobalData:
     log_dir_path: Path = Path.home().joinpath(".local/share/browser-choice")
     log_file_path: Path = log_dir_path.joinpath("log.txt")
     log_file: TextIO | None = None
+    qube_type: str = get_qube_type()
 
 
 # pylint: disable=too-few-public-methods
@@ -184,14 +192,56 @@ class ErrorDialog(QDialog):
     """
 
     def __init__(self, error_text: str, parent: QWidget | None = None):
-        super(QWidget, self).__init__(parent)
+        super().__init__(parent)
         self.setGeometry(QRect(0, 0, 640, 480))
-        self.root_layout = QVBoxLayout(self)
-        self.error_label = QLabel(self)
+        self.root_layout: QVBoxLayout = QVBoxLayout(self)
+        self.error_label: QLabel = QLabel(self)
         self.error_label.setWordWrap(True)
         self.error_label.setText(error_text)
         self.root_layout.addWidget(self.error_label)
         self.resize(self.minimumWidth(), self.minimumHeight())
+
+
+class EphemeralVMWarnDialog(QDialog):
+    """
+    Warns the user that they are in a Qubes OS AppVM and that the application
+    they install or remove will not stay permanently installed or removed.
+    """
+
+    def __init__(self, type: str, parent: QWidget | None = None):
+        super().__init__(parent)
+        self.setGeometry(QRect(0, 0, 470, 180))
+        self.root_layout: QVBoxLayout = QVBoxLayout(self)
+        self.warn_label: QLabel = QLabel(self)
+        self.warn_label.setWordWrap(True)
+        if type == "appvm":
+            self.warn_label.setText(
+                'You are currently running Browser Choice \
+inside a Qubes OS app qube. You can install or uninstall applications, but \
+these changes will be reverted after a reboot. This is because most system \
+files in app qubes are reset upon reboot. See \
+<a href="https://www.qubes-os.org/doc/templates/">Qubes Templates</a> for \
+more information.'
+            )
+        elif type == "dispvm":
+            self.warn_label.setText(
+                'You are currently running Browser Choice \
+inside a Qubes OS disposable qube. You can install or uninstall \
+applications, but these changes will be reverted after a reboot. This is \
+because all files in disposable qubes are reset upon reboot. See \
+<a href="https://www.qubes-os.org/doc/how-to-use-disposables/">How to use \
+disposables</a> for more information.'
+            )
+        self.warn_label.setOpenExternalLinks(True)
+        self.root_layout.addWidget(self.warn_label)
+        self.root_layout.addStretch()
+        self.button_layout: QHBoxLayout = QHBoxLayout(None)
+        self.button_layout.addStretch()
+        self.ok_button: QPushButton = QPushButton()
+        self.ok_button.setText("OK")
+        self.button_layout.addWidget(self.ok_button)
+        self.root_layout.addLayout(self.button_layout)
+        self.ok_button.clicked.connect(lambda: self.done(0))
 
 
 # pylint: disable=too-many-instance-attributes
@@ -202,9 +252,16 @@ class BrowserChoiceWindow(QDialog):
 
     def __init__(self, parent: QWidget | None = None):
         super(QWidget, self).__init__(parent)
+
+        if GlobalData.qube_type in ("appvm", "dispvm"):
+            ephvm_warn_dialog: EphemeralVMWarnDialog = EphemeralVMWarnDialog(
+                type=GlobalData.qube_type
+            )
+            ephvm_warn_dialog.exec()
+
         self.setGeometry(QRect(0, 0, 700, 600))
         self.root_layout = QVBoxLayout(self)
-        self.setWindowTitle("Application Chooser")
+        self.setWindowTitle("Browser Choice")
 
         try:
             self.plugin_data: list[ChoicePluginCategory] = parse_config_dir(
@@ -217,6 +274,29 @@ class BrowserChoiceWindow(QDialog):
             )
             error_dialog.exec()
             sys.exit(1)
+
+        if GlobalData.qube_type == "templatevm":
+            self.is_network_connected = True
+        else:
+            self.is_network_connected: bool = (
+                subprocess.run(
+                    ["/usr/libexec/helper-scripts/check-network-access"],
+                    check=False,
+                ).returncode
+                == 0
+            )
+
+        self.in_sysmaint_session: bool = (
+            subprocess.run(
+                [
+                    "/usr/libexec/browser-choice/user-sysmaint-split-check",
+                    "needs-sysmaint",
+                    "quiet",
+                ],
+                check=False,
+            ).returncode
+            == 0
+        )
 
         self.chosen_plugin: ChoicePlugin | None = None
         self.chosen_repo: ChoicePluginRepo | None = None
@@ -265,10 +345,11 @@ class BrowserChoiceWindow(QDialog):
         select_application_page: SelectApplicationPage = SelectApplicationPage(
             app_type_list=app_type_list,
             card_group_list=card_group_list,
-            qube_type=get_qube_type(),
+            qube_type=GlobalData.qube_type,
             show_unofficial_warning=(
                 are_unofficial_plugins_present(self.plugin_data)
             ),
+            is_network_connected=self.is_network_connected,
             parent=self,
         )
         select_application_page.cancelClicked.connect(self.exit_app)
@@ -323,7 +404,8 @@ class BrowserChoiceWindow(QDialog):
 
         choose_installation_page = ChooseInstallationPage(
             self.chosen_plugin.product_name,
-            package_card_list,
+            card_list=package_card_list,
+            is_network_connected=self.is_network_connected,
             parent=self,
         )
         choose_installation_page.backClicked.connect(
@@ -368,11 +450,13 @@ class BrowserChoiceWindow(QDialog):
         match self.choose_installation_page.modifyMode():
             case ModifyMode.UpdateAndInstall:
                 self.change_str = "installed"
-                self.allow_app_launch = True
+                if not self.in_sysmaint_session:
+                    self.allow_app_launch = True
                 command_str = self.chosen_repo.update_and_install_script
             case ModifyMode.Install:
                 self.change_str = "installed"
-                self.allow_app_launch = True
+                if not self.in_sysmaint_session:
+                    self.allow_app_launch = True
                 command_str = self.chosen_repo.install_script
             case ModifyMode.Remove:
                 self.change_str = "removed"
@@ -431,9 +515,7 @@ class BrowserChoiceWindow(QDialog):
                     "Executing command: "
                     f"{self.chosen_repo.update_and_install_script}"
                 )
-                self.execute_process = (
-                    self.chosen_repo.run_update_and_install()
-                )
+                self.execute_process = self.chosen_repo.run_update_and_install()
             case ModifyMode.Install:
                 write_to_log(
                     f"Executing command: {self.chosen_repo.install_script}"
@@ -492,9 +574,7 @@ class BrowserChoiceWindow(QDialog):
             write_to_log("Done, operation was successful.")
         else:
             self.execute_process_successful = False
-            self.applying_changes_page.logLine(
-                "Done, but operation failed!."
-            )
+            self.applying_changes_page.logLine("Done, but operation failed!")
             write_to_log("Done, but operation failed!")
         self.applying_changes_page.setContinueEnabled(True)
 
@@ -588,9 +668,7 @@ def main() -> NoReturn:
         try:
             # pylint: disable=consider-using-with
             GlobalData.log_file = open(
-                GlobalData.log_file_path,
-                mode="a",
-                encoding="utf-8"
+                GlobalData.log_file_path, mode="a", encoding="utf-8"
             )
         except PermissionError:
             GlobalData.log_file = None
