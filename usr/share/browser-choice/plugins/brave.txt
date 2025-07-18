@@ -15,7 +15,7 @@ official-plugin=yes
 [repo:brave]
 method-name=Brave Browser from Brave official repository
 method-name-short=Repo (Brave)
-method-subtext=Brave Browser from brave.com repository. Managed by apt.
+method-subtext=Brave Browser from brave.com repository. Installed via tool: apt
 method-logo=/usr/share/browser-choice/icons/brave.svg
 install-warn-text=
 update-and-install-script=
