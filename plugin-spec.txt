@@ -84,6 +84,13 @@ method-subtext=App Name from example.com repository. Managed by package manager.
 ## from the Debian repos, this should usually point to a Debian logo.
 method-logo=/usr/share/browser-choice/icons/repo.svg
 
+## 'method-type' specifies the kind of repository that the application
+## will be installed from. Recommended values are 'apt-firstparty',
+## 'apt-thirdparty', 'flathub', etc., as appropriate. This is currently used
+## to display a warning to users if a third-party apt repository is being
+## enabled.
+method-type=apt-thirdparty
+
 ## 'install-warn-text' specifies text the user should be shown before being
 ## allowed to install an application where the installation may or will have
 ## unexpected side effects. For instance, if an installation script is going

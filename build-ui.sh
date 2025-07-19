@@ -13,7 +13,7 @@ dpkg -l | grep pyqt5-dev-tools
 true "INFO: package qtchooser contains 'designer' program"
 
 mode="${1:-build}"
-project_name="browser-choice"
+project_name="browser_choice"
 
 project_base_dir="$(dirname -- "$(readlink -f -- "${0}")")";
 
