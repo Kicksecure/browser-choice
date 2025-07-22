@@ -7,5 +7,7 @@ set -e
 
 cp /usr/share/browser-choice/keys/mullvad-keyring.asc /etc/apt/keyrings/
 cp /usr/share/browser-choice/repo-defs/mullvad.list /etc/apt/sources.list.d/
+
 apt-get update
+
 apt-get-noninteractive --yes install mullvad-browser
