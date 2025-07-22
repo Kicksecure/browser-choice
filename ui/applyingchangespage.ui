@@ -54,7 +54,7 @@
    <item>
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>The system is performing the requested operation. Please wait, this may take a while.</string>
+      <string>The system is performing the requested operation. Please wait. This may take a while.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
