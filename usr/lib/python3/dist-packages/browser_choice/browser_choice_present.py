@@ -18,11 +18,9 @@ import subprocess
 import functools
 import signal
 import datetime
-from pathlib import Path
 from typing import (
     Tuple,
     NoReturn,
-    TextIO,
 )
 from types import FrameType
 
@@ -49,6 +47,7 @@ from browser_choice.browser_choice_core import (
     parse_config_dir,
 )
 
+from browser_choice import GlobalData
 from browser_choice.browsercard import BrowserCard
 from browser_choice.packagecard import PackageCard
 from browser_choice.selectapplicationpage import SelectApplicationPage
@@ -125,28 +124,6 @@ def check_package_installed(package_name: str) -> bool:
     return False
 
 
-def get_qube_type() -> str:
-    """
-    If running under Qubes OS, returns the qube type the application is
-    running under.
-    """
-
-    if not Path("/usr/share/qubes/marker-vm").is_file():
-        return "none"
-
-    if Path("/run/qubes/this-is-appvm").is_file():
-        if Path("/run/qubes/persistent-rw-only").is_file():
-            return "appvm"
-        if Path("/run/qubes/persistent-none").is_file():
-            return "dispvm"
-        if Path("/run/qubes/persistent-full").is_file():
-            return "standalonevm"
-        return "unknown"
-    if Path("/run/qubes/this-is-templatevm").is_file():
-        return "templatevm"
-    return "unknown"
-
-
 def are_unofficial_plugins_present(
     plugin_data: list[ChoicePluginCategory],
 ) -> bool:
@@ -170,20 +147,6 @@ def write_to_log(line: str) -> None:
     if GlobalData.log_file is not None:
         print(line, file=GlobalData.log_file)
 
-
-# pylint: disable=too-few-public-methods
-class GlobalData:
-    """
-    Global variables for browser_choice_ui.py.
-    """
-
-    plugin_dir: Path = Path("/usr/share/browser-choice/plugins")
-    log_dir_path: Path = Path.home().joinpath(".local/share/browser-choice")
-    log_file_path: Path = log_dir_path.joinpath("log.txt")
-    log_file: TextIO | None = None
-    qube_type: str = get_qube_type()
-
-
 # pylint: disable=too-few-public-methods
 class ErrorDialog(QDialog):
     """
@@ -202,36 +165,24 @@ class ErrorDialog(QDialog):
         self.resize(self.minimumWidth(), self.minimumHeight())
 
 
-class EphemeralVMWarnDialog(QDialog):
+class InitWarnDialog(QDialog):
     """
     Warns the user that they are in a Qubes OS AppVM and that the application
     they install or remove will not stay permanently installed or removed.
     """
 
-    def __init__(self, type: str, parent: QWidget | None = None):
+    def __init__(self, restrict_type: str, parent: QWidget | None = None):
         super().__init__(parent)
         self.setGeometry(QRect(0, 0, 470, 180))
         self.root_layout: QVBoxLayout = QVBoxLayout(self)
         self.warn_label: QLabel = QLabel(self)
         self.warn_label.setWordWrap(True)
-        if type == "appvm":
-            self.warn_label.setText(
-                'You are currently running Browser Choice \
-inside a Qubes OS app qube. You can install or uninstall applications, but \
-these changes will be reverted after a reboot. This is because most system \
-files in app qubes are reset upon reboot. See \
-<a href="https://www.qubes-os.org/doc/templates/">Qubes Templates</a> for \
-more information.'
-            )
-        elif type == "dispvm":
-            self.warn_label.setText(
-                'You are currently running Browser Choice \
-inside a Qubes OS disposable qube. You can install or uninstall \
-applications, but these changes will be reverted after a reboot. This is \
-because all files in disposable qubes are reset upon reboot. See \
-<a href="https://www.qubes-os.org/doc/how-to-use-disposables/">How to use \
-disposables</a> for more information.'
-            )
+        if restrict_type == "appvm":
+            self.warn_label.setText(GlobalData.appvm_warn_label)
+        elif restrict_type == "dispvm":
+            self.warn_label.setText(GlobalData.dispvm_warn_label)
+        elif restrict_type == "user_session":
+            self.warn_label.setText(GlobalData.usersession_warn_label)
         self.warn_label.setOpenExternalLinks(True)
         self.root_layout.addWidget(self.warn_label)
         self.root_layout.addStretch()
@@ -253,11 +204,43 @@ class BrowserChoiceWindow(QDialog):
     def __init__(self, parent: QWidget | None = None):
         super(QWidget, self).__init__(parent)
 
+        self.in_sysmaint_session: bool = subprocess.run(
+            [
+                "/usr/libexec/browser-choice/user-sysmaint-split-check",
+                "needs-sysmaint",
+                "quiet",
+            ],
+            check=False,
+        ).returncode == 0
+
+        self.user_sysmaint_split_installed: bool = subprocess.run(
+            [
+                "/usr/bin/bash",
+                "-c",
+                "--",
+                "source "
+                "/usr/libexec/helper-scripts/package_installed_check.bsh; "
+                "pkg_installed user-sysmaint-split"
+            ],
+            check=False,
+        ).returncode == 0
+
+        init_warn_dialog: InitWarnDialog | None = None
         if GlobalData.qube_type in ("appvm", "dispvm"):
-            ephvm_warn_dialog: EphemeralVMWarnDialog = EphemeralVMWarnDialog(
-                type=GlobalData.qube_type
+            init_warn_dialog = InitWarnDialog(
+                restrict_type=GlobalData.qube_type
             )
-            ephvm_warn_dialog.exec()
+            init_warn_dialog.exec()
+        elif (
+            self.user_sysmaint_split_installed
+            and not self.in_sysmaint_session
+        ):
+            init_warn_dialog = InitWarnDialog(
+                restrict_type="user_session"
+            )
+            init_warn_dialog.exec()
+        if init_warn_dialog is not None:
+            init_warn_dialog.deleteLater()
 
         self.setGeometry(QRect(0, 0, 700, 600))
         self.root_layout = QVBoxLayout(self)
@@ -276,27 +259,15 @@ class BrowserChoiceWindow(QDialog):
             sys.exit(1)
 
         if GlobalData.qube_type == "templatevm":
-            self.is_network_connected = True
+            self.is_network_connected: bool = True
         else:
-            self.is_network_connected: bool = (
+            self.is_network_connected = (
                 subprocess.run(
                     ["/usr/libexec/helper-scripts/check-network-access"],
                     check=False,
                 ).returncode
                 == 0
             )
-
-        self.in_sysmaint_session: bool = (
-            subprocess.run(
-                [
-                    "/usr/libexec/browser-choice/user-sysmaint-split-check",
-                    "needs-sysmaint",
-                    "quiet",
-                ],
-                check=False,
-            ).returncode
-            == 0
-        )
 
         self.chosen_plugin: ChoicePlugin | None = None
         self.chosen_repo: ChoicePluginRepo | None = None
@@ -345,7 +316,14 @@ class BrowserChoiceWindow(QDialog):
         select_application_page: SelectApplicationPage = SelectApplicationPage(
             app_type_list=app_type_list,
             card_group_list=card_group_list,
-            qube_type=GlobalData.qube_type,
+            restrict_type=(
+                GlobalData.qube_type if GlobalData.qube_type != "none"
+                else "user_session" if (
+                    self.user_sysmaint_split_installed
+                    and not self.in_sysmaint_session
+                )
+                else "none"
+            ),
             show_unofficial_warning=(
                 are_unofficial_plugins_present(self.plugin_data)
             ),

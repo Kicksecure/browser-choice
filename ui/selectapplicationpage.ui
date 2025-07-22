@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>652</width>
-    <height>955</height>
+    <height>1025</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -105,48 +105,9 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="appvmNoticeLabel">
+    <widget class="QLabel" name="restrictNoticeLabel">
      <property name="text">
-      <string>You are currently running Application Chooser inside a Qubes OS app qube. You can install or uninstall applications, but these changes will be reverted after a reboot. This is because most system files in app qubes are reset upon reboot. See &lt;a href=&quot;https://www.qubes-os.org/doc/templates/&quot;&gt;Qubes Templates&lt;/a&gt; for more information.</string>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-     <property name="openExternalLinks">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="dispvmNoticeLabel">
-     <property name="text">
-      <string>You are currently running Browser Choice inside a Qubes OS disposable qube. You can install or uninstall applications, but these changes will be reverted after a reboot. This is because all files in disposable qubes are reset upon reboot. See &lt;a href=&quot;https://www.qubes-os.org/doc/how-to-use-disposables/&quot;&gt;How to use disposables&lt;/a&gt; for more information.</string>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-     <property name="openExternalLinks">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="templatevmNoticeLabel">
-     <property name="text">
-      <string>You are currently running Application Chooser inside a Qubes OS template qube. Applications installed into this template will be made available in all app qubes based on this template. See &lt;a href=&quot;https://www.qubes-os.org/doc/templates/&quot;&gt;Qubes Templates&lt;/a&gt; for more information.</string>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-     <property name="openExternalLinks">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="standalonevmNoticeLabel">
-     <property name="text">
-      <string>You are current running Application Chooser inside a Qubes OS standalone qube. Applications installed into this qube will only be available within this qube. See &lt;a href=&quot;https://www.qubes-os.org/doc/templates/&quot;&gt;Qubes Templates&lt;/a&gt; for more information.</string>
+      <string>restrictNoticeLabel</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
