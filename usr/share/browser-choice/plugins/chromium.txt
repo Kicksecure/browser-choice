@@ -15,7 +15,7 @@ official-plugin=yes
 [repo:debian]
 method-name=Chromium from Debian stable repository
 method-name-short=Repo (Debian)
-method-subtext=Chromium from packages.debian.org repository. Installable via tool: APT.
+method-subtext=Chromium from packages.debian.org repository. Installed via tool: APT.
 method-logo=/usr/share/browser-choice/icons/debian.svg
 method-type=apt-firstparty
 install-warn-text=
@@ -30,7 +30,7 @@ capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 pp
 [repo:flathub]
 method-name=Chromium from Flathub repository (Community)
 method-name-short=Flatpak
-method-subtext=Chromium from flathub.org repository. Unofficial. Installable via tool: flatpak.
+method-subtext=Chromium from flathub.org repository. Unofficial. Installed via tool: Flatpak.
 method-logo=/usr/share/browser-choice/icons/flatpak.svg
 method-type=flathub
 install-warn-text=Chromium is an unverified (non-official) Flatpak (Open Source) packaged by a third party (not Google). Installing it will allow unverified and proprietary, closed source (not Open Source) Flatpaks to be installed on this system if explicitly requested by the user. This does not imply that Chromium itself is closed source. See also: <a href="https://www.kicksecure.com/wiki/Install_Software#Flathub_Package_Sources_Security">Flathub Package Sources Security</a>.

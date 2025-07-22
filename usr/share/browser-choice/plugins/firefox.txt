@@ -15,7 +15,7 @@ official-plugin=yes
 [repo:debian]
 method-name=Firefox ESR from Debian stable repository
 method-name-short=Repo (Debian)
-method-subtext=Firefox ESR (Extended Stable Release) from packages.debian.org repository. Installed via tool: apt
+method-subtext=Firefox ESR (Extended Stable Release) from packages.debian.org repository. Installed via tool: apt.
 method-logo=/usr/share/browser-choice/icons/debian.svg
 method-type=apt-firstparty
 install-warn-text=
@@ -30,7 +30,7 @@ capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 pp
 [repo:mozilla]
 method-name=Firefox Stable from Mozilla official repository
 method-name-short=Repo (Mozilla)
-method-subtext=Firefox Stable from packages.mozilla.org repository. Installed via tool: apt
+method-subtext=Firefox Stable from packages.mozilla.org repository. Installed via tool: apt.
 method-logo=/usr/share/browser-choice/icons/firefox.svg
 method-type=apt-thirdparty
 install-warn-text=
