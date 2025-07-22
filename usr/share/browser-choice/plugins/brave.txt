@@ -30,7 +30,7 @@ capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 &&
 [repo:flathub]
 method-name=Brave Browser from Flathub repository
 method-name-short=Flatpak (Brave)
-method-subtext=Brave Browser from flathub.org repository. Managed by Flathub.
+method-subtext=Brave Browser from flathub.org repository. Installed via tool: Flatpak.
 method-logo=/usr/share/browser-choice/icons/flatpak.svg
 method-type=flathub
 install-warn-text=
