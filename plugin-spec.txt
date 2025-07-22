@@ -77,7 +77,7 @@ method-name-short=Repo (Main)
 ## 'method-subtext' specifies a longer block of text describing this
 ## application+repo combination. This should usually be a couple of sentences
 ## long.
-method-subtext=App Name from example.com repository. Managed by package manager.
+method-subtext=App Name from example.com repository. Installed via tool: package manager.
 
 ## 'method-logo' specifies the full path to a logo corresponding to the
 ## repository. For instance, if this repo is used to install the application
