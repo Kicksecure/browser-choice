@@ -120,7 +120,7 @@
    <item>
     <widget class="QLabel" name="fossNoticeLabel">
      <property name="text">
-      <string>All applications displayed by this tool are open-source software. For more information on the inclusion criteria for applications listed above, see &lt;a href=&quot;https://www.kicksecure.com/wiki/Dev/browser-choice#criteria_for_inclusion_into_browser_choice&quot;&gt;Criteria for inclusion into browser-choice&lt;/a&gt;.</string>
+      <string>All applications displayed by this tool are Open Source software. For more information on the inclusion criteria for applications listed above, see &lt;a href=&quot;https://www.kicksecure.com/wiki/Dev/browser-choice#criteria_for_inclusion_into_browser_choice&quot;&gt;Criteria for inclusion into browser-choice&lt;/a&gt;.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -133,7 +133,7 @@
    <item>
     <widget class="QLabel" name="nonFossWarningLabel">
      <property name="text">
-      <string>Unofficial plugins for Application Chooser have been installed. The applications above may not be open-source or may be otherwise non-compliant with the inclusion criteria listed in &lt;a href=&quot;https://www.kicksecure.com/wiki/Dev/browser-choice#criteria_for_inclusion_into_browser_choice&quot;&gt;Criteria for inclusion into browser-choice&lt;/a&gt;. Proceed with caution.</string>
+      <string>Unofficial plugins for Application Chooser have been installed. The applications above may not be Open Source or may be otherwise non-compliant with the inclusion criteria listed in &lt;a href=&quot;https://www.kicksecure.com/wiki/Dev/browser-choice#criteria_for_inclusion_into_browser_choice&quot;&gt;Criteria for inclusion into browser-choice&lt;/a&gt;. Proceed with caution.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
