@@ -1,3 +1,111 @@
+commit f003d3a8bd096883f3b261282681ca63389ad040
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 22 05:23:44 2025 -0400
+
+    output
+
+commit 8559ba077045b7811813a6141067e97deb285e68
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 22 05:20:24 2025 -0400
+
+    output
+
+commit c51bb6e8e2801c5072289982f0f4f62fb2afac6c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 22 05:18:58 2025 -0400
+
+    output
+
+commit c861ef17a3325a2e69c1d3ec08bb1f1238b49bea
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 22 05:17:07 2025 -0400
+
+    output
+
+commit 336fe561bca8c6c98e792aa7c316c218dfc86bf4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 22 04:58:45 2025 -0400
+
+    end-of-options
+
+commit a384c32269c2cf36f879db1efc685dfb9358ce7f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 22 04:58:26 2025 -0400
+
+    --verbose
+
+commit f78b47268fe603769f6781dd48d26dcb56b28150
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 22 04:57:42 2025 -0400
+
+    enable xtrace for more self-explanatory output what is happening
+
+commit 98ee56945e9ab27dbd422b71084aad4f9e3b2429
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 22 04:57:30 2025 -0400
+
+    minor
+
+commit c470fa1776316a65793f04831b521740e4e10e95
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 22 04:57:15 2025 -0400
+
+    minor
+
+commit aa92a8fc00589172147bcba18925ca840017e37a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 22 04:57:00 2025 -0400
+
+    long options
+
+commit 7c56027af39c3aef3879e1bd61d663b1ef90acb9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 22 04:50:24 2025 -0400
+
+    output
+
+commit 2e547c1e553b3d17c06f15d37bf57b1c62c04947
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 22 04:48:04 2025 -0400
+
+    output
+
+commit 27f067c5806282e356a81eb6df84834df6d9b104
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 22 04:45:20 2025 -0400
+
+    output
+
+commit e6e4b9c93261141c12a5484d4c177b04ab6abdd6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 22 04:43:35 2025 -0400
+
+    output
+
+commit a7ada23bd745622593983e5a0df4327f0e08caf4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 22 04:43:08 2025 -0400
+
+    output
+
+commit 9fbfa77a5bf7bb5b9b44bc40c10af7584a2a3363
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 22 04:36:16 2025 -0400
+
+    output
+
+commit 89bb4c2c76b166b13f166d9d867ad5cccfade273
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 22 04:34:50 2025 -0400
+
+    output
+
+commit 795f81af0c847d479aa1da9e20fb5db6568fe510
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 22 07:24:11 2025 +0000
+
+    bumped changelog version
+
 commit a956e0e11f7718968827a99778ba48f9f62f0d92
 Merge: d3ccba2 8498e02
 Author: Patrick Schleizer <adrelanos@whonix.org>
