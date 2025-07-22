@@ -57,12 +57,12 @@ because all files in Disposables are reset upon reboot. See \
 <a href=\"https://www.qubes-os.org/doc/how-to-use-disposables/\">How to use \
 Disposables</a> for more information."
     templatevm_warn_label="You are currently running Browser Choice inside \
-a Qubes OS Template. Applications installed into this Template will be \
-made available in all App Qubes based on this Template. See \
+a Qubes OS Template. Applications installed in this Template will be \
+available in all App Qubes based on it. See \
 <a href=\"https://www.qubes-os.org/doc/templates/\">Qubes Templates</a> for \
 more information."
-    standalonevm_warn_label="You are current running Browser Choice inside a \
-Qubes OS Standalone. Applications installed into this Qube will only be \
+    standalonevm_warn_label="You are currently running Browser Choice inside a \
+Qubes OS Standalone. Applications installed in this Qube will only be \
 available within this Qube. See \
 <a href=\"https://www.qubes-os.org/doc/templates/\">Qubes Templates</a> for \
 more information."
