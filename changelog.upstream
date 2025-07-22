@@ -1,3 +1,22 @@
+commit a956e0e11f7718968827a99778ba48f9f62f0d92
+Merge: d3ccba2 8498e02
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 22 03:15:19 2025 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/master'
+
+commit 8498e02b0afa5e3c107877d057c849e12cc76514
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Mon Jul 21 22:26:30 2025 -0500
+
+    Refactor to reduce string duplication, add extra guidance for user sessions, fix overly wide browser cards
+
+commit d3ccba2f134d249ac6eae1bfae7678fda746f526
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Jul 19 09:42:30 2025 +0000
+
+    bumped changelog version
+
 commit a10cd319e1075ea358ba29f10aff3572a870f35b
 Merge: fdc6c76 be00a29
 Author: Patrick Schleizer <adrelanos@whonix.org>
