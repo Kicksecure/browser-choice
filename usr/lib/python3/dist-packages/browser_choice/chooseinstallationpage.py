@@ -112,6 +112,7 @@ class ChooseInstallationPage(QWidget):
             radio_button.setChecked(False)
             self.ui.installRadioButton.setChecked(True)
 
+    # pylint: disable=too-many-branches
     def update_available_actions(self) -> None:
         """
         Enables or disables software modification radio buttons and
