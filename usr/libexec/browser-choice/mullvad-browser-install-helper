@@ -6,8 +6,8 @@
 set -x
 set -e
 
-cp --verbose /usr/share/browser-choice/keys/mullvad-keyring.asc /etc/apt/keyrings/
-cp --verbose /usr/share/browser-choice/repo-defs/mullvad.list /etc/apt/sources.list.d/
+cp --verbose -- /usr/share/browser-choice/keys/mullvad-keyring.asc /etc/apt/keyrings/
+cp --verbose -- /usr/share/browser-choice/repo-defs/mullvad.list /etc/apt/sources.list.d/
 
 apt-get update
 
