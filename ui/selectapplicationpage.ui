@@ -54,7 +54,7 @@
    <item>
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>&lt;p&gt;&lt;font color=&quot;orange&quot;&gt;WARNING:&lt;/font&gt; Software installation comes with inherent risks. If you do not trust a vendor and their security practices, you should not install applications from them. See &lt;a href=&quot;https://www.kicksecure.com/wiki/Install_Software#Trust_Considerations&quot;&gt;Trust Considerations&lt;/a&gt; for more information.&lt;/p&gt;
+      <string>&lt;p&gt;&lt;font color=&quot;orange&quot;&gt;WARNING:&lt;/font&gt; Software installation comes with inherent risks. If you do not trust a vendor or their security practices, you should not install applications from them. See &lt;a href=&quot;https://www.kicksecure.com/wiki/Install_Software#Trust_Considerations&quot;&gt;Trust Considerations&lt;/a&gt; for more information.&lt;/p&gt;
 &lt;p&gt;Select the application to install or remove.&lt;/p&gt;</string>
      </property>
      <property name="wordWrap">
@@ -97,7 +97,7 @@
    <item>
     <widget class="QLabel" name="noNetworkWarningLabel">
      <property name="text">
-      <string>You are not connected to a network. You will not be able to install applications shown here, but may remove or purge them.</string>
+      <string>You are not connected to a network. You will not be able to install applications shown here, but you may remove or purge them.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
