@@ -17,7 +17,7 @@
    <item>
     <widget class="QLabel" name="thirdPartyWarningLabel">
      <property name="text">
-      <string>&lt;p&gt;&lt;font color=&quot;orange&quot;&gt;WARNING:&lt;/font&gt; Proceeding will enable a third-party apt repository. A compromised apt repository can install malicious software in place of any package on your system during normal software updates. Only proceed if you trust this application's developers and their security practices. See &lt;a href=&quot;https://www.kicksecure.com/wiki/Install_Software#Third_Party_Repository_Warning&quot;&gt;Third Party Repository Warning&lt;/a&gt; for more information.</string>
+      <string>&lt;p&gt;&lt;font color=&quot;orange&quot;&gt;WARNING:&lt;/font&gt; Proceeding will enable a third-party APT repository. A compromised APT repository can install malicious software in place of any package on your system during normal software updates. Only proceed if you trust this application's developers and their security practices. See &lt;a href=&quot;https://www.kicksecure.com/wiki/Install_Software#Third_Party_Repository_Warning&quot;&gt;Third Party Repository Warning&lt;/a&gt; for more information.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
