@@ -45,25 +45,25 @@ class GlobalData:
     qube_type: str = get_qube_type()
 
     appvm_warn_label="You are currently running Browser Choice \
-inside a Qubes OS app qube. You can install or uninstall applications, but \
+inside a Qubes OS App Qube. You can install or uninstall applications, but \
 these changes will be reverted after a reboot. This is because most system \
-files in app qubes are reset upon reboot. See \
+files in App Qubes are reset upon reboot. See \
 <a href=\"https://www.qubes-os.org/doc/templates/\">Qubes Templates</a> for \
 more information."
     dispvm_warn_label="You are currently running Browser Choice \
-inside a Qubes OS disposable qube. You can install or uninstall \
+inside a Qubes OS Disposable. You can install or uninstall \
 applications, but these changes will be reverted after a reboot. This is \
-because all files in disposable qubes are reset upon reboot. See \
+because all files in Disposables are reset upon reboot. See \
 <a href=\"https://www.qubes-os.org/doc/how-to-use-disposables/\">How to use \
-disposables</a> for more information."
+Disposables</a> for more information."
     templatevm_warn_label="You are currently running Browser Choice inside \
-a Qubes OS template qube. Applications installed into this template will be \
-made available in all app qubes based on this template. See \
+a Qubes OS Template. Applications installed into this Template will be \
+made available in all App Qubes based on this Template. See \
 <a href=\"https://www.qubes-os.org/doc/templates/\">Qubes Templates</a> for \
 more information."
     standalonevm_warn_label="You are current running Browser Choice inside a \
-Qubes OS standalone qube. Applications installed into this qube will only be \
-available within this qube. See \
+Qubes OS Standalone. Applications installed into this Qube will only be \
+available within this Qube. See \
 <a href=\"https://www.qubes-os.org/doc/templates/\">Qubes Templates</a> for \
 more information."
     usersession_warn_label="You are currently running Browser Choice inside \
