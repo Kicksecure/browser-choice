@@ -35,8 +35,8 @@ product-logo=/usr/share/browser-choice/icons/appicon.svg
 vendor-name=Vendor Name Here
 
 ## 'vendor-website' specifies the vendor's home page on the Internet.
-## Depending on the vendor, this may be the same thing as the product's
-## website, or it may have no connection to the product whatsoever,
+## Depending on the vendor, this may be the same as the product's
+## website, or it may have no connection to the product whatsoever.
 vendor-website=https://example.com/vendor
 
 ## 'vendor-logo' specifies the full path to the logo of the vendor.
@@ -60,7 +60,7 @@ official-plugin=yes|no
 ## is placed after the colon. There is no limit on the number of repositories
 ## an application may have, though more than four repositories will probably
 ## result in the user having to scroll very far to see all available repos.
-## At least one repo is mandatory, the others are optional.
+## At least one repo is mandatory; the others are optional.
 [repo:my-source]
 
 ## 'method-name' specifies a long name for this particular application+repo
