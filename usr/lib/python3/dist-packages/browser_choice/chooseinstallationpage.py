@@ -27,10 +27,10 @@ from browser_choice.packagecard import PackageCard
 from browser_choice.cardview import CardView
 
 
-class ModifyMode(Enum):
+class ManageMode(Enum):
     """
-    An enum indicating what kind of software modification the user wants to
-    make.
+    An enum indicating what kind of software management the user wants to
+    perform.
     """
 
     Unknown = 0
@@ -38,6 +38,7 @@ class ModifyMode(Enum):
     UpdateAndInstall = 2
     Remove = 3
     Purge = 4
+    Run = 5
 
 
 class ChooseInstallationPage(QWidget):
@@ -49,11 +50,14 @@ class ChooseInstallationPage(QWidget):
     backClicked: pyqtSignal = pyqtSignal()
     continueClicked: pyqtSignal = pyqtSignal()
 
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         app_name: str,
         card_list: list[PackageCard],
         is_network_connected: bool,
+        in_sysmaint_session: bool,
+        user_sysmaint_split_installed: bool,
         parent: QWidget | None = None,
     ):
         super().__init__(parent)
@@ -64,11 +68,18 @@ class ChooseInstallationPage(QWidget):
         self.ui.continueButton.clicked.connect(self.continueClicked)
 
         self.is_network_connected: bool = is_network_connected
+        self.in_sysmaint_session: bool = in_sysmaint_session
+        self.user_sysmaint_split_installed: bool = user_sysmaint_split_installed
 
         self.ui.appNameChoiceLabel.setText(
             f"Choose the package for '{app_name}' to install or remove."
         )
         self.ui.continueButton.setEnabled(False)
+
+        if self.in_sysmaint_session and self.user_sysmaint_split_installed:
+            self.ui.runRadioButton.setText("Run (User mode required)")
+        else:
+            self.ui.runRadioButton.setText("Run")
 
         self.card_view_layout: QVBoxLayout = QVBoxLayout(
             self.ui.packageChooserWidget
@@ -90,6 +101,7 @@ class ChooseInstallationPage(QWidget):
         self.ui.noUpdateCheckbox.setEnabled(False)
         self.ui.removeRadioButton.setEnabled(False)
         self.ui.purgeRadioButton.setEnabled(False)
+        self.ui.runRadioButton.setEnabled(False)
         self.ui.installRadioButton.setChecked(True)
 
         self.ui.installRadioButton.toggled.connect(
@@ -99,6 +111,9 @@ class ChooseInstallationPage(QWidget):
             functools.partial(self.update_available_actions)
         )
         self.ui.purgeRadioButton.toggled.connect(
+            functools.partial(self.update_available_actions)
+        )
+        self.ui.runRadioButton.toggled.connect(
             functools.partial(self.update_available_actions)
         )
 
@@ -119,31 +134,18 @@ class ChooseInstallationPage(QWidget):
         checkboxes as appropriate for the user's currently chosen settings.
         """
 
-        enable_next: bool = False
-
         if self.current_card is None:
             return
 
-        if self.is_network_connected:
-            self.ui.installRadioButton.setEnabled(True)
-            if self.ui.installRadioButton.isChecked():
-                enable_next = True
-
-        if self.current_card.supports_remove and self.current_card.is_installed:
-            self.ui.removeRadioButton.setEnabled(True)
-            if self.ui.removeRadioButton.isChecked():
-                enable_next = True
+        if (
+            self.ui.installRadioButton.isChecked()
+            or self.ui.removeRadioButton.isChecked()
+            or self.ui.purgeRadioButton.isChecked()
+            or self.ui.runRadioButton.isChecked()
+        ):
+            self.ui.continueButton.setEnabled(True)
         else:
-            self.uncheck_radio_button(self.ui.removeRadioButton)
-            self.ui.removeRadioButton.setEnabled(False)
-
-        if self.current_card.supports_purge and self.current_card.is_installed:
-            self.ui.purgeRadioButton.setEnabled(True)
-            if self.ui.purgeRadioButton.isChecked():
-                enable_next = True
-        else:
-            self.uncheck_radio_button(self.ui.purgeRadioButton)
-            self.ui.purgeRadioButton.setEnabled(False)
+            self.ui.continueButton.setEnabled(False)
 
         if self.ui.installRadioButton.isChecked():
             if self.current_card.supports_update and self.is_network_connected:
@@ -154,11 +156,6 @@ class ChooseInstallationPage(QWidget):
         else:
             self.uncheck_radio_button(self.ui.noUpdateCheckbox)
             self.ui.noUpdateCheckbox.setEnabled(False)
-
-        if enable_next:
-            self.ui.continueButton.setEnabled(True)
-        else:
-            self.ui.continueButton.setEnabled(False)
 
     def update_current_card(
         self,
@@ -171,25 +168,84 @@ class ChooseInstallationPage(QWidget):
 
         if source_card.isChecked():
             self.current_card = source_card
+
+            if (
+                self.current_card.mod_requires_privileges
+                and not self.in_sysmaint_session
+            ):
+                self.ui.installRadioButton.setText(
+                    "Install (Sysmaint mode required)"
+                )
+                self.ui.removeRadioButton.setText(
+                    "Remove (Sysmaint mode required)"
+                )
+                self.ui.purgeRadioButton.setText(
+                    "Purge (Sysmaint mode required)"
+                )
+            else:
+                self.ui.installRadioButton.setText("Install")
+                self.ui.removeRadioButton.setText("Remove")
+                self.ui.purgeRadioButton.setText("Purge")
+
+            if self.is_network_connected and (
+                not self.current_card.mod_requires_privileges
+                or self.in_sysmaint_session
+            ):
+                self.ui.installRadioButton.setEnabled(True)
+
+            if (
+                self.current_card.supports_remove
+                and self.current_card.is_installed
+                and (
+                    not self.current_card.mod_requires_privileges
+                    or self.in_sysmaint_session
+                )
+            ):
+                self.ui.removeRadioButton.setEnabled(True)
+            else:
+                self.uncheck_radio_button(self.ui.removeRadioButton)
+                self.ui.removeRadioButton.setEnabled(False)
+
+            if (
+                self.current_card.supports_purge
+                and self.current_card.is_installed
+                and (
+                    not self.current_card.mod_requires_privileges
+                    or self.in_sysmaint_session
+                )
+            ):
+                self.ui.purgeRadioButton.setEnabled(True)
+            else:
+                self.uncheck_radio_button(self.ui.purgeRadioButton)
+                self.ui.purgeRadioButton.setEnabled(False)
+
+            if self.current_card.is_installed and (
+                not self.in_sysmaint_session
+                or not self.user_sysmaint_split_installed
+            ):
+                self.ui.runRadioButton.setEnabled(True)
+
             self.update_available_actions()
 
     # pylint: disable=too-many-return-statements
-    def modifyMode(self) -> ModifyMode:
+    def manageMode(self) -> ManageMode:
         """
         Gets the software modification mode currently selected by the user.
         """
 
         if self.current_card is None:
-            return ModifyMode.Unknown
+            return ManageMode.Unknown
 
         if self.ui.installRadioButton.isChecked():
             if self.ui.noUpdateCheckbox.isChecked():
-                return ModifyMode.Install
+                return ManageMode.Install
             if self.current_card.supports_update:
-                return ModifyMode.UpdateAndInstall
-            return ModifyMode.Install
+                return ManageMode.UpdateAndInstall
+            return ManageMode.Install
         if self.ui.removeRadioButton.isChecked():
-            return ModifyMode.Remove
+            return ManageMode.Remove
         if self.ui.purgeRadioButton.isChecked():
-            return ModifyMode.Purge
-        return ModifyMode.Unknown
+            return ManageMode.Purge
+        if self.ui.runRadioButton.isChecked():
+            return ManageMode.Run
+        return ManageMode.Unknown

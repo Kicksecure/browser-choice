@@ -25,6 +25,7 @@ from typing import (
 from types import FrameType
 
 from PyQt5.QtCore import (
+    Qt,
     QRect,
     QTimer,
     QProcess,
@@ -53,7 +54,7 @@ from browser_choice.packagecard import PackageCard
 from browser_choice.selectapplicationpage import SelectApplicationPage
 from browser_choice.chooseinstallationpage import (
     ChooseInstallationPage,
-    ModifyMode,
+    ManageMode,
 )
 from browser_choice.confirminstallationdialog import ConfirmInstallationDialog
 from browser_choice.applyingchangespage import ApplyingChangesPage
@@ -147,6 +148,7 @@ def write_to_log(line: str) -> None:
     if GlobalData.log_file is not None:
         print(line, file=GlobalData.log_file)
 
+
 # pylint: disable=too-few-public-methods
 class ErrorDialog(QDialog):
     """
@@ -160,6 +162,9 @@ class ErrorDialog(QDialog):
         self.root_layout: QVBoxLayout = QVBoxLayout(self)
         self.error_label: QLabel = QLabel(self)
         self.error_label.setWordWrap(True)
+        self.error_label.setTextInteractionFlags(
+            Qt.LinksAccessibleByMouse | Qt.TextSelectableByMouse
+        )
         self.error_label.setText(error_text)
         self.root_layout.addWidget(self.error_label)
         self.resize(self.minimumWidth(), self.minimumHeight())
@@ -177,6 +182,9 @@ class InitWarnDialog(QDialog):
         self.root_layout: QVBoxLayout = QVBoxLayout(self)
         self.warn_label: QLabel = QLabel(self)
         self.warn_label.setWordWrap(True)
+        self.warn_label.setTextInteractionFlags(
+            Qt.LinksAccessibleByMouse | Qt.TextSelectableByMouse
+        )
         if restrict_type == "appvm":
             self.warn_label.setText(GlobalData.appvm_warn_label)
         elif restrict_type == "dispvm":
@@ -204,26 +212,33 @@ class BrowserChoiceWindow(QDialog):
     def __init__(self, parent: QWidget | None = None):
         super(QWidget, self).__init__(parent)
 
-        self.in_sysmaint_session: bool = subprocess.run(
-            [
-                "/usr/libexec/browser-choice/user-sysmaint-split-check",
-                "needs-sysmaint",
-                "quiet",
-            ],
-            check=False,
-        ).returncode == 0
+        self.setWindowFlags(Qt.Window)
 
-        self.user_sysmaint_split_installed: bool = subprocess.run(
-            [
-                "/usr/bin/bash",
-                "-c",
-                "--",
-                "source "
-                "/usr/libexec/helper-scripts/package_installed_check.bsh; "
-                "pkg_installed user-sysmaint-split"
-            ],
-            check=False,
-        ).returncode == 0
+        self.in_sysmaint_session: bool = (
+            subprocess.run(
+                [
+                    "/usr/libexec/browser-choice/user-sysmaint-split-check",
+                    "needs-sysmaint",
+                ],
+                check=False,
+            ).returncode
+            == 0
+        )
+
+        self.user_sysmaint_split_installed: bool = (
+            subprocess.run(
+                [
+                    "/usr/bin/bash",
+                    "-c",
+                    "--",
+                    "source "
+                    "/usr/libexec/helper-scripts/package_installed_check.bsh; "
+                    "pkg_installed user-sysmaint-split",
+                ],
+                check=False,
+            ).returncode
+            == 0
+        )
 
         init_warn_dialog: InitWarnDialog | None = None
         if GlobalData.qube_type in ("appvm", "dispvm"):
@@ -232,17 +247,14 @@ class BrowserChoiceWindow(QDialog):
             )
             init_warn_dialog.exec()
         elif (
-            self.user_sysmaint_split_installed
-            and not self.in_sysmaint_session
+            self.user_sysmaint_split_installed and not self.in_sysmaint_session
         ):
-            init_warn_dialog = InitWarnDialog(
-                restrict_type="user_session"
-            )
+            init_warn_dialog = InitWarnDialog(restrict_type="user_session")
             init_warn_dialog.exec()
         if init_warn_dialog is not None:
             init_warn_dialog.deleteLater()
 
-        self.setGeometry(QRect(0, 0, 700, 600))
+        self.setGeometry(QRect(0, 0, 865, 700))
         self.root_layout = QVBoxLayout(self)
         self.setWindowTitle("Browser Choice")
 
@@ -317,12 +329,16 @@ class BrowserChoiceWindow(QDialog):
             app_type_list=app_type_list,
             card_group_list=card_group_list,
             restrict_type=(
-                GlobalData.qube_type if GlobalData.qube_type != "none"
-                else "user_session" if (
-                    self.user_sysmaint_split_installed
-                    and not self.in_sysmaint_session
+                GlobalData.qube_type
+                if GlobalData.qube_type != "none"
+                else (
+                    "user_session"
+                    if (
+                        self.user_sysmaint_split_installed
+                        and not self.in_sysmaint_session
+                    )
+                    else "none"
                 )
-                else "none"
             ),
             show_unofficial_warning=(
                 are_unofficial_plugins_present(self.plugin_data)
@@ -377,6 +393,7 @@ class BrowserChoiceWindow(QDialog):
                 supports_purge=plugin_repo.purge_script is not None,
                 is_installed=plugin_repo.is_installed,
                 capability_info=plugin_repo.capability_info,
+                mod_requires_privileges=plugin_repo.mod_requires_privileges,
             )
             package_card_list.append(package_card)
 
@@ -384,6 +401,8 @@ class BrowserChoiceWindow(QDialog):
             self.chosen_plugin.product_name,
             card_list=package_card_list,
             is_network_connected=self.is_network_connected,
+            in_sysmaint_session=self.in_sysmaint_session,
+            user_sysmaint_split_installed=self.user_sysmaint_split_installed,
             parent=self,
         )
         choose_installation_page.backClicked.connect(
@@ -425,29 +444,42 @@ class BrowserChoiceWindow(QDialog):
 
         command_str: str | None = None
 
-        match self.choose_installation_page.modifyMode():
-            case ModifyMode.UpdateAndInstall:
+        match self.choose_installation_page.manageMode():
+            case ManageMode.UpdateAndInstall:
                 self.change_str = "installed"
                 if not self.in_sysmaint_session:
                     self.allow_app_launch = True
                 command_str = self.chosen_repo.update_and_install_script
-            case ModifyMode.Install:
+            case ManageMode.Install:
                 self.change_str = "installed"
                 if not self.in_sysmaint_session:
                     self.allow_app_launch = True
                 command_str = self.chosen_repo.install_script
-            case ModifyMode.Remove:
+            case ManageMode.Remove:
                 self.change_str = "removed"
                 command_str = self.chosen_repo.uninstall_script
-            case ModifyMode.Purge:
+            case ManageMode.Purge:
                 self.change_str = "purged"
                 command_str = self.chosen_repo.purge_script
+            case ManageMode.Run:
+                command_str = self.chosen_repo.launch_script
             case _:
                 error_dialog = ErrorDialog(
                     "<p>Unreachable code hit in <code>confirm_installation_choice</code>."
                 )
                 error_dialog.exec()
                 sys.exit(1)
+
+        if self.choose_installation_page.manageMode() == ManageMode.Run:
+            assert (
+                not self.in_sysmaint_session
+                or not self.user_sysmaint_split_installed
+            )
+            if len(sys.argv) == 2:
+                self.chosen_repo.run_launch(sys.argv[1])
+            else:
+                self.chosen_repo.run_launch()
+            sys.exit(0)
 
         assert self.change_str is not None
         assert command_str is not None
@@ -490,24 +522,24 @@ class BrowserChoiceWindow(QDialog):
             "-----"
         )
 
-        match self.choose_installation_page.modifyMode():
-            case ModifyMode.UpdateAndInstall:
+        match self.choose_installation_page.manageMode():
+            case ManageMode.UpdateAndInstall:
                 write_to_log(
                     "Executing command: "
                     f"{self.chosen_repo.update_and_install_script}"
                 )
                 self.execute_process = self.chosen_repo.run_update_and_install()
-            case ModifyMode.Install:
+            case ManageMode.Install:
                 write_to_log(
                     f"Executing command: {self.chosen_repo.install_script}"
                 )
                 self.execute_process = self.chosen_repo.run_install()
-            case ModifyMode.Remove:
+            case ManageMode.Remove:
                 write_to_log(
                     f"Executing command: {self.chosen_repo.uninstall_script}"
                 )
                 self.execute_process = self.chosen_repo.run_uninstall()
-            case ModifyMode.Purge:
+            case ManageMode.Purge:
                 write_to_log(
                     f"Executing command: {self.chosen_repo.purge_script}"
                 )
@@ -593,13 +625,15 @@ class BrowserChoiceWindow(QDialog):
         self.changes_complete_page = ChangesCompletePage(
             app_name=self.chosen_plugin.product_name,
             repository_name=self.chosen_repo.method_name_short,
+            app_script=self.chosen_repo.launch_script,
             change_str=self.change_str,
             did_succeed=self.execute_process_successful,
             allow_launch=self.allow_app_launch,
+            in_sysmaint_session=self.in_sysmaint_session,
+            user_sysmaint_split_installed=self.user_sysmaint_split_installed,
         )
         self.changes_complete_page.doneClicked.connect(self.finish_wizard)
         self.switch_to_page(self.changes_complete_page)
-        self.resize(self.minimumWidth(), self.minimumHeight())
 
     def finish_wizard(self) -> None:
         """
@@ -611,7 +645,10 @@ class BrowserChoiceWindow(QDialog):
         assert self.chosen_repo is not None
 
         if self.changes_complete_page.launchAppChecked():
-            self.chosen_repo.run_launch()
+            if len(sys.argv) == 2:
+                self.chosen_repo.run_launch(sys.argv[1])
+            else:
+                self.chosen_repo.run_launch()
         sys.exit(0)
 
     @staticmethod

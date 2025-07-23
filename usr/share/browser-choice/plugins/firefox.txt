@@ -19,13 +19,14 @@ method-subtext=Firefox ESR (Extended Stable Release) from packages.debian.org re
 method-logo=/usr/share/browser-choice/icons/debian.svg
 method-type=apt-firstparty
 install-warn-text=
-update-and-install-script=pkexec bash -c -- 'apt-get update; apt-get-noninteractive -y install firefox-esr'
+update-and-install-script=pkexec bash -c -- 'apt-get update && apt-get-noninteractive -y install firefox-esr'
 install-script=pkexec apt-get-noninteractive -y install firefox-esr
 uninstall-script=pkexec apt-get-noninteractive -y remove firefox-esr
 purge-script=pkexec apt-get-noninteractive -y purge firefox-esr
 launch-script=firefox-esr
-install-status=source /usr/libexec/helper-scripts/package_installed_check.bsh; pkg_installed firefox-esr
-capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 ppc64el && /usr/libexec/browser-choice/user-sysmaint-split-check needs-sysmaint
+install-status=source /usr/libexec/helper-scripts/package_installed_check.bsh && pkg_installed firefox-esr
+capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 ppc64el
+mod-requires-privileges=yes
 
 [repo:mozilla]
 method-name=Firefox Stable from Mozilla official repository
@@ -35,12 +36,13 @@ method-logo=/usr/share/browser-choice/icons/firefox.svg
 method-type=apt-thirdparty
 install-warn-text=
 update-and-install-script=
-install-script=pkexec bash -c -- 'extrepo enable mozilla; apt-get update; apt-get-noninteractive -y install firefox'
+install-script=pkexec bash -c -- 'extrepo enable mozilla && apt-get update && apt-get-noninteractive -y install firefox'
 uninstall-script=pkexec apt-get-noninteractive -y remove firefox
 purge-script=pkexec apt-get-noninteractive -y purge firefox
 launch-script=firefox
-install-status=source /usr/libexec/helper-scripts/package_installed_check.bsh; pkg_installed firefox
-capability=/usr/libexec/browser-choice/architecture-support-check amd64 && /usr/libexec/browser-choice/user-sysmaint-split-check needs-sysmaint
+install-status=source /usr/libexec/helper-scripts/package_installed_check.bsh && pkg_installed firefox
+capability=/usr/libexec/browser-choice/architecture-support-check amd64
+mod-requires-privileges=yes
 
 [repo:flathub]
 method-name=Firefox Stable from Flathub repository
@@ -55,4 +57,5 @@ uninstall-script=flatpak uninstall --assumeyes org.mozilla.firefox
 purge-script=
 launch-script=flatpak run org.mozilla.firefox
 install-status=flatpak info org.mozilla.firefox
-capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 && /usr/libexec/browser-choice/user-sysmaint-split-check needs-sysmaint
+capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64
+mod-requires-privileges=yes

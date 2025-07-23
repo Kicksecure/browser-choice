@@ -142,3 +142,11 @@ install-status=source /usr/libexec/helper-scripts/package_installed_check.bsh; p
 ## before failing, this info will be used to explain why the application is
 ## unsupported.
 capability=/usr/libexec/browser-choice/architecture-support-check amd64
+
+## 'mod-requires-privileges' specifies whether special privileges are needed
+## to run software "modifications" (installation, removal, purge). For
+## browsers that will be installed system-wide, this should always be set to
+## "yes", even if using Flatpak to install them, as standard user accounts on
+## Kicksecure may be unable to install Flatpaks by themselves. For
+## user-specific browsers, this can be set to "no".
+mod-requires-privileges=yes|no

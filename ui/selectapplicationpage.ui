@@ -34,6 +34,9 @@
        <property name="text">
         <string>&lt;span style=&quot; font-size:20pt; font-weight:600;&quot;&gt;Step 1/4: Select Application&lt;/span&gt;</string>
        </property>
+       <property name="textInteractionFlags">
+        <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+       </property>
       </widget>
      </item>
      <item>
@@ -55,10 +58,13 @@
     <widget class="QLabel" name="label_2">
      <property name="text">
       <string>&lt;p&gt;&lt;font color=&quot;orange&quot;&gt;WARNING:&lt;/font&gt; Software installation comes with inherent risks. If you do not trust a vendor or their security practices, you should not install applications from them. See &lt;a href=&quot;https://www.kicksecure.com/wiki/Install_Software#Trust_Considerations&quot;&gt;Trust Considerations&lt;/a&gt; for more information.&lt;/p&gt;
-&lt;p&gt;Select the application to install or remove.&lt;/p&gt;</string>
+&lt;p&gt;Select the application to install, remove, or run.&lt;/p&gt;</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
      </property>
     </widget>
    </item>
@@ -92,6 +98,9 @@
      <property name="wordWrap">
       <bool>true</bool>
      </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     </property>
     </widget>
    </item>
    <item>
@@ -101,6 +110,9 @@
      </property>
      <property name="wordWrap">
       <bool>true</bool>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
      </property>
     </widget>
    </item>
@@ -115,6 +127,9 @@
      <property name="openExternalLinks">
       <bool>true</bool>
      </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     </property>
     </widget>
    </item>
    <item>
@@ -127,6 +142,9 @@
      </property>
      <property name="openExternalLinks">
       <bool>true</bool>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
      </property>
     </widget>
    </item>
@@ -141,6 +159,9 @@
      <property name="openExternalLinks">
       <bool>true</bool>
      </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     </property>
     </widget>
    </item>
    <item>
@@ -150,6 +171,9 @@
      </property>
      <property name="openExternalLinks">
       <bool>true</bool>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
      </property>
     </widget>
    </item>

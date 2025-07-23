@@ -62,6 +62,7 @@ class ChoicePluginRepo(QObject):
         launch_script: str | None,
         install_status: str | None,
         capability: str | None,
+        mod_requires_privileges: bool | None,
         parent: QObject | None = None,
     ):
         super().__init__(parent)
@@ -77,6 +78,7 @@ class ChoicePluginRepo(QObject):
             "launch_script": launch_script,
             "install_status": install_status,
             "capability": capability,
+            "mod_requires_privileges": mod_requires_privileges,
         }
         for key, value in none_check_dict.items():
             if value is None:
@@ -95,6 +97,7 @@ class ChoicePluginRepo(QObject):
         assert launch_script is not None
         assert install_status is not None
         assert capability is not None
+        assert mod_requires_privileges is not None
 
         self.internal_id: str = internal_id
         self.method_name: str = method_name
@@ -110,14 +113,20 @@ class ChoicePluginRepo(QObject):
         self.launch_script: str = launch_script
         self.install_status: str = install_status
         self.capability: str = capability
+        self.mod_requires_privileges: bool = mod_requires_privileges
         self.is_installed: bool = self.check_installed()
         self.capability_info: str = self.check_capability()
 
-    def __run_script(self, script: str, detach: bool = False) -> QProcess:
+    def __run_script(
+        self, script: str, set_x: bool = False, detach: bool = False
+    ) -> QProcess:
         """
         Runs the provided script asynchronously with QProcess. Used internally
         to run plugin-defined scripts.
         """
+
+        if set_x:
+            script = "set -x; " + script
 
         output_process: QProcess = QProcess(self)
         output_process.setProgram("/usr/bin/bash")
@@ -144,14 +153,14 @@ class ChoicePluginRepo(QObject):
 
         if self.update_and_install_script is None:
             return None
-        return self.__run_script(self.update_and_install_script)
+        return self.__run_script(self.update_and_install_script, set_x=True)
 
     def run_install(self) -> QProcess:
         """
         Run a plugin's 'install-script' asynchronously.
         """
 
-        return self.__run_script(self.install_script)
+        return self.__run_script(self.install_script, set_x=True)
 
     def run_uninstall(self) -> QProcess | None:
         """
@@ -160,7 +169,7 @@ class ChoicePluginRepo(QObject):
 
         if self.uninstall_script is None:
             return None
-        return self.__run_script(self.uninstall_script)
+        return self.__run_script(self.uninstall_script, set_x=True)
 
     def run_purge(self) -> QProcess | None:
         """
@@ -169,15 +178,19 @@ class ChoicePluginRepo(QObject):
 
         if self.purge_script is None:
             return None
-        return self.__run_script(self.purge_script)
+        return self.__run_script(self.purge_script, set_x=True)
 
-    def run_launch(self) -> QProcess | None:
+    def run_launch(self, extra_args: str | None = None) -> QProcess | None:
         """
         Run a plugin's 'launch-script' asynchronously, detached from the
         parent so the parent can terminate without terminating the child.
         """
 
-        return self.__run_script(self.launch_script, detach=True)
+        if extra_args is None:
+            return self.__run_script(self.launch_script, detach=True)
+        return self.__run_script(
+            self.launch_script + " " + extra_args, detach=True
+        )
 
     def check_installed(self) -> bool:
         """
@@ -217,8 +230,8 @@ class ChoicePluginRepo(QObject):
         )
         if capability_process.returncode == 0:
             return ""
-        capability_process_str = (
-            capability_process.stdout.decode(encoding="utf-8")
+        capability_process_str = capability_process.stdout.decode(
+            encoding="utf-8"
         )
         if capability_process_str.strip() == "":
             return "Unsupported on this system."
@@ -347,6 +360,7 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
     repo_launch_script: str | None = None
     repo_install_status: str | None = None
     repo_capability: str | None = None
+    repo_mod_requires_privileges: bool | None = None
 
     with open(config_file, "r", encoding="utf-8") as conf_stream:
         for line in conf_stream:
@@ -394,6 +408,7 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
                             launch_script=repo_launch_script,
                             install_status=repo_install_status,
                             capability=repo_capability,
+                            mod_requires_privileges=repo_mod_requires_privileges,
                         )
                         repo_list.append(new_repo)
 
@@ -481,6 +496,17 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
                         repo_install_status = str_or_none(line_val)
                     case "capability":
                         repo_capability = str_or_none(line_val)
+                    case "mod-requires-privileges":
+                        if line_val.lower() == "yes":
+                            repo_mod_requires_privileges = True
+                        elif line_val.lower() == "no":
+                            repo_mod_requires_privileges = False
+                        else:
+                            throw_config_error(
+                                config_file,
+                                "'mod-requires-privileges' boolean not set "
+                                "to 'yes' or 'no'",
+                            )
 
     if not hit_product_header and not hit_repo_header:
         throw_config_error(config_file, "no headers found")
@@ -505,6 +531,7 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
         launch_script=repo_launch_script,
         install_status=repo_install_status,
         capability=repo_capability,
+        mod_requires_privileges=repo_mod_requires_privileges,
     )
     repo_list.append(new_repo)
 

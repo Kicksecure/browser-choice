@@ -19,13 +19,14 @@ method-subtext=Chromium from packages.debian.org repository. Installed via tool:
 method-logo=/usr/share/browser-choice/icons/debian.svg
 method-type=apt-firstparty
 install-warn-text=
-update-and-install-script=pkexec bash -c -- 'apt-get update; apt-get-noninteractive -y install chromium'
+update-and-install-script=pkexec bash -c -- 'apt-get update && apt-get-noninteractive -y install chromium'
 install-script=pkexec apt-get-noninteractive -y install chromium
 uninstall-script=pkexec apt-get-noninteractive -y remove chromium
 purge-script=pkexec apt-get-noninteractive -y purge chromium
 launch-script=chromium
-install-status=source /usr/libexec/helper-scripts/package_installed_check.bsh; pkg_installed chromium
-capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 ppc64el && /usr/libexec/browser-choice/user-sysmaint-split-check needs-sysmaint
+install-status=source /usr/libexec/helper-scripts/package_installed_check.bsh && pkg_installed chromium
+capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 ppc64el
+mod-requires-privileges=yes
 
 [repo:flathub]
 method-name=Chromium from Flathub repository (Community)
@@ -35,9 +36,10 @@ method-logo=/usr/share/browser-choice/icons/flatpak.svg
 method-type=flathub
 install-warn-text=Chromium is an unverified (non-official) Flatpak (Open Source) packaged by a third party (not Google). Installing it will allow unverified and proprietary, closed source (not Open Source) Flatpaks to be installed on this system if explicitly requested by the user. This does not imply that Chromium itself is closed source. See also: <a href="https://www.kicksecure.com/wiki/Install_Software#Flathub_Package_Sources_Security">Flathub Package Sources Security</a>.
 update-and-install-script=
-install-script=pkexec flatpak remote-modify --subset= flathub; flatpak install --assumeyes flathub org.chromium.Chromium
+install-script=pkexec flatpak remote-modify --subset= flathub && flatpak install --assumeyes flathub org.chromium.Chromium
 uninstall-script=flatpak uninstall --assumeyes org.chromium.Chromium
 purge-script=
 launch-script=flatpak run org.chromium.Chromium
 install-status=flatpak info org.chromium.Chromium
-capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 && /usr/libexec/browser-choice/user-sysmaint-split-check needs-sysmaint
+capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64
+mod-requires-privileges=yes
