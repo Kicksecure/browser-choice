@@ -37,21 +37,23 @@ class PackageCard(QWidget):
         supports_purge: bool,
         is_installed: bool,
         capability_info: str,
+        mod_requires_privileges: bool,
         parent: QWidget | None = None,
     ):
         super().__init__(parent)
         self.ui = Ui_PackageCard()
         self.ui.setupUi(self)
 
-        self.repo_id = repo_id
+        self.repo_id: str = repo_id
         self.ui.packageRadioButton.setText(package_short_description)
         self.ui.packageRadioButton.toggled.connect(self.toggled)
         self.ui.packageIconLabel.setText("")
         self.ui.packageIconLabel.setPixmap(package_icon)
-        self.supports_update = supports_update
-        self.supports_remove = supports_remove
-        self.supports_purge = supports_purge
-        self.is_installed = is_installed
+        self.supports_update: bool = supports_update
+        self.supports_remove: bool = supports_remove
+        self.supports_purge: bool = supports_purge
+        self.is_installed: bool = is_installed
+        self.mod_requires_privileges: bool = mod_requires_privileges
 
         if capability_info == "":
             if is_installed:

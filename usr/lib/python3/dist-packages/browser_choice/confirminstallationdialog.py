@@ -49,12 +49,9 @@ class ConfirmInstallationDialog(QDialog):
             f"<p>The application '{app_name}' from source '{repository_name}' "
             f"will be {change_str}. The following command will be executed:</p>"
         )
-        if (
-            install_warn_str is not None
-            and change_str == "installed"
-        ):
+        if install_warn_str is not None and change_str == "installed":
             action_info_text = (
-                f"<p><font color=\"orange\">WARNING:</font> {install_warn_str}"
+                f'<p><font color="orange">WARNING:</font> {install_warn_str}'
                 f"</p>{action_info_text}"
             )
 

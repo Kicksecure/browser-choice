@@ -34,6 +34,9 @@
        <property name="text">
         <string>&lt;span style=&quot; font-size:20pt; font-weight:600;&quot;&gt;Step 3/4: Applying Software Changes&lt;/span&gt;</string>
        </property>
+       <property name="textInteractionFlags">
+        <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+       </property>
       </widget>
      </item>
      <item>
@@ -58,6 +61,9 @@
      </property>
      <property name="wordWrap">
       <bool>true</bool>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
      </property>
     </widget>
    </item>
@@ -97,7 +103,8 @@ font: 9pt &quot;Monospace&quot;;</string>
         <string>Continue</string>
        </property>
        <property name="icon">
-        <iconset theme="go-next"/>
+        <iconset theme="go-next">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
      </item>

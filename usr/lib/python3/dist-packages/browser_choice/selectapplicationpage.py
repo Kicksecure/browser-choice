@@ -55,9 +55,7 @@ class SelectApplicationPage(QWidget):
 
         match restrict_type:
             case "appvm":
-                self.ui.restrictNoticeLabel.setText(
-                    GlobalData.appvm_warn_label
-                )
+                self.ui.restrictNoticeLabel.setText(GlobalData.appvm_warn_label)
             case "dispvm":
                 self.ui.restrictNoticeLabel.setText(
                     GlobalData.dispvm_warn_label

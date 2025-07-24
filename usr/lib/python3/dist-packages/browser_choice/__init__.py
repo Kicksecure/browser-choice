@@ -10,6 +10,7 @@ __init__.py - Shared global data.
 from pathlib import Path
 from typing import TextIO
 
+
 # pylint: disable=too-many-return-statements
 def get_qube_type() -> str:
     """
@@ -32,6 +33,7 @@ def get_qube_type() -> str:
         return "templatevm"
     return "unknown"
 
+
 # pylint: disable=too-few-public-methods
 class GlobalData:
     """
@@ -44,32 +46,33 @@ class GlobalData:
     log_file: TextIO | None = None
     qube_type: str = get_qube_type()
 
-    appvm_warn_label="You are currently running Browser Choice \
+    appvm_warn_label = 'You are currently running Browser Choice \
 inside a Qubes OS App Qube. You can install or uninstall applications, but \
 these changes will be reverted after a reboot. This is because most system \
 files in App Qubes are reset upon reboot. See \
-<a href=\"https://www.qubes-os.org/doc/templates/\">Qubes Templates</a> for \
-more information."
-    dispvm_warn_label="You are currently running Browser Choice \
+<a href="https://www.qubes-os.org/doc/templates/">Qubes Templates</a> for \
+more information.'
+    dispvm_warn_label = 'You are currently running Browser Choice \
 inside a Qubes OS Disposable. You can install or uninstall \
 applications, but these changes will be reverted after a reboot. This is \
 because all files in Disposables are reset upon reboot. See \
-<a href=\"https://www.qubes-os.org/doc/how-to-use-disposables/\">How to use \
-Disposables</a> for more information."
-    templatevm_warn_label="You are currently running Browser Choice inside \
+<a href="https://www.qubes-os.org/doc/how-to-use-disposables/">How to use \
+Disposables</a> for more information.'
+    templatevm_warn_label = 'You are currently running Browser Choice inside \
 a Qubes OS Template. Applications installed in this Template will be \
 available in all App Qubes based on it. See \
-<a href=\"https://www.qubes-os.org/doc/templates/\">Qubes Templates</a> for \
-more information."
-    standalonevm_warn_label="You are currently running Browser Choice inside a \
+<a href="https://www.qubes-os.org/doc/templates/">Qubes Templates</a> for \
+more information.'
+    standalonevm_warn_label = 'You are currently running Browser Choice inside a \
 Qubes OS Standalone. Applications installed in this Qube will only be \
 available within this Qube. See \
-<a href=\"https://www.qubes-os.org/doc/templates/\">Qubes Templates</a> for \
-more information."
-    usersession_warn_label="You are currently running Browser Choice inside \
-a user session. You will be unable to install a system-wide browser from \
-here. To install a system-wide browser, reboot, select <code>PERSISTENT Mode \
-| SYSMAINT Session | system maintenance tasks</code> from the boot menu, and \
-click <code>Install a Browser</code> in the System Maintenance Panel. See \
-<a href=\"https://www.kicksecure.com/wiki/Sysmaint\">Sysmaint</a> for more \
-information."
+<a href="https://www.qubes-os.org/doc/templates/">Qubes Templates</a> for \
+more information.'
+    usersession_warn_label = 'You are currently running Browser Choice inside \
+a user session. You will be unable to install most browsers from here; only \
+browsers that install into the current user acount will be installable. To \
+install a browser, reboot, select <code>PERSISTENT Mode| SYSMAINT Session | \
+system maintenance tasks</code> from the boot menu, and click <code>Install \
+a Browser</code> in the System Maintenance Panel. See \
+<a href="https://www.kicksecure.com/wiki/Sysmaint">Sysmaint</a> for more \
+information.'

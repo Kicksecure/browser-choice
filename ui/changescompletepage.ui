@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>504</width>
-    <height>165</height>
+    <height>581</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,6 +34,9 @@
        <property name="text">
         <string>&lt;span style=&quot; font-size:20pt; font-weight:600;&quot;&gt;Step 4/4: Software Changes Complete&lt;/span&gt;</string>
        </property>
+       <property name="textInteractionFlags">
+        <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+       </property>
       </widget>
      </item>
      <item>
@@ -57,7 +60,10 @@
       <string>actionCompleteLabel</string>
      </property>
      <property name="wordWrap">
-      <bool>false</bool>
+      <bool>true</bool>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
      </property>
     </widget>
    </item>

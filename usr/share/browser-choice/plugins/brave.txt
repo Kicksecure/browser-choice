@@ -20,12 +20,13 @@ method-logo=/usr/share/browser-choice/icons/brave.svg
 method-type=apt-thirdparty
 install-warn-text=
 update-and-install-script=
-install-script=pkexec bash -c -- 'extrepo enable brave_release; apt-get update; apt-get-noninteractive -y install brave-browser'
+install-script=pkexec bash -c -- 'extrepo enable brave_release && apt-get update && apt-get-noninteractive -y install brave-browser'
 uninstall-script=pkexec apt-get-noninteractive -y remove brave-browser
 purge-script=pkexec apt-get-noninteractive -y purge brave-browser
 launch-script=brave-browser
-install-status=source /usr/libexec/helper-scripts/package_installed_check.bsh; pkg_installed brave-browser
-capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 && /usr/libexec/browser-choice/user-sysmaint-split-check needs-sysmaint
+install-status=source /usr/libexec/helper-scripts/package_installed_check.bsh && pkg_installed brave-browser
+capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64
+mod-requires-privileges=yes
 
 [repo:flathub]
 method-name=Brave Browser from Flathub repository
@@ -40,4 +41,5 @@ uninstall-script=flatpak uninstall --assumeyes com.brave.Browser
 purge-script=
 launch-script=flatpak run com.brave.Browser
 install-status=flatpak info com.brave.Browser
-capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 && /usr/libexec/browser-choice/user-sysmaint-split-check needs-sysmaint
+capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64
+mod-requires-privileges=yes

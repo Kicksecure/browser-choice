@@ -15,7 +15,7 @@ Rules-Requires-Root: no
 
 Package: browser-choice
 Architecture: all
-Depends: python3, ${misc:Depends}
+Depends: python3, tb-updater, tb-starter, ${misc:Depends}
 Description: browser selection installer dialog
  A graphical interface that allows users to select and manage browsers.
  .

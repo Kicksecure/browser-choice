@@ -30,9 +30,12 @@ class ChangesCompletePage(QWidget):
         self,
         app_name: str,
         repository_name: str,
+        app_script: str,
         change_str: str,
         did_succeed: bool,
         allow_launch: bool,
+        in_sysmaint_session: bool,
+        user_sysmaint_split_installed: bool,
         parent: QWidget | None = None,
     ):
         super().__init__(parent)
@@ -41,19 +44,39 @@ class ChangesCompletePage(QWidget):
 
         self.ui.doneButton.clicked.connect(self.doneClicked)
 
+        exit_wizard_str = "Click 'Done' to exit the wizard. You can restart \
+this wizard at any time by "
+        if in_sysmaint_session and user_sysmaint_split_installed:
+            exit_wizard_str += "clicking 'Install a Browser' in the System \
+Maintenance Panel."
+        else:
+            exit_wizard_str += "opening 'Browser Choice' from the Start Menu."
+
         if did_succeed:
-            self.ui.actionCompleteLabel.setText(
-                f"The application '{app_name}' from '{repository_name}' has been "
-                f"{change_str}. Click 'Done' to exit the wizard."
-            )
+            if change_str == "installed":
+                self.ui.actionCompleteLabel.setText(
+                    f"<p>The application '{app_name}' from "
+                    f"'{repository_name}' has been {change_str}. You may "
+                    "launch the browser from the Start Menu in a user "
+                    f"session, or by running <code>{app_script}</code> in a "
+                    "terminal.</p>"
+                    f"<p>{exit_wizard_str}</p>"
+                )
+            else:
+                self.ui.actionCompleteLabel.setText(
+                    f"<p>The application '{app_name}' from "
+                    f"'{repository_name}' has been {change_str}.</p>"
+                    f"<p>{exit_wizard_str}</p>"
+                )
             if allow_launch:
                 self.ui.launchAppCheckbox.setText(f"Launch '{app_name}")
             else:
                 self.ui.launchAppCheckbox.setVisible(False)
         else:
             self.ui.actionCompleteLabel.setText(
-                f"The application '{app_name}' from '{repository_name} could "
-                f"not be {change_str}. Click 'Done' to exit the wizard."
+                f"<p>The application '{app_name}' from '{repository_name} "
+                f"could not be {change_str}.</p>"
+                f"<p>{exit_wizard_str}</p>"
             )
             self.ui.launchAppCheckbox.setVisible(False)
 
