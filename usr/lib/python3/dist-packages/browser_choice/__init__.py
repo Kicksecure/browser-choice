@@ -70,7 +70,7 @@ available within this Qube. See \
 more information.'
     usersession_warn_label = 'You are currently running Browser Choice inside \
 a user session. You will be unable to install most browsers from here; only \
-browsers that install into the current user acount will be installable. To \
+browsers that install into the current user account will be installable. To \
 install a browser, reboot, select <code>PERSISTENT Mode| SYSMAINT Session | \
 system maintenance tasks</code> from the boot menu, and click <code>Install \
 a Browser</code> in the System Maintenance Panel. See \
