@@ -102,7 +102,6 @@ class ChooseInstallationPage(QWidget):
         self.ui.removeRadioButton.setEnabled(False)
         self.ui.purgeRadioButton.setEnabled(False)
         self.ui.runRadioButton.setEnabled(False)
-        self.ui.installRadioButton.setChecked(True)
 
         self.ui.installRadioButton.toggled.connect(
             functools.partial(self.update_available_actions)
@@ -117,15 +116,19 @@ class ChooseInstallationPage(QWidget):
             functools.partial(self.update_available_actions)
         )
 
-    def uncheck_radio_button(self, radio_button: QRadioButton) -> None:
+    def disable_radio_button(self, radio_button: QRadioButton) -> None:
         """
-        Convenience function for unchecking a radio button that is being
-        disabled, and checking the "Install" radio button instead.
+        Convenience function for disabling and unchecking a radio button that
+        is being disabled.
         """
 
         if radio_button.isChecked():
+            ## setAutoExclusive(False) is needed to allow unchecking buttons.
+            ## See https://forum.qt.io/topic/118139/radio-buttons-not-getting-unchecked/4
+            radio_button.setAutoExclusive(False)
             radio_button.setChecked(False)
-            self.ui.installRadioButton.setChecked(True)
+            radio_button.setAutoExclusive(True)
+        radio_button.setEnabled(False)
 
     # pylint: disable=too-many-branches
     def update_available_actions(self) -> None:
@@ -151,10 +154,10 @@ class ChooseInstallationPage(QWidget):
             if self.current_card.supports_update and self.is_network_connected:
                 self.ui.noUpdateCheckbox.setEnabled(True)
             else:
-                self.uncheck_radio_button(self.ui.noUpdateCheckbox)
+                self.ui.noUpdateCheckbox.setChecked(False)
                 self.ui.noUpdateCheckbox.setEnabled(False)
         else:
-            self.uncheck_radio_button(self.ui.noUpdateCheckbox)
+            self.ui.noUpdateCheckbox.setChecked(False)
             self.ui.noUpdateCheckbox.setEnabled(False)
 
     def update_current_card(
@@ -203,8 +206,7 @@ class ChooseInstallationPage(QWidget):
             ):
                 self.ui.removeRadioButton.setEnabled(True)
             else:
-                self.uncheck_radio_button(self.ui.removeRadioButton)
-                self.ui.removeRadioButton.setEnabled(False)
+                self.disable_radio_button(self.ui.removeRadioButton)
 
             if (
                 self.current_card.supports_purge
@@ -216,14 +218,15 @@ class ChooseInstallationPage(QWidget):
             ):
                 self.ui.purgeRadioButton.setEnabled(True)
             else:
-                self.uncheck_radio_button(self.ui.purgeRadioButton)
-                self.ui.purgeRadioButton.setEnabled(False)
+                self.disable_radio_button(self.ui.purgeRadioButton)
 
             if self.current_card.is_installed and (
                 not self.in_sysmaint_session
                 or not self.user_sysmaint_split_installed
             ):
                 self.ui.runRadioButton.setEnabled(True)
+            else:
+                self.disable_radio_button(self.ui.runRadioButton)
 
             self.update_available_actions()
 
