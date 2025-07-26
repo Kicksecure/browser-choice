@@ -1,3 +1,22 @@
+commit 0cfb1630ba2afe24fd6584be239a6a30c32989b3
+Merge: c26b7ba fc37dfb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Jul 26 05:03:05 2025 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/master'
+
+commit fc37dfb44af5ce47fb550515e3070ed4900addcf
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Fri Jul 25 15:23:35 2025 -0500
+
+    Fix checkbox and radio button behavior on 'Step 2/4: Choose Installation Options'
+
+commit c26b7babe55b579401236cb901eeaed866e814cd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jul 24 06:44:08 2025 +0000
+
+    bumped changelog version
+
 commit 6991ac7e61193eb3e84f192aa0cbc6cb9743b053
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Jul 24 02:34:25 2025 -0400
