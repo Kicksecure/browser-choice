@@ -1,0 +1,7 @@
+Types: deb
+URIs: https://repository.mullvad.net/deb/stable
+Suites: stable
+Components: main
+Enabled: yes
+Signed-By: /etc/apt/keyrings/mullvad-keyring.asc
+Architectures: amd64
