@@ -1,3 +1,9 @@
+browser-choice (3:1.0-1) unstable; urgency=medium
+
+  * New upstream version (local package).
+
+ -- Patrick Schleizer <adrelanos@whonix.org>  Tue, 26 Aug 2025 08:35:12 +0000
+
 browser-choice (3:0.9-1) unstable; urgency=medium
 
   * New upstream version (local package).
