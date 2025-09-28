@@ -3,10 +3,13 @@
 # Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 # See the file COPYING for copying conditions.
 
+# pylint: disable=broad-exception-caught
+
 """
 __init__.py - Shared global data.
 """
 
+import re
 from pathlib import Path
 from typing import TextIO
 
@@ -34,6 +37,50 @@ def get_qube_type() -> str:
     return "unknown"
 
 
+def get_qubes_version() -> str:
+    """
+    If running under Qubes OS, returns the Qubes OS version this VM is running
+    under.
+    """
+
+    marker_path: Path = Path("/usr/share/qubes/marker-vm")
+    if not marker_path.is_file():
+        return "0"
+
+    try:
+        marker_lines: list[str] = marker_path.read_text(encoding="utf-8").split(
+            "\n"
+        )
+        marker_version: str | None = None
+        detect_comment_regex: re.Pattern[str] = re.compile(r"\s*#")
+        for marker_line in marker_lines:
+            if detect_comment_regex.match(marker_line):
+                continue
+            marker_version = marker_line
+            break
+        if marker_version is not None:
+            return marker_version
+    except Exception:
+        pass
+
+    return "0"
+
+
+def get_usersession_warn_label() -> str:
+    """
+    Gets the usersession_warn_label string appropriate for the current
+    environment.
+    """
+
+    if GlobalData.qube_type == "none":
+        return GlobalData.usersession_warn_label_nonqubes
+    if GlobalData.qubes_version == "4.2":
+        return GlobalData.usersession_warn_label_qubes_old
+    if GlobalData.qube_type in ("appvm", "dispvm"):
+        return GlobalData.usersession_warn_label_qubes_new_appvm
+    return GlobalData.usersession_warn_label_qubes_new_template
+
+
 # pylint: disable=too-few-public-methods
 class GlobalData:
     """
@@ -45,6 +92,7 @@ class GlobalData:
     log_file_path: Path = log_dir_path.joinpath("log.txt")
     log_file: TextIO | None = None
     qube_type: str = get_qube_type()
+    qubes_version: str = get_qubes_version()
 
     appvm_warn_label = 'You are currently running Browser Choice \
 inside a Qubes OS App Qube. You can install or uninstall applications, but \
@@ -68,11 +116,35 @@ Qubes OS Standalone. Applications installed in this Qube will only be \
 available within this Qube. See \
 <a href="https://www.qubes-os.org/doc/templates/">Qubes Templates</a> for \
 more information.'
-    usersession_warn_label = 'You are currently running Browser Choice inside \
-a user session. You will be unable to install most browsers from here; only \
-browsers that install into the current user account will be installable. To \
-install a browser, reboot, select <code>PERSISTENT Mode| SYSMAINT Session | \
-system maintenance tasks</code> from the boot menu, and click <code>Install \
-a Browser</code> in the System Maintenance Panel. See \
+    usersession_warn_label_nonqubes = 'You are currently running Browser \
+Choice inside a user session. You will be unable to install most browsers \
+from here; only browsers that install into the current user account will be \
+installable. To install a browser, reboot, select <code>PERSISTENT Mode | \
+SYSMAINT Session | system maintenance tasks</code> from the boot menu, and \
+click <code>Install a Browser</code> in the System Maintenance Panel. See \
 <a href="https://www.kicksecure.com/wiki/Sysmaint">Sysmaint</a> for more \
 information.'
+    usersession_warn_label_qubes_old = 'You are currently running Browser \
+Choice as a normal user. You will be unable to install most browsers from \
+here; only browsers that install into the current user account will be \
+installable. To install a browser, open a terminal in dom0, run \
+<code>qvm-run -u root VMNAME xfce4-terminal</code>, then run \
+<code>browser-choice</code> from that terminal. See <a \
+href="https://www.kicksecure.com/wiki/Sysmaint">Sysmaint</a> for more \
+information.'
+    usersession_warn_label_qubes_new_appvm = 'You are currently running \
+Browser Choice as a normal user. You will be unable to install most browsers \
+from here; only browsers that install into the current user account will be \
+installable. To install other browsers in this qube, run \
+<code>browser-choice</code> in this qube\'s template. See <a \
+href="https://www.kicksecure.com/wiki/Sysmaint">Sysmaint</a> for more \
+information.'
+    usersession_warn_label_qubes_new_template = 'You are currently running \
+Browser Choice as a normal user. You will be unable to install most browsers \
+from here; only browsers that install into the current user account will be \
+installable. To install other browsers in this qube, shut the qube down. Then \
+in dom0, open Qube Manager, select this qube, click "Settings", click the \
+"Advanced" tab, set the boot mode to "default (PERSISTENT Mode - SYSMAINT \
+Session)", and click "OK". Then boot this qube and launch Browser Choice \
+again. See <a href="https://www.kicksecure.com/wiki/Sysmaint">Sysmaint</a> \
+for more information.'

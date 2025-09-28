@@ -22,6 +22,7 @@ from PyQt5.QtWidgets import (
 from browser_choice.selectapplicationpage_ui import Ui_SelectApplicationPage
 
 from browser_choice import GlobalData
+from browser_choice import get_usersession_warn_label
 from browser_choice.browsercard import BrowserCard
 from browser_choice.cardview import CardView
 
@@ -70,7 +71,7 @@ class SelectApplicationPage(QWidget):
                 )
             case "user_session":
                 self.ui.restrictNoticeLabel.setText(
-                    GlobalData.usersession_warn_label
+                    get_usersession_warn_label()
                 )
             case _:
                 self.ui.restrictNoticeLabel.setVisible(False)
