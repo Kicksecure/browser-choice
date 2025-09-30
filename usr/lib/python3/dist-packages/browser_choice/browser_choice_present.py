@@ -450,12 +450,18 @@ class BrowserChoiceWindow(QDialog):
         match self.choose_installation_page.manageMode():
             case ManageMode.UpdateAndInstall:
                 self.change_str = "installed"
-                if not self.in_sysmaint_session:
+                if (
+                    not self.in_sysmaint_session
+                    and not GlobalData.qube_type == "templatevm"
+                ):
                     self.allow_app_launch = True
                 command_str = self.chosen_repo.update_and_install_script
             case ManageMode.Install:
                 self.change_str = "installed"
-                if not self.in_sysmaint_session:
+                if (
+                    not self.in_sysmaint_session
+                    and not GlobalData.qube_type == "templatevm"
+                ):
                     self.allow_app_launch = True
                 command_str = self.chosen_repo.install_script
             case ManageMode.Remove:
