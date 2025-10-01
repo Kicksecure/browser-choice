@@ -1,3 +1,28 @@
+commit c2a8b071101875eb4db00e8f4a85b732087329f7
+Merge: a079b4f 845946c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Oct 1 05:37:48 2025 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit 845946c344c4917afbb765a7c322e6ac3e955e28
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Mon Sep 29 21:44:39 2025 -0500
+
+    Don't offer to start a browser in a Qubes TemplateVM
+
+commit 41ced11b9a77abfb58d2d7f616563625d70d9363
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sun Sep 28 18:40:10 2025 -0500
+
+    Fix user session warning string on Qubes OS
+
+commit a079b4fc01d993cbe1edf3fe2187120613a652e5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Sep 19 16:10:17 2025 +0000
+
+    bumped changelog version
+
 commit 9f2ea598ecbd6b8fce05c2a16b3faaedde69872c
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Sep 18 10:06:05 2025 -0400
