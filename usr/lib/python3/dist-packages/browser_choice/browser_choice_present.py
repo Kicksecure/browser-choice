@@ -49,6 +49,7 @@ from browser_choice.browser_choice_core import (
 )
 
 from browser_choice import GlobalData
+from browser_choice import get_usersession_warn_label
 from browser_choice.browsercard import BrowserCard
 from browser_choice.packagecard import PackageCard
 from browser_choice.selectapplicationpage import SelectApplicationPage
@@ -185,12 +186,14 @@ class InitWarnDialog(QDialog):
         self.warn_label.setTextInteractionFlags(
             Qt.LinksAccessibleByMouse | Qt.TextSelectableByMouse
         )
+
         if restrict_type == "appvm":
             self.warn_label.setText(GlobalData.appvm_warn_label)
         elif restrict_type == "dispvm":
             self.warn_label.setText(GlobalData.dispvm_warn_label)
         elif restrict_type == "user_session":
-            self.warn_label.setText(GlobalData.usersession_warn_label)
+            self.warn_label.setText(get_usersession_warn_label())
+
         self.warn_label.setOpenExternalLinks(True)
         self.root_layout.addWidget(self.warn_label)
         self.root_layout.addStretch()
@@ -447,12 +450,18 @@ class BrowserChoiceWindow(QDialog):
         match self.choose_installation_page.manageMode():
             case ManageMode.UpdateAndInstall:
                 self.change_str = "installed"
-                if not self.in_sysmaint_session:
+                if (
+                    not self.in_sysmaint_session
+                    and not GlobalData.qube_type == "templatevm"
+                ):
                     self.allow_app_launch = True
                 command_str = self.chosen_repo.update_and_install_script
             case ManageMode.Install:
                 self.change_str = "installed"
-                if not self.in_sysmaint_session:
+                if (
+                    not self.in_sysmaint_session
+                    and not GlobalData.qube_type == "templatevm"
+                ):
                     self.allow_app_launch = True
                 command_str = self.chosen_repo.install_script
             case ManageMode.Remove:
