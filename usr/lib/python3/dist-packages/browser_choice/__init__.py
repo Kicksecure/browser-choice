@@ -10,6 +10,7 @@ __init__.py - Shared global data.
 """
 
 import re
+import os
 from pathlib import Path
 from typing import TextIO
 
@@ -93,6 +94,7 @@ class GlobalData:
     log_file: TextIO | None = None
     qube_type: str = get_qube_type()
     qubes_version: str = get_qubes_version()
+    uid = os.getuid()
 
     appvm_warn_label = 'You are currently running Browser Choice \
 inside a Qubes OS App Qube. You can install or uninstall applications, but \

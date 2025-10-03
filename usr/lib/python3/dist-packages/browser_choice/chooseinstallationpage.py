@@ -25,6 +25,7 @@ from browser_choice.chooseinstallationpage_ui import Ui_ChooseInstallationPage
 
 from browser_choice.packagecard import PackageCard
 from browser_choice.cardview import CardView
+from browser_choice import GlobalData
 
 
 class ManageMode(Enum):
@@ -76,8 +77,12 @@ class ChooseInstallationPage(QWidget):
         )
         self.ui.continueButton.setEnabled(False)
 
-        if self.in_sysmaint_session and self.user_sysmaint_split_installed:
-            self.ui.runRadioButton.setText("Run (User mode required)")
+        if (
+            (self.in_sysmaint_session and self.user_sysmaint_split_installed)
+            or GlobalData.qube_type == "templatevm"
+            or GlobalData.uid == 0
+        ):
+            self.ui.runRadioButton.setText("Run (User session required)")
         else:
             self.ui.runRadioButton.setText("Run")
 
@@ -175,15 +180,16 @@ class ChooseInstallationPage(QWidget):
             if (
                 self.current_card.mod_requires_privileges
                 and not self.in_sysmaint_session
+                and GlobalData.uid != 0
             ):
                 self.ui.installRadioButton.setText(
-                    "Install (Sysmaint mode required)"
+                    "Install (Sysmaint mode or root privileges required)"
                 )
                 self.ui.removeRadioButton.setText(
-                    "Remove (Sysmaint mode required)"
+                    "Remove (Sysmaint mode or root privileges required)"
                 )
                 self.ui.purgeRadioButton.setText(
-                    "Purge (Sysmaint mode required)"
+                    "Purge (Sysmaint mode or root privileges required)"
                 )
             else:
                 self.ui.installRadioButton.setText("Install")
@@ -193,6 +199,7 @@ class ChooseInstallationPage(QWidget):
             if self.is_network_connected and (
                 not self.current_card.mod_requires_privileges
                 or self.in_sysmaint_session
+                or GlobalData.uid == 0
             ):
                 self.ui.installRadioButton.setEnabled(True)
 
@@ -202,6 +209,7 @@ class ChooseInstallationPage(QWidget):
                 and (
                     not self.current_card.mod_requires_privileges
                     or self.in_sysmaint_session
+                    or GlobalData.uid == 0
                 )
             ):
                 self.ui.removeRadioButton.setEnabled(True)
@@ -214,6 +222,7 @@ class ChooseInstallationPage(QWidget):
                 and (
                     not self.current_card.mod_requires_privileges
                     or self.in_sysmaint_session
+                    or GlobalData.uid == 0
                 )
             ):
                 self.ui.purgeRadioButton.setEnabled(True)
@@ -221,8 +230,12 @@ class ChooseInstallationPage(QWidget):
                 self.disable_radio_button(self.ui.purgeRadioButton)
 
             if self.current_card.is_installed and (
-                not self.in_sysmaint_session
-                or not self.user_sysmaint_split_installed
+                (
+                    not self.in_sysmaint_session
+                    or not self.user_sysmaint_split_installed
+                )
+                and not GlobalData.qube_type == "templatevm"
+                and GlobalData.uid != 0
             ):
                 self.ui.runRadioButton.setEnabled(True)
             else:
