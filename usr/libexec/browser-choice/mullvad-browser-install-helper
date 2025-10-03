@@ -11,4 +11,4 @@ cp --verbose -- /usr/share/browser-choice/repo-defs/mullvad.sources /etc/apt/sou
 
 apt-get update
 
-apt-get-noninteractive --yes install mullvad-browser
+apt-get-noninteractive --no-install-recommends --yes install mullvad-browser
