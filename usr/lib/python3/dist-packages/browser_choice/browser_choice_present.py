@@ -250,7 +250,9 @@ class BrowserChoiceWindow(QDialog):
             )
             init_warn_dialog.exec()
         elif (
-            self.user_sysmaint_split_installed and not self.in_sysmaint_session
+            self.user_sysmaint_split_installed
+            and not self.in_sysmaint_session
+            and GlobalData.uid != 0
         ):
             init_warn_dialog = InitWarnDialog(restrict_type="user_session")
             init_warn_dialog.exec()
@@ -339,6 +341,7 @@ class BrowserChoiceWindow(QDialog):
                     if (
                         self.user_sysmaint_split_installed
                         and not self.in_sysmaint_session
+                        and GlobalData.uid != 0
                     )
                     else "none"
                 )
@@ -451,16 +454,24 @@ class BrowserChoiceWindow(QDialog):
             case ManageMode.UpdateAndInstall:
                 self.change_str = "installed"
                 if (
-                    not self.in_sysmaint_session
+                    (
+                        not self.in_sysmaint_session
+                        or not self.user_sysmaint_split_installed
+                    )
                     and not GlobalData.qube_type == "templatevm"
+                    and GlobalData.uid != 0
                 ):
                     self.allow_app_launch = True
                 command_str = self.chosen_repo.update_and_install_script
             case ManageMode.Install:
                 self.change_str = "installed"
                 if (
-                    not self.in_sysmaint_session
+                    (
+                        not self.in_sysmaint_session
+                        or not self.user_sysmaint_split_installed
+                    )
                     and not GlobalData.qube_type == "templatevm"
+                    and GlobalData.uid != 0
                 ):
                     self.allow_app_launch = True
                 command_str = self.chosen_repo.install_script
@@ -481,8 +492,12 @@ class BrowserChoiceWindow(QDialog):
 
         if self.choose_installation_page.manageMode() == ManageMode.Run:
             assert (
-                not self.in_sysmaint_session
-                or not self.user_sysmaint_split_installed
+                (
+                    not self.in_sysmaint_session
+                    or not self.user_sysmaint_split_installed
+                )
+                and not GlobalData.qube_type == "templatevm"
+                and not GlobalData.uid == 0
             )
             if len(sys.argv) == 2:
                 self.chosen_repo.run_launch(sys.argv[1])
