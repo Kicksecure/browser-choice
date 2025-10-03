@@ -1,3 +1,39 @@
+commit cff03ea23805b834928cb49ef1c4092a8f34856f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 3 17:16:02 2025 -0400
+
+    --no-install-recommends
+
+commit f95fa4491d981af569ce22325d77df798315c84b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 3 17:14:03 2025 -0400
+
+    --no-install-recommends
+
+commit 2138121642f9eae06a6e2b6a9f86017dab2e1be4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 3 17:13:37 2025 -0400
+
+    chmod +x
+
+commit fc4e1edc9b6aa4a1663ef066846dba5262daf323
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 3 17:13:13 2025 -0400
+
+    --no-install-recommends
+
+commit d28ad16e62c61461959d84b4396ab2a1fbf38cf8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 3 17:11:45 2025 -0400
+
+    use long options by default
+
+commit 784c6397a75d0a1c43d6601cbd67e44366ddbd1d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 3 14:00:56 2025 +0000
+
+    bumped changelog version
+
 commit e66171bf0451eac117de6e0e65150242242f7cd4
 Merge: 30e81a8 f133143
 Author: Patrick Schleizer <adrelanos@whonix.org>
