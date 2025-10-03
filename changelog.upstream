@@ -1,3 +1,22 @@
+commit e66171bf0451eac117de6e0e65150242242f7cd4
+Merge: 30e81a8 f133143
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 3 09:54:58 2025 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit f1331432b649fb636f7516617fc3df98692e90af
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Thu Oct 2 21:15:39 2025 -0500
+
+    Fix privileged vs. unprivileged logic
+
+commit 30e81a8c7475c9ffac293cc2c3bc068b4169e909
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Oct 1 09:40:43 2025 +0000
+
+    bumped changelog version
+
 commit c2a8b071101875eb4db00e8f4a85b732087329f7
 Merge: a079b4f 845946c
 Author: Patrick Schleizer <adrelanos@whonix.org>
