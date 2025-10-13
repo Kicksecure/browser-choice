@@ -609,10 +609,24 @@ class BrowserChoiceWindow(QDialog):
                 "Done, operation was successful."
             )
             write_to_log("Done, operation was successful.")
+            subprocess.run(
+                [
+                    "/usr/bin/notify-send",
+                    "browser-choice",
+                    f"Browser was successfully {self.change_str}."
+                ]
+            )
         else:
             self.execute_process_successful = False
             self.applying_changes_page.logLine("Done, but operation failed!")
             write_to_log("Done, but operation failed!")
+            subprocess.run(
+                [
+                    "/usr/bin/notify-send",
+                    "browser-choice",
+                    f"Browser could not be {self.change_str}!"
+                ]
+            )
         self.applying_changes_page.setContinueEnabled(True)
 
     def execute_process_output_received(self) -> None:
