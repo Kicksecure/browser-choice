@@ -1,3 +1,22 @@
+commit f60b6a34730394ace4de1c66b3f59924ccf774cb
+Merge: 75ece71 116062f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Oct 13 07:58:25 2025 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit 116062f244b67bd3865696866fe1063e853deb8c
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sun Oct 12 09:46:32 2025 -0500
+
+    Add notifications when a browser installation or removal completes
+
+commit 75ece71bdfe27af3d45e7e7cdd320d251b2d7933
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 3 21:16:17 2025 +0000
+
+    bumped changelog version
+
 commit cff03ea23805b834928cb49ef1c4092a8f34856f
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Oct 3 17:16:02 2025 -0400
