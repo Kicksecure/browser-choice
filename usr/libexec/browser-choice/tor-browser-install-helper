@@ -1,0 +1,13 @@
+#!/bin/bash
+
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+set -x
+set -e
+
+apt-get-noninteractive update
+
+apt-get-noninteractive --no-install-recommends --yes install tb-updater tb-starter
+
+update-torbrowser --input gui

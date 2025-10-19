@@ -1,0 +1,11 @@
+#!/bin/bash
+
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+set -x
+set -e
+
+apt-get-noninteractive --yes purge tb-updater tb-starter
+
+true "NOTE: Deletion of folder ${HOME}/.tb not yet implemented."
