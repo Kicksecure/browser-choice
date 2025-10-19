@@ -1,3 +1,15 @@
+commit 028e7d9a77e2aa2a96a47d4fb0bc1d76ddc5bec8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 19 08:27:37 2025 -0400
+
+    fix: no longer depend on tb-updater and tb-starter
+
+commit afd75a5a6e38d8d0cf1131e89da8e19c381c5a4b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 18 09:07:11 2025 +0000
+
+    bumped changelog version
+
 commit f9705297273b32e7bf191eb0facd7d5eacad6c5e
 Merge: 7aebc1b 83e33a2
 Author: Patrick Schleizer <adrelanos@whonix.org>
