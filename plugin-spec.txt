@@ -109,7 +109,7 @@ install-warn-text=Installing this application may have unexpected consequences!
 ## need to run package manager commands as root. If this is necessary, prefix
 ## your command with 'pkexec' - this will handle any necessary authentication
 ## for you.
-update-and-install-script=pkexec bash -c -- 'apt-get update; apt-get-noninteractive install appname'
+update-and-install-script=pkexec bash -c -- 'apt-get-noninteractive update; apt-get-noninteractive install appname'
 
 ## 'install-script' specifies a shell command that will install the
 ## application without explicitly updating a software database. It is
