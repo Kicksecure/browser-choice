@@ -12,14 +12,10 @@ apt-get-noninteractive --no-install-recommends --yes install tb-updater tb-start
 
 set +x
 
-kernel_cmdline=""
-if [ -r '/proc/cmdline' ]; then
-  kernel_cmdline="$(cat /proc/cmdline)"
-elif [ -r '/proc/1/cmdline' ]; then
-  kernel_cmdline="$(cat /proc/1/cmdline)"
-fi
+## sets: boot_session
+source /usr/libexec/helper-scripts/boot-session-detection.sh
 
-if [[ "${kernel_cmdline}" =~ 'boot-role=sysmaint' ]]; then
+if [ "$boot_session" = "sysmaint_session" ]
   printf '%s\n' "
 ------------------------------------------------------------------------------
 Done installing tb-updater and tb-starter. Reboot into
