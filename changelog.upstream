@@ -1,3 +1,52 @@
+commit e4206b2718cc8bd9d27b13eae69aaea2bf63062f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Oct 23 01:36:30 2025 -0400
+
+    Depends: helper-scripts
+
+commit 85fc8196a61c2d63493bb952426ddae9282b8b82
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Oct 23 01:36:01 2025 -0400
+
+    apt-get-noninteractive
+
+commit 107ce934df550bcf9f66f41c02aae9d9fef1836a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Oct 23 01:32:23 2025 -0400
+
+    fix
+
+commit b6e689eedd9c236901fe3084c0e4758bc46e8eff
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Oct 23 01:31:25 2025 -0400
+
+    refactoring
+
+commit 4957d9833d59ca8dcdbb2c1d8f2452ff6844a007
+Merge: a5511d6 4de106f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Oct 23 01:14:06 2025 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit 4de106f76084bdb66823ca9de30e50ede80fb9b0
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Wed Oct 22 23:58:52 2025 -0500
+
+    Fix tor-browser plugin, disable install option for already-installed packages
+
+commit 458e7119ad9416106ca8d67235658808443cd65f
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Wed Oct 22 23:21:17 2025 -0500
+
+    Direct user how to install Tor Browser in their user account without installing it into the sysmaint account
+
+commit a5511d6263001d032fa0f4ae664c04259cbe5d9e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 19 12:28:00 2025 +0000
+
+    bumped changelog version
+
 commit 028e7d9a77e2aa2a96a47d4fb0bc1d76ddc5bec8
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Oct 19 08:27:37 2025 -0400
