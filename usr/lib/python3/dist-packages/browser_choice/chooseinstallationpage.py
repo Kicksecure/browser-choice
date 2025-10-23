@@ -192,16 +192,27 @@ class ChooseInstallationPage(QWidget):
                     "Purge (Sysmaint mode or root privileges required)"
                 )
             else:
-                self.ui.installRadioButton.setText("Install")
+                if self.current_card.is_installed:
+                    self.ui.installRadioButton.setText(
+                        "Install (Already installed)"
+                    )
+                else:
+                    self.ui.installRadioButton.setText("Install")
                 self.ui.removeRadioButton.setText("Remove")
                 self.ui.purgeRadioButton.setText("Purge")
 
-            if self.is_network_connected and (
-                not self.current_card.mod_requires_privileges
-                or self.in_sysmaint_session
-                or GlobalData.uid == 0
+            if (
+                self.is_network_connected
+                and (
+                    not self.current_card.mod_requires_privileges
+                    or self.in_sysmaint_session
+                    or GlobalData.uid == 0
+                )
+                and not self.current_card.is_installed
             ):
                 self.ui.installRadioButton.setEnabled(True)
+            else:
+                self.disable_radio_button(self.ui.installRadioButton)
 
             if (
                 self.current_card.supports_remove
