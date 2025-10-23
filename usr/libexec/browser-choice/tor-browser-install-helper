@@ -15,7 +15,7 @@ set +x
 ## sets: boot_session
 source /usr/libexec/helper-scripts/boot-session-detection.sh
 
-if [ "$boot_session" = "sysmaint_session" ]
+if [ "$boot_session" = "sysmaint_session" ]; then
   printf '%s\n' "
 ------------------------------------------------------------------------------
 Done installing tb-updater and tb-starter. Reboot into
