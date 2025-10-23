@@ -24,6 +24,6 @@ install-script=pkexec /usr/libexec/browser-choice/tor-browser-install-helper
 uninstall-script=pkexec /usr/libexec/browser-choice/tor-browser-uninstall-helper
 purge-script=pkexec /usr/libexec/browser-choice/tor-browser-purge-helper
 launch-script=torbrowser
-install-status=test -d "${HOME}/.tb"
+install-status=source /usr/libexec/helper-scripts/package_installed_check.bsh && pkg_installed tb-updater && pkg_installed tb-starter
 capability=/usr/libexec/browser-choice/architecture-support-check amd64
 mod-requires-privileges=yes

@@ -10,6 +10,8 @@ apt-get-noninteractive update
 
 apt-get-noninteractive --no-install-recommends --yes install tb-updater tb-starter
 
+set +x
+
 kernel_cmdline=""
 if [ -r '/proc/cmdline' ]; then
   kernel_cmdline="$(cat /proc/cmdline)"
@@ -18,7 +20,18 @@ elif [ -r '/proc/1/cmdline' ]; then
 fi
 
 if [[ "${kernel_cmdline}" =~ 'boot-role=sysmaint' ]]; then
-  printf '%s\n' "$0: INFO: Done installing tb-updater and tb-starter. Reboot into 'PERSISTENT Mode | USER Session', then launch 'Tor Browser (AnonDist)' from the application menu to download and run Tor Browser."
+  printf '%s\n' "
+------------------------------------------------------------------------------
+Done installing tb-updater and tb-starter. Reboot into
+\"PERSISTENT Mode | USER Session\", then launch \"Tor Browser (AnonDist)\"
+from the application menu to download and run Tor Browser.
+------------------------------------------------------------------------------
+"
 else
-  printf '%s\n' "$0: INFO: Done installing tb-updater and tb-starter. Launch 'Tor Browser (AnonDist)' from the application menu to download and run Tor Browser."
+  printf '%s\n' "
+------------------------------------------------------------------------------
+INFO: Done installing tb-updater and tb-starter. Launch \"Tor Browser
+(AnonDist)\" from the application menu to download and run Tor Browser.
+------------------------------------------------------------------------------
+"
 fi
