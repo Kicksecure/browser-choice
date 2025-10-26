@@ -221,7 +221,7 @@ class BrowserChoiceWindow(QDialog):
         self.in_sysmaint_session: bool = (
             subprocess.run(
                 [
-                    "/usr/libexec/browser-choice/user-sysmaint-split-check",
+                    "/usr/libexec/helper-scripts/user-sysmaint-split-check",
                     "needs-sysmaint",
                 ],
                 check=False,
