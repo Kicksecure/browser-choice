@@ -24,6 +24,6 @@ install-script=pkexec /usr/libexec/browser-choice/mullvad-browser-install-helper
 uninstall-script=pkexec apt-get-noninteractive --yes remove mullvad-browser
 purge-script=pkexec apt-get-noninteractive --yes purge mullvad-browser
 launch-script=mullvad-browser
-install-status=source /usr/libexec/helper-scripts/package_installed_check.bsh && pkg_installed mullvad-browser
+install-status=/usr/bin/package-installed-check mullvad-browser
 capability=/usr/libexec/browser-choice/architecture-support-check amd64
 mod-requires-privileges=yes

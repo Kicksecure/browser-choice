@@ -24,7 +24,7 @@ install-script=pkexec apt-get-noninteractive --no-install-recommends --yes insta
 uninstall-script=pkexec apt-get-noninteractive --yes remove chromium
 purge-script=pkexec apt-get-noninteractive --yes purge chromium
 launch-script=chromium
-install-status=source /usr/libexec/helper-scripts/package_installed_check.bsh && pkg_installed chromium
+install-status=/usr/bin/package-installed-check chromium
 capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 ppc64el
 mod-requires-privileges=yes
 

@@ -24,7 +24,7 @@ install-script=pkexec apt-get-noninteractive --no-install-recommends --yes insta
 uninstall-script=pkexec apt-get-noninteractive --yes remove firefox-esr
 purge-script=pkexec apt-get-noninteractive --yes purge firefox-esr
 launch-script=firefox-esr
-install-status=source /usr/libexec/helper-scripts/package_installed_check.bsh && pkg_installed firefox-esr
+install-status=/usr/bin/package-installed-check firefox-esr
 capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 ppc64el
 mod-requires-privileges=yes
 
@@ -40,7 +40,7 @@ install-script=pkexec bash -c -- 'extrepo enable mozilla && apt-get-noninteracti
 uninstall-script=pkexec apt-get-noninteractive --yes remove firefox
 purge-script=pkexec apt-get-noninteractive --yes purge firefox
 launch-script=firefox
-install-status=source /usr/libexec/helper-scripts/package_installed_check.bsh && pkg_installed firefox
+install-status=/usr/bin/package-installed-check firefox
 capability=/usr/libexec/browser-choice/architecture-support-check amd64
 mod-requires-privileges=yes
 

@@ -112,14 +112,7 @@ def check_package_installed(package_name: str) -> bool:
     """
 
     check_process = subprocess.run(
-        [
-            "/usr/bin/bash",
-            "-c",
-            "--",
-            "source /usr/libexec/helper-scripts/package_installed_check.bsh; "
-            f'rslt="$(pkg_installed {package_name})"; '
-            "exit $rslt",
-        ],
+        ["/usr/bin/package-installed-check", package_name],
         check=False,
     )
     if check_process.returncode == 0:
@@ -229,20 +222,7 @@ class BrowserChoiceWindow(QDialog):
             == 0
         )
 
-        self.user_sysmaint_split_installed: bool = (
-            subprocess.run(
-                [
-                    "/usr/bin/bash",
-                    "-c",
-                    "--",
-                    "source "
-                    "/usr/libexec/helper-scripts/package_installed_check.bsh; "
-                    "pkg_installed user-sysmaint-split",
-                ],
-                check=False,
-            ).returncode
-            == 0
-        )
+        self.user_sysmaint_split_installed: bool = check_package_installed("user-sysmaint-split")
 
         init_warn_dialog: InitWarnDialog | None = None
         if GlobalData.qube_type in ("appvm", "dispvm"):

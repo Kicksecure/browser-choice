@@ -133,7 +133,7 @@ launch-script=appname
 
 ## 'install-status' specifies a shell command that will check if the
 ## application is installed or not.
-install-status=source /usr/libexec/helper-scripts/package_installed_check.bsh; pkg_installed appname
+install-status=/usr/bin/package-installed-check appname
 
 ## 'capability' specifies a shell command that will ensure the system supports
 ## installing the application from this repo. Usually this is used to check
