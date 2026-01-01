@@ -1,6 +1,9 @@
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
+## Code duplication. (Un)installtion commands are also present in
+## live-config-dist/etc/privleap/conf.d/live-config-dist.conf.
+
 [product]
 product-name=Brave
 product-category=Browsers
@@ -15,18 +18,22 @@ official-plugin=yes
 [repo:brave]
 method-name=Brave Browser from Brave official repository
 method-name-short=Repo (Brave)
-method-subtext=Brave Browser from brave.com repository. Installed via tool: apt.
+method-subtext=Brave Browser from brave.com repository. Installed via tool: APT.
 method-logo=/usr/share/browser-choice/icons/brave.svg
 method-type=apt-thirdparty
 install-warn-text=
+unprivileged-check-script=leaprun --check browser-choice-unprivileged-enabled
 update-and-install-script=
 install-script=pkexec bash -c -- 'extrepo enable brave_release && apt-get-noninteractive update && apt-get-noninteractive --no-install-recommends --yes install brave-browser'
 uninstall-script=pkexec apt-get-noninteractive --yes remove brave-browser
 purge-script=pkexec apt-get-noninteractive --yes purge brave-browser
+update-and-install-script-unprivileged=
+install-script-unprivileged=leaprun brave-tpdeb-install
+uninstall-script-unprivileged=leaprun brave-tpdeb-uninstall
+purge-script-unprivileged=leaprun brave-tpdeb-purge
 launch-script=brave-browser
 install-status=/usr/bin/package-installed-check brave-browser
 capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64
-mod-requires-privileges=yes
 
 [repo:flathub]
 method-name=Brave Browser from Flathub repository
@@ -35,11 +42,15 @@ method-subtext=Brave Browser from flathub.org repository. Installed via tool: Fl
 method-logo=/usr/share/browser-choice/icons/flatpak.svg
 method-type=flathub
 install-warn-text=
+unprivileged-check-script=leaprun --check browser-choice-unprivileged-enabled
 update-and-install-script=
-install-script=flatpak install --assumeyes flathub com.brave.Browser
-uninstall-script=flatpak uninstall --assumeyes com.brave.Browser
+install-script=pkexec flatpak install --assumeyes flathub com.brave.Browser
+uninstall-script=pkexec flatpak uninstall --assumeyes com.brave.Browser
 purge-script=
+update-and-install-script-unprivileged=
+install-script-unprivileged=leaprun brave-flathub-install
+uninstall-script-unprivileged=leaprun brave-flathub-uninstall
+purge-script-unprivileged=
 launch-script=flatpak run com.brave.Browser
 install-status=flatpak info com.brave.Browser
 capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64
-mod-requires-privileges=yes

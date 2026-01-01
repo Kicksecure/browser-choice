@@ -26,6 +26,12 @@ from PyQt5.QtGui import (
 )
 
 
+## Caches the commands used for checking whether a package can be installed
+## without privileges or not, so that duplicate commands aren't run
+## unnecessarily.
+unprivileged_check_cache: dict[str, bool] = {}
+
+
 def str_or_none(data: str) -> str | None:
     """
     Returns the input string, or None if the input string is empty.
@@ -41,7 +47,6 @@ class ChoicePluginRepo(QObject):
     """
     Represents a repo defined in a browser-choice plugin. You can install,
     remove, or purge an application from a particular repo.
-
     """
 
     # pylint: disable=too-many-arguments,too-many-locals
@@ -55,14 +60,18 @@ class ChoicePluginRepo(QObject):
         method_type: str | None,
         method_logo: QPixmap | None,
         install_warn_text: str | None,
+        unprivileged_check_script: str | None,
         update_and_install_script: str | None,
         install_script: str | None,
         uninstall_script: str | None,
         purge_script: str | None,
+        update_and_install_script_unprivileged: str | None,
+        install_script_unprivileged: str | None,
+        uninstall_script_unprivileged: str | None,
+        purge_script_unprivileged: str | None,
         launch_script: str | None,
         install_status: str | None,
         capability: str | None,
-        mod_requires_privileges: bool | None,
         parent: QObject | None = None,
     ):
         super().__init__(parent)
@@ -74,11 +83,9 @@ class ChoicePluginRepo(QObject):
             "method_subtext": method_subtext,
             "method_logo": method_logo,
             "method_type": method_type,
-            "install_script": install_script,
             "launch_script": launch_script,
             "install_status": install_status,
             "capability": capability,
-            "mod_requires_privileges": mod_requires_privileges,
         }
         for key, value in none_check_dict.items():
             if value is None:
@@ -93,11 +100,25 @@ class ChoicePluginRepo(QObject):
         assert method_subtext is not None
         assert method_type is not None
         assert method_logo is not None
-        assert install_script is not None
         assert launch_script is not None
         assert install_status is not None
         assert capability is not None
-        assert mod_requires_privileges is not None
+
+        if unprivileged_check_script is None:
+            if install_script is None:
+                throw_config_error(
+                    config_file,
+                    f"'install_script' in repo '{internal_id}' cannot be "
+                    + "None when 'unprivileged_check_script' is None!",
+                )
+        else:
+            if install_script_unprivileged is None:
+                throw_config_error(
+                    config_file,
+                    f"'install_script_unprivileged' in repo '{internal_id}' "
+                    + "cannot be None when 'unprivileged_check_script' is "
+                    + "not None!",
+                )
 
         self.internal_id: str = internal_id
         self.method_name: str = method_name
@@ -106,16 +127,30 @@ class ChoicePluginRepo(QObject):
         self.method_logo: QPixmap = method_logo
         self.method_type: str = method_type
         self.install_warn_text: str | None = install_warn_text
+        self.unprivileged_check_script: str | None = unprivileged_check_script
         self.update_and_install_script: str | None = update_and_install_script
-        self.install_script: str = install_script
+        self.install_script: str | None = install_script
         self.uninstall_script: str | None = uninstall_script
         self.purge_script: str | None = purge_script
+        self.update_and_install_script_unprivileged: str | None = (
+            update_and_install_script_unprivileged
+        )
+        self.install_script_unprivileged: str | None = (
+            install_script_unprivileged
+        )
+        self.uninstall_script_unprivileged: str | None = (
+            uninstall_script_unprivileged
+        )
+        self.purge_script_unprivileged: str | None = purge_script_unprivileged
         self.launch_script: str = launch_script
         self.install_status: str = install_status
         self.capability: str = capability
-        self.mod_requires_privileges: bool = mod_requires_privileges
         self.is_installed: bool = self.check_installed()
         self.capability_info: str = self.check_capability()
+
+        self.mod_requires_privileges: bool = True
+        if self.unprivileged_check_script is not None:
+            self.mod_requires_privileges = self.check_mod_unprivileged()
 
     def __run_script(
         self, script: str, set_x: bool = False, detach: bool = False
@@ -155,11 +190,13 @@ class ChoicePluginRepo(QObject):
             return None
         return self.__run_script(self.update_and_install_script, set_x=True)
 
-    def run_install(self) -> QProcess:
+    def run_install(self) -> QProcess | None:
         """
         Run a plugin's 'install-script' asynchronously.
         """
 
+        if self.install_script is None:
+            return None
         return self.__run_script(self.install_script, set_x=True)
 
     def run_uninstall(self) -> QProcess | None:
@@ -179,6 +216,47 @@ class ChoicePluginRepo(QObject):
         if self.purge_script is None:
             return None
         return self.__run_script(self.purge_script, set_x=True)
+
+    def run_update_and_install_unprivileged(self) -> QProcess | None:
+        """
+        Run a plugin's 'update-and-install-script-unprivileged'
+        asynchronously.
+        """
+
+        if self.update_and_install_script_unprivileged is None:
+            return None
+        return self.__run_script(
+            self.update_and_install_script_unprivileged, set_x=True
+        )
+
+    def run_install_unprivileged(self) -> QProcess | None:
+        """
+        Run a plugin's 'install-script-unprivileged' asynchronously.
+        """
+
+        if self.install_script_unprivileged is None:
+            return None
+        return self.__run_script(self.install_script_unprivileged, set_x=True)
+
+    def run_uninstall_unprivileged(self) -> QProcess | None:
+        """
+        Run a plugin's 'uninstall-script-unprivileged' asynchronously.
+        """
+
+        if self.uninstall_script_unprivileged is None:
+            return None
+        return self.__run_script(
+            self.uninstall_script_unprivileged, set_x=True
+        )
+
+    def run_purge_unprivileged(self) -> QProcess | None:
+        """
+        Run a plugin's 'purge-script-unprivileged' asynchronously.
+        """
+
+        if self.purge_script_unprivileged is None:
+            return None
+        return self.__run_script(self.purge_script_unprivileged, set_x=True)
 
     def run_launch(self, extra_args: str | None = None) -> QProcess | None:
         """
@@ -236,6 +314,35 @@ class ChoicePluginRepo(QObject):
         if capability_process_str.strip() == "":
             return "Unsupported on this system."
         return capability_process_str
+
+    def check_mod_unprivileged(self) -> bool:
+        """
+        Check if a package can be modified without administrative privileges
+        by running the 'unprivileged-check-cmd' script synchronously with
+        subprocess.run. Caches command results to improve performance.
+        """
+
+        assert self.unprivileged_check_script is not None
+
+        if self.unprivileged_check_script in unprivileged_check_cache:
+            return unprivileged_check_cache[self.unprivileged_check_script]
+
+        unprivileged_check_process = subprocess.run(
+            [
+                "/usr/bin/bash",
+                "-c",
+                "--",
+                self.unprivileged_check_script,
+            ],
+            check=False,
+            capture_output=True,
+        )
+
+        if unprivileged_check_process.returncode == 0:
+            unprivileged_check_cache[self.unprivileged_check_script] = False
+            return False
+        unprivileged_check_cache[self.unprivileged_check_script] = True
+        return True
 
 
 class ChoicePlugin(QObject):
@@ -353,14 +460,18 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
     repo_method_logo: QPixmap | None = None
     repo_method_type: str | None = None
     repo_install_warn_text: str | None = None
+    repo_unprivileged_check_script: str | None = None
     repo_update_and_install_script: str | None = None
     repo_install_script: str | None = None
     repo_uninstall_script: str | None = None
     repo_purge_script: str | None = None
+    repo_update_and_install_script_unprivileged: str | None = None
+    repo_install_script_unprivileged: str | None = None
+    repo_uninstall_script_unprivileged: str | None = None
+    repo_purge_script_unprivileged: str | None = None
     repo_launch_script: str | None = None
     repo_install_status: str | None = None
     repo_capability: str | None = None
-    repo_mod_requires_privileges: bool | None = None
 
     with open(config_file, "r", encoding="utf-8") as conf_stream:
         for line in conf_stream:
@@ -399,16 +510,30 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
                             method_subtext=repo_method_subtext,
                             method_logo=repo_method_logo,
                             install_warn_text=repo_install_warn_text,
+                            unprivileged_check_script=(
+                                repo_unprivileged_check_script
+                            ),
                             update_and_install_script=(
                                 repo_update_and_install_script
                             ),
                             install_script=repo_install_script,
                             uninstall_script=repo_uninstall_script,
                             purge_script=repo_purge_script,
+                            update_and_install_script_unprivileged=(
+                                repo_update_and_install_script_unprivileged
+                            ),
+                            install_script_unprivileged=(
+                                repo_install_script_unprivileged
+                            ),
+                            uninstall_script_unprivileged=(
+                                repo_uninstall_script_unprivileged
+                            ),
+                            purge_script_unprivileged=(
+                                repo_purge_script_unprivileged
+                            ),
                             launch_script=repo_launch_script,
                             install_status=repo_install_status,
                             capability=repo_capability,
-                            mod_requires_privileges=repo_mod_requires_privileges,
                         )
                         repo_list.append(new_repo)
 
@@ -482,6 +607,8 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
                         repo_method_type = str_or_none(line_val)
                     case "install-warn-text":
                         repo_install_warn_text = str_or_none(line_val)
+                    case "unprivileged-check-script":
+                        repo_unprivileged_check_script = str_or_none(line_val)
                     case "update-and-install-script":
                         repo_update_and_install_script = str_or_none(line_val)
                     case "install-script":
@@ -490,23 +617,26 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
                         repo_uninstall_script = str_or_none(line_val)
                     case "purge-script":
                         repo_purge_script = str_or_none(line_val)
+                    case "update-and-install-script-unprivileged":
+                        repo_update_and_install_script_unprivileged = (
+                            str_or_none(line_val)
+                        )
+                    case "install-script-unprivileged":
+                        repo_install_script_unprivileged = str_or_none(
+                            line_val
+                        )
+                    case "uninstall-script-unprivileged":
+                        repo_uninstall_script_unprivileged = str_or_none(
+                            line_val
+                        )
+                    case "purge-script-unprivileged":
+                        repo_purge_script_unprivileged = str_or_none(line_val)
                     case "launch-script":
                         repo_launch_script = str_or_none(line_val)
                     case "install-status":
                         repo_install_status = str_or_none(line_val)
                     case "capability":
                         repo_capability = str_or_none(line_val)
-                    case "mod-requires-privileges":
-                        if line_val.lower() == "yes":
-                            repo_mod_requires_privileges = True
-                        elif line_val.lower() == "no":
-                            repo_mod_requires_privileges = False
-                        else:
-                            throw_config_error(
-                                config_file,
-                                "'mod-requires-privileges' boolean not set "
-                                "to 'yes' or 'no'",
-                            )
 
     if not hit_product_header and not hit_repo_header:
         throw_config_error(config_file, "no headers found")
@@ -524,14 +654,20 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
         method_logo=repo_method_logo,
         method_type=repo_method_type,
         install_warn_text=repo_install_warn_text,
+        unprivileged_check_script=repo_unprivileged_check_script,
         update_and_install_script=repo_update_and_install_script,
         install_script=repo_install_script,
         uninstall_script=repo_uninstall_script,
         purge_script=repo_purge_script,
+        update_and_install_script_unprivileged=(
+            repo_update_and_install_script_unprivileged
+        ),
+        install_script_unprivileged=repo_install_script_unprivileged,
+        uninstall_script_unprivileged=repo_uninstall_script_unprivileged,
+        purge_script_unprivileged=repo_purge_script_unprivileged,
         launch_script=repo_launch_script,
         install_status=repo_install_status,
         capability=repo_capability,
-        mod_requires_privileges=repo_mod_requires_privileges,
     )
     repo_list.append(new_repo)
 

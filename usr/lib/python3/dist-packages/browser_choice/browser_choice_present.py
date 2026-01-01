@@ -22,30 +22,35 @@ import datetime
 from typing import (
     Tuple,
     NoReturn,
+    Any,
 )
 from types import FrameType
 
 from PyQt5.QtCore import (
-    Qt,
-    QRect,
-    QTimer,
+    pyqtSignal,
+    QObject,
     QProcess,
+    QRect,
+    Qt,
+    QThread,
+    QTimer,
 )
 
 from PyQt5.QtWidgets import (
     QApplication,
     QDialog,
-    QWidget,
-    QVBoxLayout,
-    QLabel,
-    QPushButton,
     QHBoxLayout,
+    QLabel,
+    QProgressBar,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
 )
 
 from browser_choice.browser_choice_core import (
-    ChoicePluginRepo,
     ChoicePlugin,
     ChoicePluginCategory,
+    ChoicePluginRepo,
     parse_config_dir,
 )
 
@@ -61,6 +66,11 @@ from browser_choice.chooseinstallationpage import (
 from browser_choice.confirminstallationdialog import ConfirmInstallationDialog
 from browser_choice.applyingchangespage import ApplyingChangesPage
 from browser_choice.changescompletepage import ChangesCompletePage
+
+
+## This has to be a global so that it can be passed between threads. Trying to
+## send a Python list over a pyqtSignal results in a segfault.
+app_plugin_data: list[ChoicePluginCategory] = []
 
 
 def convert_plugins_to_browser_cards(
@@ -154,6 +164,7 @@ class ErrorDialog(QDialog):
     def __init__(self, error_text: str, parent: QWidget | None = None):
         super().__init__(parent)
         self.setGeometry(QRect(0, 0, 640, 480))
+        self.setWindowTitle("Browser Choice")
         self.root_layout: QVBoxLayout = QVBoxLayout(self)
         self.error_label: QLabel = QLabel(self)
         self.error_label.setWordWrap(True)
@@ -174,6 +185,7 @@ class InitWarnDialog(QDialog):
     def __init__(self, restrict_type: str, parent: QWidget | None = None):
         super().__init__(parent)
         self.setGeometry(QRect(0, 0, 470, 180))
+        self.setWindowTitle("Browser Choice")
         self.root_layout: QVBoxLayout = QVBoxLayout(self)
         self.warn_label: QLabel = QLabel(self)
         self.warn_label.setWordWrap(True)
@@ -200,13 +212,38 @@ class InitWarnDialog(QDialog):
         self.ok_button.clicked.connect(lambda: self.done(0))
 
 
+class SplashScreenDialog(QDialog):
+    """
+    Shows a simple splash screen while plugin data is loaded.
+    """
+
+    def __init__(self, parent: QWidget | None = None):
+        super().__init__(parent)
+        self.setGeometry(QRect(0, 0, 250, 75))
+        self.setWindowTitle("Browser Choice")
+        self.root_layout: QVBoxLayout = QVBoxLayout(self)
+        self.splash_label: QLabel = QLabel(self)
+        self.splash_label.setWordWrap(True)
+        self.splash_label.setText("Browser Choice is starting...")
+        self.progress_bar: QProgressBar = QProgressBar(self)
+        self.progress_bar.setMinimum(0)
+        self.progress_bar.setMaximum(0)
+        self.root_layout.addWidget(self.splash_label)
+        self.root_layout.addStretch()
+        self.root_layout.addWidget(self.progress_bar)
+
+
 # pylint: disable=too-many-instance-attributes
 class BrowserChoiceWindow(QDialog):
     """
     Core BrowserChoice window.
     """
 
-    def __init__(self, parent: QWidget | None = None):
+    def __init__(
+        self,
+        plugin_data: list[ChoicePluginCategory],
+        parent: QWidget | None = None
+    ):
         super(QWidget, self).__init__(parent)
 
         self.setWindowFlags(Qt.Window)
@@ -244,17 +281,7 @@ class BrowserChoiceWindow(QDialog):
         self.root_layout = QVBoxLayout(self)
         self.setWindowTitle("Browser Choice")
 
-        try:
-            self.plugin_data: list[ChoicePluginCategory] = parse_config_dir(
-                GlobalData.plugin_dir
-            )
-        except Exception:
-            error_dialog = ErrorDialog(
-                "<p>Error: Could not parse a plugin! Details:</p>"
-                f"<p><pre>{traceback.format_exc()}</pre></p>"
-            )
-            error_dialog.exec()
-            sys.exit(1)
+        self.plugin_data = plugin_data
 
         if GlobalData.qube_type == "templatevm":
             self.is_network_connected: bool = True
@@ -295,10 +322,19 @@ class BrowserChoiceWindow(QDialog):
         assert self.select_application_page is not None
         self.switch_to_page(self.select_application_page)
 
+    ## Overrides QMainWindow.closeEvent
+    # pylint: disable=unused-argument,invalid-name
+    def closeEvent(self, e: Any) -> None:
+        """
+        Terminates the application when the main window is closed.
+        """
+
+        sys.exit(0)
+
     def switch_to_page(self, page: QWidget) -> None:
         """
         Switches the currently visible wizard page. It is the caller's
-        responsibility tp destroy the old page if appropriate.
+        responsibility to destroy the old page if appropriate.
         """
 
         if self.current_page is not None:
@@ -349,6 +385,15 @@ class BrowserChoiceWindow(QDialog):
 
         self.select_application_page = select_application_page
 
+    @staticmethod
+    def arg_filter_switch(arg1: Any, arg2: Any, which_arg: bool) -> Any:
+        """
+        Returns arg1 if which_arg is True, otherwise returns arg2.
+        """
+        if which_arg:
+            return arg1
+        return arg2
+
     def make_choose_installation_page(self) -> None:
         """
         Creates the page for "Step 2/4: Choose Installation Options".
@@ -382,11 +427,26 @@ class BrowserChoiceWindow(QDialog):
                 package_short_description=plugin_repo.method_name,
                 package_long_description=plugin_repo.method_subtext,
                 package_icon=plugin_repo.method_logo,
-                supports_update=(
-                    plugin_repo.update_and_install_script is not None
-                ),
-                supports_remove=plugin_repo.uninstall_script is not None,
-                supports_purge=plugin_repo.purge_script is not None,
+                supports_install=self.arg_filter_switch(
+                    plugin_repo.install_script,
+                    plugin_repo.install_script_unprivileged,
+                    plugin_repo.mod_requires_privileges,
+                ) is not None,
+                supports_update=self.arg_filter_switch(
+                    plugin_repo.update_and_install_script,
+                    plugin_repo.update_and_install_script_unprivileged,
+                    plugin_repo.mod_requires_privileges,
+                ) is not None,
+                supports_remove=self.arg_filter_switch(
+                    plugin_repo.uninstall_script,
+                    plugin_repo.uninstall_script_unprivileged,
+                    plugin_repo.mod_requires_privileges,
+                ) is not None,
+                supports_purge=self.arg_filter_switch(
+                    plugin_repo.purge_script,
+                    plugin_repo.purge_script_unprivileged,
+                    plugin_repo.mod_requires_privileges,
+                ) is not None,
                 is_installed=plugin_repo.is_installed,
                 capability_info=plugin_repo.capability_info,
                 mod_requires_privileges=plugin_repo.mod_requires_privileges,
@@ -452,7 +512,11 @@ class BrowserChoiceWindow(QDialog):
                     and GlobalData.uid != 0
                 ):
                     self.allow_app_launch = True
-                command_str = self.chosen_repo.update_and_install_script
+                command_str = self.arg_filter_switch(
+                    self.chosen_repo.update_and_install_script,
+                    self.chosen_repo.update_and_install_script_unprivileged,
+                    self.chosen_repo.mod_requires_privileges,
+                )
             case ManageMode.Install:
                 self.change_str = "installed"
                 if (
@@ -464,13 +528,25 @@ class BrowserChoiceWindow(QDialog):
                     and GlobalData.uid != 0
                 ):
                     self.allow_app_launch = True
-                command_str = self.chosen_repo.install_script
+                command_str = self.arg_filter_switch(
+                    self.chosen_repo.install_script,
+                    self.chosen_repo.install_script_unprivileged,
+                    self.chosen_repo.mod_requires_privileges,
+                )
             case ManageMode.Remove:
                 self.change_str = "removed"
-                command_str = self.chosen_repo.uninstall_script
+                command_str = self.arg_filter_switch(
+                    self.chosen_repo.uninstall_script,
+                    self.chosen_repo.uninstall_script_unprivileged,
+                    self.chosen_repo.mod_requires_privileges,
+                )
             case ManageMode.Purge:
                 self.change_str = "purged"
-                command_str = self.chosen_repo.purge_script
+                command_str = self.arg_filter_switch(
+                    self.chosen_repo.purge_script,
+                    self.chosen_repo.purge_script_unprivileged,
+                    self.chosen_repo.mod_requires_privileges,
+                )
             case ManageMode.Run:
                 command_str = self.chosen_repo.launch_script
             case _:
@@ -542,22 +618,44 @@ class BrowserChoiceWindow(QDialog):
                     "Executing command: "
                     f"{self.chosen_repo.update_and_install_script}"
                 )
-                self.execute_process = self.chosen_repo.run_update_and_install()
+                if self.chosen_repo.mod_requires_privileges:
+                    self.execute_process = (
+                        self.chosen_repo.run_update_and_install()
+                    )
+                else:
+                    self.execute_process = (
+                        self.chosen_repo.run_update_and_install_unprivileged()
+                    )
             case ManageMode.Install:
                 write_to_log(
                     f"Executing command: {self.chosen_repo.install_script}"
                 )
-                self.execute_process = self.chosen_repo.run_install()
+                if self.chosen_repo.mod_requires_privileges:
+                    self.execute_process = self.chosen_repo.run_install()
+                else:
+                    self.execute_process = (
+                        self.chosen_repo.run_install_unprivileged()
+                    )
             case ManageMode.Remove:
                 write_to_log(
                     f"Executing command: {self.chosen_repo.uninstall_script}"
                 )
-                self.execute_process = self.chosen_repo.run_uninstall()
+                if self.chosen_repo.mod_requires_privileges:
+                    self.execute_process = self.chosen_repo.run_uninstall()
+                else:
+                    self.execute_process = (
+                        self.chosen_repo.run_uninstall_unprivileged()
+                    )
             case ManageMode.Purge:
                 write_to_log(
                     f"Executing command: {self.chosen_repo.purge_script}"
                 )
-                self.execute_process = self.chosen_repo.run_purge()
+                if self.chosen_repo.mod_requires_privileges:
+                    self.execute_process = self.chosen_repo.run_purge()
+                else:
+                    self.execute_process = (
+                        self.chosen_repo.run_purge_unprivileged()
+                    )
             case _:
                 error_dialog = ErrorDialog(
                     "<p>Unreachable code hit in <code>apply_software_changes</code>."
@@ -602,9 +700,11 @@ class BrowserChoiceWindow(QDialog):
             subprocess.run(
                 [
                     "/usr/bin/notify-send",
-                    "browser-choice",
+                    "--app-name=Browser Choice",
+                    "Done",
                     f"Browser was successfully {self.change_str}."
-                ]
+                ],
+                check=False,
             )
         else:
             self.execute_process_successful = False
@@ -613,9 +713,11 @@ class BrowserChoiceWindow(QDialog):
             subprocess.run(
                 [
                     "/usr/bin/notify-send",
-                    "browser-choice",
+                    "--app-name=Browser Choice",
+                    "Failed",
                     f"Browser could not be {self.change_str}!"
-                ]
+                ],
+                check=False,
             )
         self.applying_changes_page.setContinueEnabled(True)
 
@@ -688,6 +790,83 @@ class BrowserChoiceWindow(QDialog):
         sys.exit(0)
 
 
+class PluginDataLoader(QObject):
+    """
+    Loads plugin data from the disk. Intended to run in a secondary thread.
+    """
+    pluginDataLoaded = pyqtSignal()
+    pluginDataLoadError = pyqtSignal(str)
+
+    def run(self) -> None:
+        """
+        Core function, launched by thread.
+        """
+        # pylint: disable=global-statement
+        global app_plugin_data
+        try:
+            app_plugin_data = parse_config_dir(
+                GlobalData.plugin_dir
+            )
+            self.pluginDataLoaded.emit()
+        except Exception:
+            self.pluginDataLoadError.emit(traceback.format_exc())
+
+
+class AppInitManager(QObject):
+    """
+    Displays the splash screen, loads plugin data, hides the splash screen
+    once plugin data is loaded, then displays either the main UI or an error
+    screen depending on whether plugin data loaded successfully.
+    """
+
+    def __init__(self, parent: QObject | None = None) -> None:
+        """
+        Init function.
+        """
+
+        super().__init__(parent)
+
+        self.main_window: BrowserChoiceWindow | None = None
+
+        self.splash_window: SplashScreenDialog = SplashScreenDialog()
+        self.splash_window.show()
+
+        self.plugin_data_loader: PluginDataLoader = PluginDataLoader()
+        self.loader_thread: QThread = QThread()
+
+        self.plugin_data_loader.pluginDataLoaded.connect(self.start_main_ui)
+        self.plugin_data_loader.pluginDataLoadError.connect(
+            self.show_load_error
+        )
+        self.plugin_data_loader.moveToThread(self.loader_thread)
+        self.loader_thread.started.connect(self.plugin_data_loader.run)
+        self.loader_thread.start()
+
+    def start_main_ui(self) -> None:
+        """
+        Create and display the main UI.
+        """
+
+        self.splash_window.close()
+        del self.splash_window
+        self.main_window = BrowserChoiceWindow(app_plugin_data)
+        self.main_window.show()
+
+    def show_load_error(self, error_str: str) -> None:
+        """
+        Create and display an error dialog, then exit non-zero.
+        """
+
+        self.splash_window.close()
+        del self.splash_window
+        error_dialog = ErrorDialog(
+            "<p>Error: Could not parse a plugin! Details:</p>"
+            + f"<p><pre>{error_str}</pre></p>"
+        )
+        error_dialog.exec()
+        sys.exit(1)
+
+
 # pylint: disable=unused-argument
 def signal_handler(sig: int, frame: FrameType | None) -> None:
     """
@@ -720,6 +899,7 @@ def main() -> NoReturn:
             GlobalData.log_file = None
 
     app = QApplication(sys.argv)
+    app.setQuitOnLastWindowClosed(False)
 
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
@@ -728,8 +908,8 @@ def main() -> NoReturn:
     timer.start(500)
     timer.timeout.connect(lambda: None)
 
-    window = BrowserChoiceWindow()
-    window.show()
+    # pylint: disable=unused-variable
+    app_init_manager = AppInitManager()
     app.exec_()
     sys.exit(0)
 

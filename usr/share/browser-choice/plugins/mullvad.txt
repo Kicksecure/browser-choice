@@ -1,6 +1,9 @@
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
+## Code duplication. (Un)installtion commands are also present in
+## live-config-dist/etc/privleap/conf.d/live-config-dist.conf.
+
 [product]
 product-name=Mullvad
 product-category=Browsers
@@ -15,15 +18,19 @@ official-plugin=yes
 [repo:mullvad]
 method-name=Mullvad Browser from Mullvad official repository
 method-name-short=Repo (Mullvad)
-method-subtext=Mullvad Browser from repository.mullvad.net repository. Installed via tool: apt.
+method-subtext=Mullvad Browser from repository.mullvad.net repository. Installed via tool: APT.
 method-logo=/usr/share/browser-choice/icons/mullvad.svg
 method-type=apt-thirdparty
 install-warn-text=
+unprivileged-check-script=leaprun --check browser-choice-unprivileged-enabled
 update-and-install-script=
 install-script=pkexec /usr/libexec/browser-choice/mullvad-browser-install-helper
 uninstall-script=pkexec apt-get-noninteractive --yes remove mullvad-browser
 purge-script=pkexec apt-get-noninteractive --yes purge mullvad-browser
+update-and-install-script-unprivileged=
+install-script-unprivileged=leaprun mullvad-tpdeb-install
+uninstall-script-unprivileged=leaprun mullvad-tpdeb-uninstall
+purge-script-unprivileged=leaprun mullvad-tpdeb-purge
 launch-script=mullvad-browser
 install-status=/usr/bin/package-installed-check mullvad-browser
 capability=/usr/libexec/browser-choice/architecture-support-check amd64
-mod-requires-privileges=yes
