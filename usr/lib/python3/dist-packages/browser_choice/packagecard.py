@@ -17,6 +17,7 @@ from PyQt5.QtWidgets import QWidget
 from browser_choice.packagecard_ui import Ui_PackageCard
 
 
+# pylint: disable=too-many-instance-attributes
 class PackageCard(QWidget):
     """
     Displays information about a package, and provides a radio button for
@@ -32,6 +33,7 @@ class PackageCard(QWidget):
         package_short_description: str,
         package_long_description: str,
         package_icon: QPixmap,
+        supports_install: bool,
         supports_update: bool,
         supports_remove: bool,
         supports_purge: bool,
@@ -49,6 +51,7 @@ class PackageCard(QWidget):
         self.ui.packageRadioButton.toggled.connect(self.toggled)
         self.ui.packageIconLabel.setText("")
         self.ui.packageIconLabel.setPixmap(package_icon)
+        self.supports_install: bool = supports_install
         self.supports_update: bool = supports_update
         self.supports_remove: bool = supports_remove
         self.supports_purge: bool = supports_purge

@@ -42,7 +42,7 @@ class ConfirmInstallationDialog(QDialog):
         self.ui = Ui_ConfirmInstallationDialog()
         self.ui.setupUi(self)
 
-        if not is_apt_third_party_repo:
+        if not is_apt_third_party_repo or change_str != "installed":
             self.ui.thirdPartyWarningLabel.setVisible(False)
 
         action_info_text = (

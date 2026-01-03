@@ -1,6 +1,9 @@
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
+## Code duplication. (Un)installtion commands are also present in
+## live-config-dist/etc/privleap/conf.d/live-config-dist.conf.
+
 [product]
 product-name=Firefox
 product-category=Browsers
@@ -15,34 +18,42 @@ official-plugin=yes
 [repo:debian]
 method-name=Firefox ESR from Debian stable repository
 method-name-short=Repo (Debian)
-method-subtext=Firefox ESR (Extended Stable Release) from packages.debian.org repository. Installed via tool: apt.
+method-subtext=Firefox ESR (Extended Stable Release) from packages.debian.org repository. Installed via tool: APT.
 method-logo=/usr/share/browser-choice/icons/debian.svg
 method-type=apt-firstparty
 install-warn-text=
+unprivileged-check-script=leaprun --check browser-choice-unprivileged-enabled
 update-and-install-script=pkexec bash -c -- 'apt-get-noninteractive update && apt-get-noninteractive --no-install-recommends --yes install firefox-esr'
 install-script=pkexec apt-get-noninteractive --no-install-recommends --yes install firefox-esr
 uninstall-script=pkexec apt-get-noninteractive --yes remove firefox-esr
 purge-script=pkexec apt-get-noninteractive --yes purge firefox-esr
+update-and-install-script-unprivileged=leaprun firefox-deb-update-install
+install-script-unprivileged=leaprun firefox-deb-install
+uninstall-script-unprivileged=leaprun firefox-deb-uninstall
+purge-script-unprivileged=leaprun firefox-deb-purge
 launch-script=firefox-esr
 install-status=/usr/bin/package-installed-check firefox-esr
 capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 ppc64el
-mod-requires-privileges=yes
 
 [repo:mozilla]
 method-name=Firefox Stable from Mozilla official repository
 method-name-short=Repo (Mozilla)
-method-subtext=Firefox Stable from packages.mozilla.org repository. Installed via tool: apt.
+method-subtext=Firefox Stable from packages.mozilla.org repository. Installed via tool: APT.
 method-logo=/usr/share/browser-choice/icons/firefox.svg
 method-type=apt-thirdparty
 install-warn-text=
+unprivileged-check-script=leaprun --check browser-choice-unprivileged-enabled
 update-and-install-script=
 install-script=pkexec bash -c -- 'extrepo enable mozilla && apt-get-noninteractive update && apt-get-noninteractive --no-install-recommends --yes install firefox'
 uninstall-script=pkexec apt-get-noninteractive --yes remove firefox
 purge-script=pkexec apt-get-noninteractive --yes purge firefox
+update-and-install-script-unprivileged=
+install-script-unprivileged=leaprun firefox-tpdeb-install
+uninstall-script-unprivileged=leaprun firefox-tpdeb-uninstall
+purge-script-unprivileged=leaprun firefox-tpdeb-purge
 launch-script=firefox
 install-status=/usr/bin/package-installed-check firefox
 capability=/usr/libexec/browser-choice/architecture-support-check amd64
-mod-requires-privileges=yes
 
 [repo:flathub]
 method-name=Firefox Stable from Flathub repository
@@ -51,11 +62,15 @@ method-subtext=Firefox Stable from flathub.org repository. Installed via tool: F
 method-logo=/usr/share/browser-choice/icons/flatpak.svg
 method-type=flathub
 install-warn-text=
+unprivileged-check-script=leaprun --check browser-choice-unprivileged-enabled
 update-and-install-script=
-install-script=flatpak install --assumeyes flathub org.mozilla.firefox
-uninstall-script=flatpak uninstall --assumeyes org.mozilla.firefox
+install-script=pkexec flatpak install --assumeyes flathub org.mozilla.firefox
+uninstall-script=pkexec flatpak uninstall --assumeyes org.mozilla.firefox
 purge-script=
+update-and-install-script-unprivileged=
+install-script-unprivileged=leaprun firefox-flathub-install
+uninstall-script-unprivileged=leaprun firefox-flathub-uninstall
+purge-script-unprivileged=
 launch-script=flatpak run org.mozilla.firefox
 install-status=flatpak info org.mozilla.firefox
 capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64
-mod-requires-privileges=yes

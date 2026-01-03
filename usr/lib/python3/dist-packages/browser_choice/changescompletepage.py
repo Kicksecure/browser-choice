@@ -69,7 +69,7 @@ Maintenance Panel."
                     f"<p>{exit_wizard_str}</p>"
                 )
             if allow_launch:
-                self.ui.launchAppCheckbox.setText(f"Launch '{app_name}")
+                self.ui.launchAppCheckbox.setText(f"Launch '{app_name}'")
             else:
                 self.ui.launchAppCheckbox.setVisible(False)
         else:

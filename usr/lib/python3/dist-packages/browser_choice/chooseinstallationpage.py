@@ -201,8 +201,10 @@ class ChooseInstallationPage(QWidget):
                 self.ui.removeRadioButton.setText("Remove")
                 self.ui.purgeRadioButton.setText("Purge")
 
+            # pylint: disable=too-many-boolean-expressions
             if (
-                self.is_network_connected
+                self.current_card.supports_install
+                and self.is_network_connected
                 and (
                     not self.current_card.mod_requires_privileges
                     or self.in_sysmaint_session

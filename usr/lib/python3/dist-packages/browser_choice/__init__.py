@@ -99,54 +99,52 @@ class GlobalData:
     appvm_warn_label = 'You are currently running Browser Choice \
 inside a Qubes OS App Qube. You can install or uninstall applications, but \
 these changes will be reverted after a reboot. This is because most system \
-files in App Qubes are reset upon reboot. See \
-<a href="https://www.qubes-os.org/doc/templates/">Qubes Templates</a> for \
-more information.'
+files in App Qubes are reset upon reboot. See <a \
+href="https://www.qubes-os.org/doc/templates/">Qubes Templates</a> for more \
+information.'
     dispvm_warn_label = 'You are currently running Browser Choice \
 inside a Qubes OS Disposable. You can install or uninstall \
 applications, but these changes will be reverted after a reboot. This is \
-because all files in Disposables are reset upon reboot. See \
-<a href="https://www.qubes-os.org/doc/how-to-use-disposables/">How to use \
+because all files in Disposables are reset upon reboot. See <a \
+href="https://www.qubes-os.org/doc/how-to-use-disposables/">How to use \
 Disposables</a> for more information.'
     templatevm_warn_label = 'You are currently running Browser Choice inside \
 a Qubes OS Template. Applications installed in this Template will be \
-available in all App Qubes based on it. See \
-<a href="https://www.qubes-os.org/doc/templates/">Qubes Templates</a> for \
+available in all App Qubes based on it. See <a \
+href="https://www.qubes-os.org/doc/templates/">Qubes Templates</a> for \
 more information.'
-    standalonevm_warn_label = 'You are currently running Browser Choice inside a \
-Qubes OS Standalone. Applications installed in this Qube will only be \
-available within this Qube. See \
-<a href="https://www.qubes-os.org/doc/templates/">Qubes Templates</a> for \
+    standalonevm_warn_label = 'You are currently running Browser Choice \
+inside a Qubes OS Standalone. Applications installed in this Qube will only \
+be available within this Qube. See <a \
+href="https://www.qubes-os.org/doc/templates/">Qubes Templates</a> for \
 more information.'
     usersession_warn_label_nonqubes = 'You are currently running Browser \
-Choice inside a user session. You will be unable to install most browsers \
-from here; only browsers that install into the current user account will be \
-installable. To install a browser, reboot, select <code>PERSISTENT Mode | \
-SYSMAINT Session | system maintenance tasks</code> from the boot menu, and \
-click <code>Install a Browser</code> in the System Maintenance Panel. See \
-<a href="https://www.kicksecure.com/wiki/Sysmaint">Sysmaint</a> for more \
+Choice inside a user session. Only browsers that support unprivileged \
+installation will be installable. To install other browsers, reboot, select \
+<code>PERSISTENT Mode | SYSMAINT Session | system maintenance tasks</code> \
+from the boot menu, and click <code>Install a Browser</code> in the System \
+Maintenance Panel. See <a \
+href="https://www.kicksecure.com/wiki/Sysmaint">Sysmaint</a> for more \
 information.'
     usersession_warn_label_qubes_old = 'You are currently running Browser \
-Choice as a normal user. You will be unable to install most browsers from \
-here; only browsers that install into the current user account will be \
-installable. To install a browser, open a terminal in dom0, run \
-<code>qvm-run -u root VMNAME xfce4-terminal</code>, then run \
+Choice as a normal user. Only browsers that support unprivileged \
+installation will be installable. To install other browsers, open a terminal \
+in dom0, run <code>qvm-run -u root VMNAME xfce4-terminal</code>, then run \
 <code>browser-choice</code> from that terminal. See <a \
 href="https://www.kicksecure.com/wiki/Sysmaint">Sysmaint</a> for more \
 information.'
     usersession_warn_label_qubes_new_appvm = 'You are currently running \
-Browser Choice as a normal user. You will be unable to install most browsers \
-from here; only browsers that install into the current user account will be \
-installable. To install other browsers in this qube, run \
-<code>browser-choice</code> in this qube\'s template. See <a \
+Browser Choice as a normal user. Only browsers that support unprivileged \
+installation will be installable. To install other browsers in this qube, \
+run <code>browser-choice</code> in this qube\'s template. See <a \
 href="https://www.kicksecure.com/wiki/Sysmaint">Sysmaint</a> for more \
 information.'
     usersession_warn_label_qubes_new_template = 'You are currently running \
-Browser Choice as a normal user. You will be unable to install most browsers \
-from here; only browsers that install into the current user account will be \
-installable. To install other browsers in this qube, shut the qube down. Then \
-in dom0, open Qube Manager, select this qube, click "Settings", click the \
-"Advanced" tab, set the boot mode to "default (PERSISTENT Mode - SYSMAINT \
-Session)", and click "OK". Then boot this qube and launch Browser Choice \
-again. See <a href="https://www.kicksecure.com/wiki/Sysmaint">Sysmaint</a> \
-for more information.'
+Browser Choice as a normal user. Only browsers that support unprivileged \
+installation will be installable. To install other browsers in this qube, \
+shut the qube down. Then in dom0, open Qube Manager, select this qube, click \
+"Settings", click the "Advanced" tab, set the boot mode to "default \
+(PERSISTENT Mode - SYSMAINT Session)", and click "OK". Then boot this qube \
+and launch Browser Choice again. See <a \
+href="https://www.kicksecure.com/wiki/Sysmaint">Sysmaint</a> for more \
+information.'

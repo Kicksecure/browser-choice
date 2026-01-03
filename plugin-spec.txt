@@ -98,35 +98,61 @@ method-type=apt-thirdparty
 ## should be mentioned here.
 install-warn-text=Installing this application may have unexpected consequences!
 
-## 'update-and-install-script' specifies a shell command that will update the
-## appropriate software database if necessary, then install the application.
-## If the package manager being used doesn't have a concept of a "software
-## database update", or if there is no way to install an application with the
-## package manager without updating a software database, this may be set to an
-## empty string.
+## 'unprivileged-check-script' specifies a shell command that will check if
+## the browser can be installed without administrative permissions. If this
+## script succeeds, browser-choice will use only unprivileged software
+## modification commands. If it fails, browser-choice will use the privileged
+## commands.
+unprivileged-check-script=leaprun --check unprivileged-helper
+
+## 'update-and-install-script' specifies a privileged shell command that will
+## update the appropriate software database if necessary, then install the
+## application. If the package manager being used doesn't have a concept of a
+## "software database update", or if there is no way to install an application
+## with the package manager without updating a software database, this should
+## be set to an empty string. This command, and all other privileged commands,
+## MUST require the user to authenticate.
 ##
-## NOTE: For the software installation and uninstallation scripts, you may
-## need to run package manager commands as root. If this is necessary, prefix
-## your command with 'pkexec' - this will handle any necessary authentication
-## for you.
+## Usually 'pkexec' is the best tool for escalating privileges since it will
+## handle any necessary authentication for you.
 update-and-install-script=pkexec bash -c -- 'apt-get-noninteractive update; apt-get-noninteractive install appname'
 
-## 'install-script' specifies a shell command that will install the
+## 'install-script' specifies a privileged shell command that will install the
 ## application without explicitly updating a software database. It is
 ## acceptable for this command to update a software database if there is no
 ## reasonable way to skip updating the database.
 install-script=pkexec apt-get-noninteractive install appname
 
-## 'uninstall-script' specifies a shell command that will remove the
-## application from the system. If the appropriate package manager supports a
-## separate "purge" mode for erasing additional information about the software
-## beyond what would normally be removed, this command must NOT use the purge
-## mode.
+## 'uninstall-script' specifies a privileged shell command that will remove
+## the application from the system. If the appropriate package manager
+## supports a separate "purge" mode for erasing additional information about
+## the software beyond what would normally be removed, this command must NOT
+## use the purge mode.
 uninstall-script=pkexec apt-get-noninteractive remove appname
 
-## 'purge-script' specifies a shell command that will remove the application
-## and additional associated data (usually config files) from the system.
+## 'purge-script' specifies a privileged shell command that will remove the
+## application and additional associated data (usually config files) from the
+## system.
 purge-script=pkexec apt-get-noninteractive purge appname
+
+## 'update-and-install-script-unprivileged' is the same as
+## 'update-and-install-script', but it must NOT require the user to
+## authenticate. On Kicksecure, usually this means that either the plugin uses
+## leaprun to run the installation command, or that the command itself does
+## not require elevated privileges at all.
+update-and-install-script-unprivileged=leaprun update-and-install-browser
+
+## 'install-script-unprivileged' is the same as 'install-script', but must not
+## require the user to authenticate.
+install-script-unprivileged=leaprun install-browser
+
+## 'uninstall-script-unprivileged' is the same as 'uninstall-script', but must
+## not require the user to authenticate.
+uninstall-script-unprivileged=leaprun uninstall-browser
+
+## 'purge-script-unprivileged' is the same as 'purge-script', but must not
+## require the user to authenticate.
+purge-script-unprivileged=leaprun purge-browser
 
 ## 'launch-script' specifies a shell command that will run the application.
 launch-script=appname
@@ -142,11 +168,3 @@ install-status=/usr/bin/package-installed-check appname
 ## before failing, this info will be used to explain why the application is
 ## unsupported.
 capability=/usr/libexec/browser-choice/architecture-support-check amd64
-
-## 'mod-requires-privileges' specifies whether special privileges are needed
-## to run software "modifications" (installation, removal, purge). For
-## browsers that will be installed system-wide, this should always be set to
-## "yes", even if using Flatpak to install them, as standard user accounts on
-## Kicksecure may be unable to install Flatpaks by themselves. For
-## user-specific browsers, this can be set to "no".
-mod-requires-privileges=yes|no

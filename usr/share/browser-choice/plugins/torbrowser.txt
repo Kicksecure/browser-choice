@@ -1,6 +1,9 @@
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
+## Code duplication. (Un)installtion commands are also present in
+## live-config-dist/etc/privleap/conf.d/live-config-dist.conf.
+
 [product]
 product-name=Tor Browser
 product-category=Browsers
@@ -13,17 +16,21 @@ wiki=https://www.kicksecure.com/wiki/Tor_Browser
 official-plugin=yes
 
 [repo:tpo]
-method-name=Official Tor Browser tarball
-method-name-short=Tarball (TPO)
-method-subtext=Tor Browser from the torproject.org repository. Installed via tool: Tor Browser Downloader (by Kicksecure developers).
+method-name=Tor Browser Downloader
+method-name-short=Repo (Kicksecure)
+method-subtext=Tor Browser Downloader (by Kicksecure developers) from the kicksecure.com repository. Installed via tool: APT.
 method-logo=/usr/share/browser-choice/icons/torbrowser.png
-method-type=tarball
-install-warn-text=Tor Browser will only be installed for the current user account.
+method-type=apt-firstparty
+install-warn-text=Only the Tor Browser Downloader will be installed. You can then use the downloader to install Tor Browser in an unprivileged user account.
+unprivileged-check-script=leaprun --check browser-choice-unprivileged-enabled
 update-and-install-script=
 install-script=pkexec /usr/libexec/browser-choice/tor-browser-install-helper
 uninstall-script=pkexec /usr/libexec/browser-choice/tor-browser-uninstall-helper
 purge-script=pkexec /usr/libexec/browser-choice/tor-browser-purge-helper
+update-and-install-script-unprivileged=
+install-script-unprivileged=leaprun torbrowser-deb-install
+uninstall-script-unprivileged=leaprun torbrowser-deb-uninstall
+purge-script-unprivileged=leaprun torbrowser-deb-purge
 launch-script=torbrowser
 install-status=/usr/bin/package-installed-check tb-updater && /usr/bin/package-installed-check tb-starter
 capability=/usr/libexec/browser-choice/architecture-support-check amd64
-mod-requires-privileges=yes

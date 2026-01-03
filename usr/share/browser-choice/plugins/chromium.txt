@@ -1,6 +1,9 @@
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
+## Code duplication. (Un)installtion commands are also present in
+## live-config-dist/etc/privleap/conf.d/live-config-dist.conf.
+
 [product]
 product-name=Chromium
 product-category=Browsers
@@ -19,14 +22,18 @@ method-subtext=Chromium from packages.debian.org repository. Installed via tool:
 method-logo=/usr/share/browser-choice/icons/debian.svg
 method-type=apt-firstparty
 install-warn-text=
+unprivileged-check-script=leaprun --check browser-choice-unprivileged-enabled
 update-and-install-script=pkexec bash -c -- 'apt-get-noninteractive update && apt-get-noninteractive --no-install-recommends --yes install chromium chromium-sandbox'
 install-script=pkexec apt-get-noninteractive --no-install-recommends --yes install chromium chromium-sandbox
 uninstall-script=pkexec apt-get-noninteractive --yes remove chromium
 purge-script=pkexec apt-get-noninteractive --yes purge chromium
+update-and-install-script-unprivileged=leaprun chromium-deb-update-install
+install-script-unprivileged=leaprun chromium-deb-install
+uninstall-script-unprivileged=leaprun chromium-deb-uninstall
+purge-script-unprivileged=leaprun chromium-deb-purge
 launch-script=chromium
 install-status=/usr/bin/package-installed-check chromium
 capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64 ppc64el
-mod-requires-privileges=yes
 
 [repo:flathub]
 method-name=Chromium from Flathub repository (Community)
@@ -35,11 +42,15 @@ method-subtext=Chromium from flathub.org repository. Unofficial. Installed via t
 method-logo=/usr/share/browser-choice/icons/flatpak.svg
 method-type=flathub
 install-warn-text=Chromium is an unverified (non-official) Flatpak (Open Source) packaged by a third party (not Google). Installing it will allow unverified and proprietary, closed source (not Open Source) Flatpaks to be installed on this system if explicitly requested by the user. This does not imply that Chromium itself is closed source. See also: <a href="https://www.kicksecure.com/wiki/Install_Software#Flathub_Package_Sources_Security">Flathub Package Sources Security</a>.
+unprivileged-check-script=leaprun --check browser-choice-unprivileged-enabled
 update-and-install-script=
-install-script=pkexec flatpak remote-modify --subset= flathub && flatpak install --assumeyes flathub org.chromium.Chromium
-uninstall-script=flatpak uninstall --assumeyes org.chromium.Chromium
+install-script=pkexec bash -c -- 'flatpak remote-modify --subset= flathub && flatpak install --assumeyes flathub org.chromium.Chromium'
+uninstall-script=pkexec flatpak uninstall --assumeyes org.chromium.Chromium
 purge-script=
+update-and-install-script-unprivileged=
+install-script-unprivileged=leaprun chromium-flathub-install
+uninstall-script-unprivileged=leaprun chromium-flathub-uninstall
+purge-script-unprivileged=
 launch-script=flatpak run org.chromium.Chromium
 install-status=flatpak info org.chromium.Chromium
 capability=/usr/libexec/browser-choice/architecture-support-check amd64 arm64
-mod-requires-privileges=yes
