@@ -1,7 +1,7 @@
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-## Code duplication. (Un)installtion commands are also present in
+## Code duplication. (Un)installation commands are also present in
 ## live-config-dist/etc/privleap/conf.d/live-config-dist.conf.
 
 [product]
