@@ -1,3 +1,22 @@
+commit a3f763b390a03a317bf22af9e47a559bdc5e390f
+Merge: 221f67a 1acc5d2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jan 22 03:50:42 2026 -0500
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit 1acc5d2a173710e04e7f069297dbcafee59488f0
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Tue Jan 20 18:14:35 2026 -0600
+
+    Move live ISO unprivileged browser installation config to browser-choice
+
+commit 221f67a5755e299e30e20936da46afb89690ba3d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jan 11 16:21:55 2026 +0000
+
+    bumped changelog version
+
 commit 7f1afbdd1f5d4bf68415c04732770dcb375c50c5
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Jan 11 10:45:37 2026 -0500
