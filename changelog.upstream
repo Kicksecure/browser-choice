@@ -1,3 +1,22 @@
+commit fd073fa3b3167568307f14cfc532380d59a76e2c
+Merge: 67f08f4 eaaa133
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jan 25 02:36:45 2026 -0500
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit eaaa133728d215dcb9cad30015ab2931d8734e53
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sat Jan 24 23:16:58 2026 -0600
+
+    Fix Qubes proxy handling
+
+commit 67f08f4ecd74f61f6c1d8cadf37b5781ade7a972
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jan 22 10:56:08 2026 +0000
+
+    bumped changelog version
+
 commit a3f763b390a03a317bf22af9e47a559bdc5e390f
 Merge: 221f67a 1acc5d2
 Author: Patrick Schleizer <adrelanos@whonix.org>
