@@ -1,0 +1,23 @@
+#!/bin/bash
+
+## Copyright (C) 2026 - 2026 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+set -o errexit
+set -o nounset
+set -o errtrace
+set -o pipefail
+
+if [ -f /run/qubes/this-is-templatevm ]; then
+  export https_proxy='http://127.0.0.1:8082/'
+  export http_proxy='http://127.0.0.1:8082/'
+  export HTTPS_PROXY='http://127.0.0.1:8082/'
+  ## Not setting HTTP_PROXY, as applications generally ignore it for
+  ## security reasons. See:
+  ##
+  ## https://superuser.com/questions/876100/https-proxy-vs-https-proxy
+  ## https://github.com/golang/go/issues/16405
+  ## https://httpoxy.org
+fi
+
+"$@"

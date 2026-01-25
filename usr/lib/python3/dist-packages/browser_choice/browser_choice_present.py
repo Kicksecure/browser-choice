@@ -285,15 +285,8 @@ class BrowserChoiceWindow(QDialog):
 
         if GlobalData.qube_type == "templatevm":
             self.is_network_connected: bool = True
-            os.environ["https_proxy"]="http://127.0.0.1:8082/"
-            os.environ["http_proxy"]="http://127.0.0.1:8082/"
-            os.environ["HTTPS_PROXY"]="http://127.0.0.1:8082/"
-            ## Not setting HTTP_PROXY, as applications generally ignore it for
-            ## security reasons. See:
-            ##
-            ## https://superuser.com/questions/876100/https-proxy-vs-https-proxy
-            ## https://github.com/golang/go/issues/16405
-            ## https://httpoxy.org/
+            ## The HTTP proxy for Qubes TemplateVMs is configured by
+            ## /usr/libexec/browser-choice/qubes-proxy-maybe.
         else:
             self.is_network_connected = (
                 subprocess.run(
