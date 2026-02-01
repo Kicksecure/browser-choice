@@ -251,12 +251,13 @@ class BrowserChoiceWindow(QDialog):
         self.in_sysmaint_session: bool = (
             subprocess.run(
                 [
-                    "/usr/libexec/helper-scripts/user-sysmaint-split-check",
-                    "needs-sysmaint",
+                    "/usr/libexec/helper-scripts/boot-session-detection.bsh",
                 ],
                 check=False,
-            ).returncode
-            == 0
+                capture_output=True,
+                encoding="utf-8",
+            ).stdout.strip()
+            == "sysmaint_session"
         )
 
         self.user_sysmaint_split_installed: bool = check_package_installed("user-sysmaint-split")
