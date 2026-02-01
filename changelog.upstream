@@ -1,3 +1,22 @@
+commit e18965ee80ae6e71d277c2b23409ad5f48736fbe
+Merge: cf51603 de57c79
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Feb 1 08:02:23 2026 -0500
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit de57c79d8063b7dcdcb1e6af38bed120188541fe
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sun Feb 1 05:58:49 2026 -0600
+
+    Switch from user-sysmaint-split-check to boot-session-detection.bsh
+
+commit cf516030f79ae11aa82c264c91f96da2bd90de46
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jan 25 07:41:09 2026 +0000
+
+    bumped changelog version
+
 commit fd073fa3b3167568307f14cfc532380d59a76e2c
 Merge: 67f08f4 eaaa133
 Author: Patrick Schleizer <adrelanos@whonix.org>
