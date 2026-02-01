@@ -13,7 +13,7 @@ apt-get-noninteractive --no-install-recommends --yes install tb-updater tb-start
 set +x
 
 ## sets: boot_session
-source /usr/libexec/helper-scripts/boot-session-detection.sh
+source /usr/libexec/helper-scripts/boot-session-detection.bsh
 
 if [ "$boot_session" = "sysmaint_session" ]; then
   printf '%s\n' "
