@@ -12,7 +12,6 @@ browser_choice_present.py - GUI layer of browser-choice.
 ## NOTE: This file must not be named 'browser_choice.py', it confuses mypy.
 ## See https://github.com/python/mypy/issues/19410
 
-import os
 import sys
 import traceback
 import subprocess
@@ -679,7 +678,7 @@ class BrowserChoiceWindow(QDialog):
         assert self.applying_changes_page is not None
 
         self.stdout_buffer += (
-            self.execute_process.readAllStandardOutput().data()
+            self.execute_process.readAllStandardOutput().data() # type: ignore
         )
         stdout_text: str = self.stdout_buffer.decode(encoding="utf-8")
         self.applying_changes_page.logLine(stdout_text)
@@ -727,7 +726,7 @@ class BrowserChoiceWindow(QDialog):
         assert self.applying_changes_page is not None
 
         self.stdout_buffer += (
-            self.execute_process.readAllStandardOutput().data()
+            self.execute_process.readAllStandardOutput().data() # type: ignore
         )
         while b"\n" in self.stdout_buffer:
             cutoff_idx: int = self.stdout_buffer.index(b"\n")

@@ -56,8 +56,7 @@ class CardView(QScrollArea):
         if isinstance(card, PackageCard) and self.card_type != "PackageCard":
             raise ValueError("This CardView does not support PackageCards!")
 
-        if card.height() > self.min_height:
-            self.min_height = card.height()
+        self.min_height = max(self.min_height, card.height())
         self.min_width += card.width()
         self.root_widget.setMinimumSize(self.min_width, self.min_height + 10)
 
