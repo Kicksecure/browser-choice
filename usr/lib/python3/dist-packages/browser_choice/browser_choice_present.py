@@ -241,7 +241,7 @@ class BrowserChoiceWindow(QDialog):
     def __init__(
         self,
         plugin_data: list[ChoicePluginCategory],
-        parent: QWidget | None = None
+        parent: QWidget | None = None,
     ):
         super(QWidget, self).__init__(parent)
 
@@ -259,7 +259,9 @@ class BrowserChoiceWindow(QDialog):
             == "sysmaint_session"
         )
 
-        self.user_sysmaint_split_installed: bool = check_package_installed("user-sysmaint-split")
+        self.user_sysmaint_split_installed: bool = check_package_installed(
+            "user-sysmaint-split"
+        )
 
         init_warn_dialog: InitWarnDialog | None = None
         if GlobalData.qube_type in ("appvm", "dispvm"):
@@ -424,22 +426,26 @@ class BrowserChoiceWindow(QDialog):
                     plugin_repo.install_script,
                     plugin_repo.install_script_unprivileged,
                     plugin_repo.mod_requires_privileges,
-                ) is not None,
+                )
+                is not None,
                 supports_update=self.arg_filter_switch(
                     plugin_repo.update_and_install_script,
                     plugin_repo.update_and_install_script_unprivileged,
                     plugin_repo.mod_requires_privileges,
-                ) is not None,
+                )
+                is not None,
                 supports_remove=self.arg_filter_switch(
                     plugin_repo.uninstall_script,
                     plugin_repo.uninstall_script_unprivileged,
                     plugin_repo.mod_requires_privileges,
-                ) is not None,
+                )
+                is not None,
                 supports_purge=self.arg_filter_switch(
                     plugin_repo.purge_script,
                     plugin_repo.purge_script_unprivileged,
                     plugin_repo.mod_requires_privileges,
-                ) is not None,
+                )
+                is not None,
                 is_installed=plugin_repo.is_installed,
                 capability_info=plugin_repo.capability_info,
                 mod_requires_privileges=plugin_repo.mod_requires_privileges,
@@ -678,7 +684,7 @@ class BrowserChoiceWindow(QDialog):
         assert self.applying_changes_page is not None
 
         self.stdout_buffer += (
-            self.execute_process.readAllStandardOutput().data() # type: ignore
+            self.execute_process.readAllStandardOutput().data()  # type: ignore
         )
         stdout_text: str = self.stdout_buffer.decode(encoding="utf-8")
         self.applying_changes_page.logLine(stdout_text)
@@ -695,7 +701,7 @@ class BrowserChoiceWindow(QDialog):
                     "/usr/bin/notify-send",
                     "--app-name=Browser Choice",
                     "Done",
-                    f"Browser was successfully {self.change_str}."
+                    f"Browser was successfully {self.change_str}.",
                 ],
                 check=False,
             )
@@ -708,7 +714,7 @@ class BrowserChoiceWindow(QDialog):
                     "/usr/bin/notify-send",
                     "--app-name=Browser Choice",
                     "Failed",
-                    f"Browser could not be {self.change_str}!"
+                    f"Browser could not be {self.change_str}!",
                 ],
                 check=False,
             )
@@ -726,7 +732,7 @@ class BrowserChoiceWindow(QDialog):
         assert self.applying_changes_page is not None
 
         self.stdout_buffer += (
-            self.execute_process.readAllStandardOutput().data() # type: ignore
+            self.execute_process.readAllStandardOutput().data()  # type: ignore
         )
         while b"\n" in self.stdout_buffer:
             cutoff_idx: int = self.stdout_buffer.index(b"\n")
@@ -787,6 +793,7 @@ class PluginDataLoader(QObject):
     """
     Loads plugin data from the disk. Intended to run in a secondary thread.
     """
+
     pluginDataLoaded = pyqtSignal()
     pluginDataLoadError = pyqtSignal(str)
 
@@ -797,9 +804,7 @@ class PluginDataLoader(QObject):
         # pylint: disable=global-statement
         global app_plugin_data
         try:
-            app_plugin_data = parse_config_dir(
-                GlobalData.plugin_dir
-            )
+            app_plugin_data = parse_config_dir(GlobalData.plugin_dir)
             self.pluginDataLoaded.emit()
         except Exception:
             self.pluginDataLoadError.emit(traceback.format_exc())
