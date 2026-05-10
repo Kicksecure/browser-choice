@@ -180,6 +180,7 @@ class ChooseInstallationPage(QWidget):
             if (
                 self.current_card.mod_requires_privileges
                 and not self.in_sysmaint_session
+                and self.user_sysmaint_split_installed
                 and GlobalData.uid != 0
             ):
                 self.ui.installRadioButton.setText(
@@ -208,6 +209,7 @@ class ChooseInstallationPage(QWidget):
                 and (
                     not self.current_card.mod_requires_privileges
                     or self.in_sysmaint_session
+                    or not self.user_sysmaint_split_installed
                     or GlobalData.uid == 0
                 )
                 and not self.current_card.is_installed
@@ -222,6 +224,7 @@ class ChooseInstallationPage(QWidget):
                 and (
                     not self.current_card.mod_requires_privileges
                     or self.in_sysmaint_session
+                    or not self.user_sysmaint_split_installed
                     or GlobalData.uid == 0
                 )
             ):
@@ -235,6 +238,7 @@ class ChooseInstallationPage(QWidget):
                 and (
                     not self.current_card.mod_requires_privileges
                     or self.in_sysmaint_session
+                    or not self.user_sysmaint_split_installed
                     or GlobalData.uid == 0
                 )
             ):

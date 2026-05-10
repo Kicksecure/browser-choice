@@ -245,9 +245,7 @@ class ChoicePluginRepo(QObject):
 
         if self.uninstall_script_unprivileged is None:
             return None
-        return self.__run_script(
-            self.uninstall_script_unprivileged, set_x=True
-        )
+        return self.__run_script(self.uninstall_script_unprivileged, set_x=True)
 
     def run_purge_unprivileged(self) -> QProcess | None:
         """
@@ -622,9 +620,7 @@ def parse_config_file(config_file: Path) -> ChoicePlugin:
                             str_or_none(line_val)
                         )
                     case "install-script-unprivileged":
-                        repo_install_script_unprivileged = str_or_none(
-                            line_val
-                        )
+                        repo_install_script_unprivileged = str_or_none(line_val)
                     case "uninstall-script-unprivileged":
                         repo_uninstall_script_unprivileged = str_or_none(
                             line_val
