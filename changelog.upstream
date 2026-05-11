@@ -1,3 +1,28 @@
+commit 865e2e07f19679dd7a2fab6d6594d27bc8f30cdf
+Merge: c371098 1953f8d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun May 10 12:42:14 2026 -0400
+
+    Merge remote-tracking branch 'refs/remotes/ArrayBolt3/arraybolt3/trixie'
+
+commit 1953f8d1e61da599911c4abf62f380ced0dc8928
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Sat May 9 22:48:06 2026 -0400
+
+    Reformat with Black
+
+commit 956ef92ef388c6e4499dc51dc082b6c9faedc2bc
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Sat May 9 22:48:00 2026 -0400
+
+    Fix logic bug that prevented use in unrestricted admin mode
+
+commit c37109895baa62206931c801981ed9f0baf2ff50
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Feb 1 13:59:20 2026 +0000
+
+    bumped changelog version
+
 commit e18965ee80ae6e71d277c2b23409ad5f48736fbe
 Merge: cf51603 de57c79
 Author: Patrick Schleizer <adrelanos@whonix.org>
