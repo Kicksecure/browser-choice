@@ -1,3 +1,41 @@
+commit 06abc1e2a7b5abcdc4d629439af11238de67d04a
+Merge: 3873e18 b038ff6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Aug 1 04:21:26 2026 -0400
+
+    Merge remote-tracking branch 'refs/remotes/org-ai-assisted/master'
+
+commit b038ff65e25c8ba60a9690ad141c04be3461c82d
+Merge: 3873e18 e0981ea
+Author: assisted-by-ai (Bot Account) (Machine Account) <228987186+assisted-by-ai@users.noreply.github.com>
+Date:   Fri Jul 31 15:51:40 2026 -0400
+
+    Merge pull request #1 from org-ai-assisted/ai
+
+    ci: add file-based CodeQL python lane
+
+commit e0981ea0d44bec535718774e243a51699d4741d5
+Author: claude (dev142 b93fb2c6-e15f-4d45-8566-f3ded893b70e) <noreply@anthropic.com>
+Date:   Fri Jul 31 14:57:35 2026 -0400
+
+    ci: add file-based CodeQL python lane
+
+    Propagate consumer-codeql-python.yml byte-identically from
+    developer-meta-files/consumer-templates. browser-choice ships real
+    product Python (browser install/remove via subprocess + package ops)
+    that had no python CodeQL analysis.
+
+    build-mode none; push/PR/workflow_dispatch triggers. No dm-consumer.yml
+    section required (reusable soft-skips an absent section).
+
+    Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+
+commit 3873e1890b0988d86fd2ac8ebbe6f6be13ff7a9c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 20 21:58:52 2026 +0000
+
+    bumped changelog version
+
 commit 2791ab827f6f485ae2d7bb7b8976f10218a33a4b
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed May 20 16:56:42 2026 -0400
