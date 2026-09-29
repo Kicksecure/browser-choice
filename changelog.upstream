@@ -1,3 +1,51 @@
+commit b3db4e41e12be6b4fc149117ad700d1d8d5a05f9
+Merge: c3b8460 2b12987
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Sep 28 01:36:55 2026 -0400
+
+    Merge remote-tracking branch 'refs/remotes/ArrayBolt3/arraybolt3/trixie'
+
+commit 2b12987ea2e00b2b1d8fcd2f5fd615d34f5590d6
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Fri Sep 25 00:01:54 2026 -0400
+
+    Drop overengineered AI-generated test script, way too much code and complexity to test one very small component of code structure
+
+commit 050f0e59831d06fa2c593ebf0ed7eb0385c036ee
+Merge: c3b8460 28356f7
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Thu Sep 24 23:56:02 2026 -0400
+
+    Merge branch 'ai' into arraybolt3/trixie
+
+commit 28356f754e465ee2823c4dd07575dd485b18a7f1
+Author: claude (dev668 95b0e488-d95a-4f41-8862-db7eba135329) <noreply@anthropic.com>
+Date:   Thu Sep 24 05:38:49 2026 -0400
+
+    Fix super() first arg to enclosing class (py/super-not-enclosing-class)
+
+    - super(QObject/QWidget, self) named a BASE not the enclosing class, so
+      MRO resolution skipped the immediate base __init__ and dropped the Qt
+      parent-child ownership that base sets up
+    - affects BrowserChoiceWindow(QDialog) and ChoicePlugin /
+      ChoicePluginCategory(QObject)
+    - AST regression test guards the whole package against reintroduction
+
+    Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+
+commit 7c40c3253382c94ce1228986dc312f305aa964f2
+Merge: ccfbd24 c3b8460
+Author: assisted-by-ai <assisted-by-ai@users.noreply.github.com>
+Date:   Tue Sep 15 12:46:26 2026 -0400
+
+    Merge master into ai (remaster)
+
+commit c3b8460238af32ebf0d437fb78f8b62f956a5cc7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Sep 14 13:35:43 2026 +0000
+
+    bumped changelog version
+
 commit b577031db6821d572e573b77e5b33aae645bd1c6
 Merge: 243f71e 1b6b631
 Author: Patrick Schleizer <adrelanos@whonix.org>
@@ -10,6 +58,13 @@ Author: Aaron Rainbolt <arraybolt3@gmail.com>
 Date:   Sun Sep 13 18:54:01 2026 -0400
 
     comments
+
+commit ccfbd24592bd8053c71f5e38fd7160ab8006756e
+Merge: 3d93d92 243f71e
+Author: claude <noreply@anthropic.com>
+Date:   Tue Sep 8 13:06:34 2026 -0400
+
+    Merge branch 'master' into ai
 
 commit 243f71ec838ed4a818f3c1eebcf1fc0026dfd663
 Author: Patrick Schleizer <adrelanos@whonix.org>
